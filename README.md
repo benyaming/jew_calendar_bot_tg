@@ -1,1 +1,0 @@
-jew_calendar_bot_tg
