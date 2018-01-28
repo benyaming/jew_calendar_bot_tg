@@ -10,7 +10,7 @@ import settings
 import text_handler
 import utils as f
 
-'''import tornado.web
+import tornado.web
 
 from tornado import httpserver
 from tornado.web import HTTPError
@@ -23,13 +23,13 @@ WEBHOOK_PORT = 8443
 WEBHOOK_SSL_CERT = './webhook_cert.pem'
 WEBHOOK_SSL_PRIV = './webhook_pkey.pem'
 WEBHOOK_URL_BASE = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
-WEBHOOK_URL_PATH = f'/{config.TOKEN}/'''
+WEBHOOK_URL_PATH = f'/{settings.TOKEN}/'
 
 
 bot = telebot.TeleBot(settings.TOKEN)
 
 
-'''class WebhookServer(tornado.web.RequestHandler):
+class WebhookServer(tornado.web.RequestHandler):
     def post(self):
         headers = self.request.headers
         if 'content-length' in headers and \
@@ -45,7 +45,7 @@ bot = telebot.TeleBot(settings.TOKEN)
 
 application = tornado.web.Application([
     (WEBHOOK_URL_PATH, WebhookServer),
-])'''
+])
 
 
 @bot.message_handler(commands=['start'])
@@ -100,7 +100,7 @@ def handle_venue(message):
                                     bot
                                     ):
 
-        text_handler.handle_text('Back', message.from_user.id, bot)
+        text_handler.handle_text(message.from_user.id, 'Back')
         tz = f.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
@@ -114,7 +114,7 @@ def handle_reg(message):
     if loc[0] == message.text:
         loc = message.text.split(sep=',')
     if db_operations.check_location(message.from_user.id, loc[0], loc[1], bot):
-        text_handler.handle_text('Back', message.from_user.id, bot)
+        text_handler.handle_text(message.from_user.id, 'Back')
         tz = f.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
@@ -131,7 +131,7 @@ def handle_text_message(message):
 
 
 if __name__ == '__main__':
-    '''logger = logging.getLogger('bot_logger')
+    logger = logging.getLogger('bot_logger')
     logger.setLevel(logging.INFO)
     handler = RotatingFileHandler('logs/bot_logger',
                                   maxBytes=1024*1024*3,
@@ -155,5 +155,4 @@ if __name__ == '__main__':
     bot.set_webhook(url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
                     certificate=open(WEBHOOK_SSL_CERT, 'r'))
     server.listen(WEBHOOK_PORT)
-    IOLoop.instance().start()'''
-    bot.polling(none_stop=True)
+    IOLoop.instance().start()
