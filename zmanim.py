@@ -112,11 +112,11 @@ def get_ext_zmanim(user, lang):
 
     if zmanim_dict['alos_ma'] == 'X:XX:XX':
         zmanim_dict['alos_ma'] = str(datetime.time(datetime.strptime(
-            zmanim_dict['zmanim']['chatzos'],
+            zmanim_dict['chatzos'],
             "%H:%M:%S") - timedelta(hours=12)))
         if zmanim_dict['talis_ma'] == 'X:XX:XX':
             zmanim_dict['talis_ma'] = str(datetime.time(datetime.strptime(
-                zmanim_dict['zmanim']['chatzos'],
+                zmanim_dict['chatzos'],
                 "%H:%M:%S") - timedelta(hours=12)))
     if zmanim_dict['tzeis_595_degrees'] == 'X:XX:XX':
         zmanim_dict['tzeis_595_degrees'] = None

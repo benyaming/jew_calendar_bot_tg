@@ -26,13 +26,22 @@ def get_shabbos_string(loc, lang):
     month = shabbat_date[5:7:]
     day = shabbat_date[8::]
     year = shabbat_date[:4:]
-    params = {
-        'mode': 'day',
-        'timezone': tz,
-        'dateBegin': f'{month}/{day}/{year}',
-        'lat': loc[0],
-        'lng': loc[1]
-    }
+    if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+        params = {'mode': 'day',
+                  'timezone': tz,
+                  'dateBegin': f'{month}/{day}/{year}',
+                  'lat': loc[0],
+                  'lng': loc[1],
+                  'israel_holidays': 'true'
+                  }
+    else:
+        params = {
+            'mode': 'day',
+            'timezone': tz,
+            'dateBegin': f'{month}/{day}/{year}',
+            'lat': loc[0],
+            'lng': loc[1]
+        }
     shabbat = requests.get(URL, params=params)
     shabbat_dict = shabbat.json()
 

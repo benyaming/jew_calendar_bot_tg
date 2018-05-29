@@ -120,7 +120,7 @@ gr_dayofweek = {
 }
 
 jewish_months = {
-    'Nissan': 'Нисан',
+    'Nisan': 'Нисан',
     'Iyar': 'Ияр',
     'Sivan': 'Сиван',
     'Tamuz': 'Тамуз',
@@ -137,7 +137,7 @@ jewish_months = {
 }
 
 jewish_months_a = {
-    'Nissan': 'Нисcана',
+    'Nisan': 'Ниcана',
     'Iyar': 'Ияра',
     'Sivan': 'Сивана',
     'Tammuz': 'Тамуза',
@@ -289,6 +289,7 @@ hdays_of_7_en = {
 }
 
 parashat = {
+    'PESACH_VIII': 'ПЕСАХ',
     'Bereshit': 'Берешит',
     'Noach': 'Ноах',
     'Lech Lecha': 'Лех Леха',

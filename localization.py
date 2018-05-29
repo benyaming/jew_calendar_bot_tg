@@ -200,11 +200,11 @@ class Shabos(object):
             shabos_str = f'*Шаббат*\n\n📜 *Недельная глава:* ' \
                          f'{data.parashat[parasha]}\n\n' \
                          f'В данных широтах невозможно определить ' \
-                         f'зманим из-за полярного дня/полярной ночи'
+                         f'зманим из-за полярного дня/полярной ночи.'
         elif lang == 'English':
             shabos_str = f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n\n' \
                          f'In these latitudes zmanim is impossible' \
-                         f' to determine because of polar night/day'
+                         f' to determine because of polar night/day.'
         return shabos_str
 
     # для шаббатов в северных широтах с предупреждением о раннем зажигании
@@ -246,6 +246,8 @@ class Shabos(object):
                          f'🕯 *Зажигание свечей:* {cl}\n' \
                          f'✨ *Выход звёзд:* {th}'
         elif lang == 'English':
+            if parasha == 'PESACH_VIII':
+                parasha = 'PESACH'
             shabos_str = f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n' \
                          f'🕯 *Candle lighting:* {cl}\n' \
                          f'✨ *Tzeit hakochavim:* {th}'
@@ -289,10 +291,10 @@ class Zmanim(object):
         error_message = ''
         if lang == 'Russian':
             error_message = 'В данных широтах невозможно определить ' \
-                            'зманим из-за полярного дня/полярной ночи'
+                            'зманим из-за полярного дня/полярной ночи.'
         elif lang == 'English':
             error_message = 'In these latitudes it is impossible to determine'\
-                            ' because of polar night/day'
+                            ' because of polar night/day.'
         return error_message
 
     # обычные зманим
@@ -315,7 +317,7 @@ class Zmanim(object):
         zmanim_str = ''
         if lang == 'Russian':
             zmanim_str = f'*Зманим*\n\n*Еврейская дата:* {h_day} ' \
-                         f'{data.jewish_months_a[h_month]} {h_year} года\n' \
+                         f'{data.jewish_months_a[h_month]} {h_year}\n' \
                          f'*Рассвет* _(Алот Ашахар)_ *—* {alos_ma}\n' \
                          f'*Самое раннее время надевания ' \
                          f'талита и тфилин* _(Мишеякир)_ *—* {talis_ma}\n' \
@@ -330,7 +332,7 @@ class Zmanim(object):
                          f'*Выход звезд* _(Цет Акохавим)_ *—* {tzeis}\n'
         elif lang == 'English':
             zmanim_str = f'*Zmanim*\n\n*Hebrew date:* ' \
-                         f'{h_day} {h_month} {h_year} года\n' \
+                         f'{h_day} {h_month} {h_year}\n' \
                          f'*Alot Hashachar —* {alos_ma}\n' \
                          f'*Misheyakir —* {talis_ma}\n' \
                          f'*Hanetz Hachama —* {sunrise}\n' \
@@ -363,7 +365,7 @@ class Zmanim(object):
                 zmanim_str += '*Конец времени чтения Шма' \
                          ' [Маген Авраам]* *—* {:.5s}\n' \
                          '*Конец времени чтения Шма [АГРО]* *—* {:.5s}\n' \
-                         '*Конец времени чтения молитвы Амида\n' \
+                         '*Конец времени чтения молитвы Амида ' \
                          '[Маген Авраам]* *—*  {:.5s}\n' \
                          '*Конец времени чтения' \
                          ' молитвы Амида [АГРО]* *—* {:.5s}\n'\
@@ -456,7 +458,7 @@ class Zmanim(object):
                     .format(zmanim_dict['tzeis_850_degrees'])
             zmanim_str += '*Tzeit Hakochavim [42 minutes]*  *—* {:.5s}\n' \
                           '*Tzeit Hakochavim [72 minutes]*  *—* {:.5s}\n' \
-                          '*Chatzot Halayiah* *—* {:.5s}\n\n' \
+                          '*Chatzot Halaylah* *—* {:.5s}\n\n' \
                           '*Astronomical Hour [GR"A]* *—* {:.4s}\n' \
                 .format(zmanim_dict['tzeis_42_minutes'],
                         zmanim_dict['tzeis_72_minutes'],
@@ -547,6 +549,30 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    # запрос даты для зманим
+    @staticmethod
+    def request_date(lang: str) -> str:
+        responses = {
+            'Russian': 'Пожалуйста, введите дату, на которую вы '
+                       'хотите получить _зманим_ *в формате ДД.ММ.ГГГГ*',
+            'English': 'Please enter the date to calculate the _Zmanim_  '
+                       'for your selection *in the format DD.MM.YYYY*'
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # некорректная дата
+    @staticmethod
+    def incorrect_date(lang: str) -> str:
+        responses = {
+            'Russian': 'Вы ввели некорректную дату. \nПожалуйста, введите '
+                       'дату в *формате ДД.ММ.ГГГГ*',
+            'English': 'Incorrect date. \nPlease input date *in '
+                       'the format DD.MM.YYYY*'
+        }
+        response = responses.get(lang, '')
+        return response
+
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
@@ -602,7 +628,61 @@ class Holidays(object):
                                      avdala_time)
 
         return lighting_time
+    
+    # Когда один день праздника и перед ним шаббат
+    @staticmethod
+    def shabbat_before_holiday_israel(
+            lang: str,
+            light_shab_day: str,
+            light_shab_month: str,
+            light_shab_time: str,
+            light_day: str,
+            light_month: str,
+            light_time: str,
+            avdala_day: str,
+            avdala_month: str,
+            avdala_time: str
+    ) -> str:
+        lighting_time = ''
+        if lang == 'Russian':
+            lighting_time = '🕯 Зажигание свечей (Шаббат) {}' \
+                            ' {}:' \
+                            ' *{:.5s}*\n' \
+                            '✨🕯 Авдала и зажигание свечей {}' \
+                            ' {}:' \
+                            ' *{:.5s}*\n' \
+                            '✨ Авдала {}' \
+                            ' {}:' \
+                            ' *{:.5s}*' \
+                .format(light_shab_day,
+                        data.gr_months_index[light_shab_month],
+                        light_shab_time,
+                        light_day,
+                        data.gr_months_index[light_month],
+                        light_time, avdala_day,
+                        data.gr_months_index[avdala_month],
+                        avdala_time)
+        elif lang == 'English':
+            lighting_time = '🕯 Candle lighting (Shabbat) {}' \
+                            ' {}:' \
+                            ' *{:.5s}*\n' \
+                            '✨🕯 Avdala and candle lighting {}' \
+                            ' {}:' \
+                            ' *{:.5s}*\n' \
+                            '✨ Avdala {}' \
+                            ' {}:' \
+                            ' *{:.5s}*' \
+                .format(light_shab_day,
+                        data.gr_months_index_en[light_shab_month],
+                        light_shab_time,
+                        light_day,
+                        data.gr_months_index_en[light_month],
+                        light_time, avdala_day,
+                        data.gr_months_index_en[avdala_month],
+                        avdala_time)
 
+        return lighting_time
+    
     # Для Йом-Кипура
     @staticmethod
     def lighting_fast(
@@ -683,8 +763,70 @@ class Holidays(object):
                         avdala_time)
 
         return ra_time
+    
+    # Когда 2 дня праздника и перед ними шаббат
+    @staticmethod
+    def shabbat_before_holiday_diaspora(
+            lang: str,
+            light_shab_day: str,
+            light_shab_month: str,
+            light_shab_time: str,
+            light_1_day: str,
+            light_1_month: str,
+            light_1_time: str,
+            light_2_day: str,
+            light_2_month: str,
+            light_2_time: str,
+            avdala_day: str,
+            avdala_month: str,
+            avdala_time: str
+    ) -> str:
+        ra_time = ''
+        if lang == 'Russian':
+            ra_time = '🕯 Зажигание свечей (Шаббат) {}' \
+                      ' {}:' \
+                      ' *{:.5s}*\n' \
+                      '✨🕯 Авдала и зажигание свечей {}' \
+                      ' {}:' \
+                      ' *{:.5s}*\n' \
+                      '🕯 Зажигание свечей {}' \
+                      ' {}:' \
+                      ' *{:.5s}*\n' \
+                      '✨ Авдала {}' \
+                      ' {}:' \
+                      ' *{:.5s}*' \
+                .format(light_shab_day, data.gr_months_index[light_shab_month],
+                        light_shab_time, light_1_day,
+                        data.gr_months_index[light_1_month],
+                        light_1_time, light_2_day,
+                        data.gr_months_index[light_2_month],
+                        light_2_time, avdala_day,
+                        data.gr_months_index[avdala_month], avdala_time)
+        elif lang == 'English':
+            ra_time = '🕯 Candle lighting (Shabbat) {}' \
+                      ' {}:' \
+                      ' *{:.5s}*\n' \
+                      '✨🕯 Avdala and candle lighting {}' \
+                      ' {}:' \
+                      ' *{:.5s}*\n' \
+                      '🕯 Candle lighting {}' \
+                      ' {}: ' \
+                      '*{:.5s}*\n' \
+                      '✨ Avdala {}' \
+                      ' {}:' \
+                      ' *{:.5s}*' \
+                .format(light_shab_day,
+                        data.gr_months_index_en[light_shab_month],
+                        light_shab_time,
+                        light_1_day, data.gr_months_index_en[light_1_month],
+                        light_1_time, light_2_day,
+                        data.gr_months_index_en[light_2_month], light_2_time,
+                        avdala_day,
+                        data.gr_months_index_en[avdala_month], avdala_time)
 
-    # 2 дня праздника (без шаббата)
+        return ra_time
+    
+    # 2 дня праздника (без шаббата)   
     @staticmethod
     def lighting_double(
             lang: str,
@@ -731,7 +873,7 @@ class Holidays(object):
                         data.gr_months_index_en[avdala_month], avdala_time)
 
         return ra_time
-
+    
     # 2 дня прадника и после них идет шаббат
     @staticmethod
     def lighting_double_shabbat(

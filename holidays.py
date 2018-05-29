@@ -101,17 +101,12 @@ def get_holiday_data(holidays_dict, holi_id, lang):
         if brackets:
             month2 = 13
         if holidays_dict['name'] in ['Pesach', 'Chanukah']:
-            if d_m_2[1] == d_m_2[3]:
+            if d_m[1] == d_m[3]:
                 if int(month2) == int(month) and int(day2) < int(day) \
                         or int(month2) < int(month):
                     holiday_number = Holidays.long_holiday(
                         lang, h_numbers_2[0], h_numbers_2[1], d_m_2[3],
                         year + 1, d_m_2[0], d_m_2[2])
-                elif month == 1 and holidays_dict['name'] == 'AsarahBTevet' \
-                        or month == 1 and holidays_dict['name'] == 'Chanukah':
-                    holiday_number = Holidays.long_holiday(
-                        lang, h_numbers_2[0], h_numbers_2[1], d_m_2[3], year,
-                        d_m_2[0], d_m_2[2])
                 elif month2 == 13:
                     holiday_number = Holidays.long_holiday(
                         lang, h_numbers[0], h_numbers[1], d_m[3], year + 1,
@@ -137,7 +132,7 @@ def get_holiday_data(holidays_dict, holi_id, lang):
                         year + 1, d_m[0], d_m[2])
                 else:
                     holiday_number = Holidays.long_holiday_jump(
-                        lang, h_numbers[0], d_m_2[1], h_numbers[1], d_m[3],
+                        lang, h_numbers[0], d_m[1], h_numbers[1], d_m[3],
                         year, d_m[0], d_m[2])
         else:
             if d_m_2[1] == d_m_2[3]:
@@ -186,16 +181,13 @@ def get_holiday_data(holidays_dict, holi_id, lang):
             holiday_number = Holidays.short_holiday(lang, h_numbers_2[0],
                                                     d_m_2[1], year + 1,
                                                     d_m_2[0])
-        elif month == 1 and holidays_dict['name'] == 'AsarahBTevet' \
-                or holidays_dict['name'] == 'Chanukah':
-            holiday_number = Holidays.short_holiday(lang, h_numbers_2[0],
-                                                    d_m_2[1], year, d_m_2[0])
         elif month1 == 13:
             holiday_number = Holidays.short_holiday(lang, h_numbers[0],
                                                     d_m[1], year + 1, d_m[0])
         else:
             holiday_number = Holidays.short_holiday(lang, h_numbers[0],
                                                     d_m[1], year, d_m[0])
+
     return holiday_number
 
 
@@ -424,7 +416,7 @@ def rosh_ash(get_dict, holi_id, lang):
                                   "%H:%M:%S")
     d_delta = timedelta(minutes=18)
     if holi_time_dict['dayOfWeek'] == '4':
-        ra_time = Holidays.lighting_double_shabbat(
+        holiday_string = Holidays.lighting_double_shabbat(
             lang, spec_date1[2], str(spec_date1[1]),
             str(datetime.time(d_candle - d_delta)), day_time, month_time,
             holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
@@ -432,14 +424,14 @@ def rosh_ash(get_dict, holi_id, lang):
             spec_date3[2], str(spec_date3[1]),
             holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
     else:
-        ra_time = Holidays.lighting_double(
+        holiday_string = Holidays.lighting_double(
             lang, spec_date1[2], str(spec_date1[1]),
             str(datetime.time(d_candle - d_delta)), day_time, month_time,
             holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
             str(spec_date2[1]),
             holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
 
-    return ra_time
+    return holiday_string
 
 
 # Время зажигания и Авдолы Йом-Кипура
@@ -525,7 +517,7 @@ def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
     day_time = ''
     if number == 1:
         if month_time < month or month_time == month \
-                and int(h_numbers[1]) < int(day):
+                and int(h_numbers[0]) < int(day):
             month_time = data.holi_month_index[d_m_2[1]]
             day_time = h_numbers_2[0]
         else:
@@ -554,12 +546,14 @@ def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
     date1 = datetime.strptime(f'{month_time}/{day_time}/{year}', '%m/%d/%Y')
     delta1 = timedelta(days=1)
     delta2 = timedelta(days=2)
-    d1 = (date1 - delta1).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    d2 = (date1 + delta1).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    d3 = (date1 + delta2).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
+    d1 = (date1 - delta1).strftime('%Y/%m/%d')
+    d2 = (date1 + delta1).strftime('%Y/%m/%d')
+    d3 = (date1 + delta2).strftime('%Y/%m/%d')
+    d4 = (date1 - delta2).strftime('%Y/%m/%d')
     spec_date1 = re.findall(r'\d+', str(d1))
     spec_date2 = re.findall(r'\d+', str(d2))
     spec_date3 = re.findall(r'\d+', str(d3))
+    spec_date4 = re.findall(r'\d+', str(d4))
     params = {'mode': 'day',
               'timezone': tz,
               'dateBegin': f'{spec_date1[1]}/{spec_date1[2]}/{spec_date1[0]}',
@@ -581,9 +575,17 @@ def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
               'lng': loc[1],
               'havdala_offset': '72'}
     holiday_time_ra3 = send_request(params)
+    params = {'mode': 'day',
+              'timezone': tz,
+              'dateBegin': f'{spec_date4[1]}/{spec_date4[2]}/{spec_date4[0]}',
+              'lat': loc[0],
+              'lng': loc[1],
+              'havdala_offset': '72'}
+    holiday_time_ra4 = send_request(params)
     holi_time_dict_ra1 = holiday_time_ra1.json()
     holi_time_dict_ra2 = holiday_time_ra2.json()
     holi_time_dict_ra3 = holiday_time_ra3.json()
+    holi_time_dict_ra4 = holiday_time_ra4.json()
     if holi_time_dict_ra1['zmanim']['chatzos'] == 'X:XX:XX'\
             or holi_time_dict_ra2['zmanim']['chatzos'] == 'X:XX:XX'\
             or holi_time_dict_ra3['zmanim']['chatzos'] == 'X:XX:XX':
@@ -592,11 +594,14 @@ def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
                                  "%H:%M:%S")
     d_candle2 = datetime.strptime(holi_time_dict_ra2['zmanim']['sunset'],
                                   "%H:%M:%S")
+    d_candle3 = datetime.strptime(holi_time_dict_ra4['zmanim']['sunset'],
+                                  "%H:%M:%S")
     d_delta = timedelta(minutes=18)
+    holiday_string = ''
     # проверка на израиль
     if not israel:
         if holi_time_dict['dayOfWeek'] == '4':
-            ra_time = Holidays.lighting_double_shabbat(
+            holiday_string = Holidays.lighting_double_shabbat(
                 lang, spec_date1[2], str(spec_date1[1]),
                 str(datetime.time(d_candle - d_delta)), day_time,
                 month_time, holi_time_dict["zmanim"]["tzeis_850_degrees"],
@@ -604,28 +609,61 @@ def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
                 str(datetime.time(d_candle2 - d_delta)), spec_date3[2],
                 str(spec_date3[1]),
                 holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
+        elif holi_time_dict['dayOfWeek'] == '7':
+            holiday_string = Holidays.shabbat_before_holiday_diaspora(
+                lang, spec_date4[2], str(spec_date4[1]),
+                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
+                spec_date1[1],
+                holi_time_dict_ra1["zmanim"]["tzeis_850_degrees"],
+                day_time, month_time,
+                holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
+                str(spec_date2[1]),
+                holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
+        elif holi_time_dict['dayOfWeek'] == '6' and number is 2:
+            holiday_string = Holidays.lighting_shabbat(
+                lang, spec_date4[2], str(spec_date4[1]),
+                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
+                str(spec_date1[1]),
+                str(datetime.time(d_candle - d_delta)), day_time,
+                month_time,
+                holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
         else:
-            ra_time = Holidays.lighting_double(
+            holiday_string = Holidays.lighting_double(
                 lang, spec_date1[2], str(spec_date1[1]),
                 str(datetime.time(d_candle - d_delta)), day_time, month_time,
                 holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
                 str(spec_date2[1]),
                 holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
     else:
-        if holi_time_dict['dayOfWeek'] == '5':
-            ra_time = Holidays.lighting_shabbat(
+        if holi_time_dict['dayOfWeek'] == '5' and number is 2:
+            holiday_string = Holidays.lighting(
+                lang, day_time, month_time,
+                str(datetime.time(d_candle - d_delta)),
+                spec_date2[2], str(spec_date2[1]),
+                holi_time_dict["zmanim"]["tzeis_850_degrees"])
+        elif holi_time_dict['dayOfWeek'] == '7':
+            holiday_string = Holidays.shabbat_before_holiday_israel(
+                lang, spec_date4[2], str(spec_date4[1]),
+                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
+                spec_date1[1],
+                holi_time_dict_ra1["zmanim"]["tzeis_850_degrees"],
+                day_time, month_time,
+                holi_time_dict["zmanim"]["tzeis_850_degrees"]
+            )
+        elif holi_time_dict['dayOfWeek'] == '5':
+            holiday_string = Holidays.lighting_shabbat(
                 lang, spec_date1[2], str(spec_date1[1]),
                 str(datetime.time(d_candle - d_delta)), day_time, month_time,
                 str(datetime.time(d_candle2 - d_delta)), spec_date2[2],
                 str(spec_date2[1]),
                 holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
         else:
-            ra_time = Holidays.lighting(
+            holiday_string = Holidays.lighting(
                 lang, spec_date1[2], str(spec_date1[1]),
                 str(datetime.time(d_candle - d_delta)), day_time, month_time,
                 holi_time_dict["zmanim"]["tzeis_850_degrees"])
 
-    return ra_time
+    return holiday_string
 
 
 index = get_holidays_dict
