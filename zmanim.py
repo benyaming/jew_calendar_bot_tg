@@ -84,14 +84,24 @@ def get_zmanim(user, lang):
     return zmanim_str
 
 
-def get_ext_zmanim(user, lang):
+def get_ext_zmanim(
+        user,
+        lang,
+        custom_day=None,
+        custom_month=None,
+        custom_year=None
+):
     tz = db_operations.get_tz_by_id(user)
     loc = db_operations.get_location_by_id(user)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
+    if custom_day and custom_month and custom_year:
+        date_str = f'{custom_month}/{custom_day}/{custom_year}'
+    else:
+        date_str = f'{now.month}/{now.day}/{now.year}'
     params = {'mode': 'day',
               'timezone': tz,
-              'dateBegin': f'{now.month}/{now.day}/{now.year}',
+              'dateBegin': date_str,
               'lat': loc[0],
               'lng': loc[1]
               }
@@ -112,11 +122,11 @@ def get_ext_zmanim(user, lang):
 
     if zmanim_dict['alos_ma'] == 'X:XX:XX':
         zmanim_dict['alos_ma'] = str(datetime.time(datetime.strptime(
-            zmanim_dict['chatzos'],
+            zmanim_dict['zmanim']['chatzos'],
             "%H:%M:%S") - timedelta(hours=12)))
         if zmanim_dict['talis_ma'] == 'X:XX:XX':
             zmanim_dict['talis_ma'] = str(datetime.time(datetime.strptime(
-                zmanim_dict['chatzos'],
+                zmanim_dict['zmanim']['chatzos'],
                 "%H:%M:%S") - timedelta(hours=12)))
     if zmanim_dict['tzeis_595_degrees'] == 'X:XX:XX':
         zmanim_dict['tzeis_595_degrees'] = None

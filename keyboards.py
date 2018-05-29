@@ -73,3 +73,13 @@ def get_geobutton(lang, is_update=False):
         }
         geobutton.row(cancel.get(lang, ''))
     return geobutton
+
+
+def get_cancel_keyboard(lang):
+    keyboard = ReplyKeyboardMarkup(True)
+    cancel = {
+        'Russian': 'Отмена',
+        'English': 'Cancel'
+    }
+    keyboard.row(cancel.get(lang, ''))
+    return keyboard
