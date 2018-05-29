@@ -2,3 +2,7 @@
 settings\.py
 
 \.idea/
+
+__pycache__/
+
+requirements\.txt
