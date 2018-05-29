@@ -1,13 +1,13 @@
 import psycopg2
 import redis
-import config
+import settings
 import text_handler
 
 
 def set_lang(user, lang):
     conn = psycopg2.connect(dbname='jcalendarbot',
                             user='cloud-user',
-                            host=config.HOST,
+                            host=settings.HOST,
                             password='qwerty',
                             port=5432
                             )
@@ -31,7 +31,7 @@ def set_lang(user, lang):
 def get_lang_by_id(user):
     conn = psycopg2.connect(dbname='jcalendarbot',
                             user='cloud-user',
-                            host=config.HOST,
+                            host=settings.HOST,
                             password='qwerty',
                             port=5432
                             )
@@ -55,7 +55,7 @@ def get_lang_from_redis(user):
         print('ЯЗЫКА НЕТУ')
         lang_in_db = get_lang_by_id(user)
         if not lang_in_db:
-            return text_handler.change_lang(user)
+            return text_handler.change_lang()
         else:
             r.set(user, lang_in_db)
             r.expire(user, 31536000)
