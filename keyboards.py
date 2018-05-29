@@ -6,13 +6,13 @@ def get_main_menu(lang):
     if lang == 'English':
         user_markup.row('Zmanim', 'Shabbos', 'Holidays')
         user_markup.row('Daf Yomi', 'Rosh Chodesh', 'Fast days')
-        user_markup.row('Extended Zmanim', 'Update location')
+        user_markup.row('Zmanim (Full)', 'Zmanim by the date', 'Location')
         user_markup.row('Language', 'F.A.Q.', 'Contact')
     elif lang == 'Russian':
         user_markup.row('Зманим', 'Шаббат', 'Праздники')
         user_markup.row('Даф Йоми', 'Рош Ходеш', 'Посты')
-        user_markup.row('Расширенные Зманим', 'Обновить местоположение')
-        user_markup.row('Сменить язык', 'ЧаВо', 'Сообщить об ошибке')
+        user_markup.row('Зманим (Полные)', 'Зманим по дате', 'Местоположение')
+        user_markup.row('Язык', 'ЧаВо', 'Обратная связь')
     return user_markup
 
 
