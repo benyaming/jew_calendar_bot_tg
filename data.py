@@ -289,7 +289,6 @@ hdays_of_7_en = {
 }
 
 parashat = {
-    'PESACH_VIII': 'ПЕСАХ',
     'Bereshit': 'Берешит',
     'Noach': 'Ноах',
     'Lech Lecha': 'Лех Леха',
