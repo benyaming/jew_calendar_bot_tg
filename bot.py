@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 from logging.handlers import RotatingFileHandler
+from time import sleep
 
 import telebot
-import botan
 import db_operations
 
 import settings
@@ -18,10 +18,10 @@ from tornado.escape import json_decode
 from tornado.ioloop import IOLoop
 
 
-WEBHOOK_HOST = '188.42.195.141'
-WEBHOOK_PORT = 8443
-WEBHOOK_SSL_CERT = './webhook_cert.pem'
-WEBHOOK_SSL_PRIV = './webhook_pkey.pem'
+WEBHOOK_HOST = settings.BOT_HOST
+WEBHOOK_PORT = settings.BOT_PORT
+WEBHOOK_SSL_CERT = '/hdd/certs/webhook_cert.pem'
+WEBHOOK_SSL_PRIV = '/hdd/certs//webhook_pkey.pem'
 WEBHOOK_URL_BASE = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 WEBHOOK_URL_PATH = f'/{settings.TOKEN}/'
 
@@ -32,9 +32,8 @@ bot = telebot.TeleBot(settings.TOKEN)
 class WebhookServer(tornado.web.RequestHandler):
     def post(self):
         headers = self.request.headers
-        if 'content-length' in headers and \
-            'content-type' in headers and \
-            headers['content-type'] == 'application/json':
+        if 'content-length' in headers and 'content-type' in headers and \
+                headers['content-type'] == 'application/json':
 
             json_string = json_decode(self.request.body)
             update = telebot.types.Update.de_json(json_string)
@@ -131,28 +130,35 @@ def handle_text_message(message):
 
 
 if __name__ == '__main__':
-    logger = logging.getLogger('bot_logger')
-    logger.setLevel(logging.INFO)
-    handler = RotatingFileHandler('logs/bot_logger',
-                                  maxBytes=1024*1024*3,
-                                  backupCount=20)
-    formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' \
-                                      '%(levelname)-8s [%(asctime)s]  '
-                                      '%(message)s'
-                                  )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if settings.IS_SERVER:
+        logger = logging.getLogger('bot_logger')
+        logger.setLevel(logging.INFO)
+        handler = RotatingFileHandler('/hdd/logs/bot_logger',
+                                      maxBytes=1024*1024*3,
+                                      backupCount=20)
+        formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' 
+                                          '%(levelname)-8s [%(asctime)s]  '
+                                          '%(message)s'
+                                      )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
-    server = httpserver.HTTPServer(
-        application,
-        ssl_options={
-            "certfile": WEBHOOK_SSL_CERT,
-            "keyfile": WEBHOOK_SSL_PRIV,
-        }
-    )
+        server = httpserver.HTTPServer(
+            application,
+            ssl_options={
+                "certfile": WEBHOOK_SSL_CERT,
+                "keyfile": WEBHOOK_SSL_PRIV,
+            }
+        )
 
-    bot.remove_webhook()
-    bot.set_webhook(url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
-                    certificate=open(WEBHOOK_SSL_CERT, 'r'))
-    server.listen(WEBHOOK_PORT)
-    IOLoop.instance().start()
+        bot.remove_webhook()
+        bot.set_webhook(
+            url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
+            certificate=open(WEBHOOK_SSL_CERT, 'r')
+        )
+        server.listen(WEBHOOK_PORT)
+        IOLoop.instance().start()
+    else:
+        bot.remove_webhook()
+        sleep(2)
+        bot.polling(True)
