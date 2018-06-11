@@ -49,7 +49,8 @@ application = tornado.web.Application([
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
+    if settings.IS_SERVER:
+        logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
     db_operations.check_id_in_db(message.from_user)
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('Русский', 'English')
