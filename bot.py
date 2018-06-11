@@ -49,7 +49,7 @@ application = tornado.web.Application([
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    # logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
+    logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
     db_operations.check_id_in_db(message.from_user)
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('Русский', 'English')
@@ -57,12 +57,11 @@ def handle_start(message):
                      'Выберите язык/Choose the language',
                      reply_markup=user_markup
                      )
-    # botan.track(config.BOTAN_KEY, message.from_user.id, message, '/start')
 
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    # logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
+    logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
     db_operations.check_id_in_db(message.from_user)
     menu = telebot.types.ReplyKeyboardMarkup(True, False)
     menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
@@ -70,11 +69,11 @@ def handle_help(message):
     bot.send_message(message.from_user.id,
                      help_str,
                      reply_markup=menu)
-    # botan.track(config.BOTAN_KEY, message.from_user.id, message, '/help')
 
 
 @bot.message_handler(commands=['report'])
 def handle_report(message):
+    logger.info(f' Command: \'\help\', from: {message.from_user.id}, REPORT')
     db_operations.check_id_in_db(message.from_user)
     report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
                  't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
@@ -86,7 +85,6 @@ def handle_report(message):
     bot.send_message(message.from_user.id,
                      report_str,
                      disable_web_page_preview=True)
-    # botan.track(config.BOTAN_KEY, message.from_user.id, message, '/report')
 
 
 @bot.message_handler(func=lambda message: True, content_types=['location',
@@ -117,16 +115,12 @@ def handle_reg(message):
         tz = f.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
-        # botan.track(config.BOTAN_KEY, message.from_user.id, message,
-        # 'Получил текстовую геометку')
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message):
     db_operations.check_id_in_db(message.from_user)
     text_handler.handle_text(message.from_user.id, message.text)
-    # botan.track(config.BOTAN_KEY, message.from_user.id, message,
-    #  message.text)
 
 
 if __name__ == '__main__':
@@ -152,6 +146,7 @@ if __name__ == '__main__':
         )
 
         bot.remove_webhook()
+        sleep(2)
         bot.set_webhook(
             url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
             certificate=open(WEBHOOK_SSL_CERT, 'r')

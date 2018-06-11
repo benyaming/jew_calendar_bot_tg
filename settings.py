@@ -21,3 +21,4 @@ db_parameters_string = f'dbname={dbname} ' \
                        f'password={password} ' \
                        f'host={host} ' \
                        f'port={port}'
+
