@@ -14,7 +14,7 @@ dbname = environ.get('dbname')
 user = environ.get('user')
 password = environ.get('password')
 port = environ.get('port')
-host = environ.get('HOST')  # localhost
+host = environ.get('host')  # localhost
 
 db_parameters_string = f'dbname={dbname} ' \
                        f'user={user} ' \
