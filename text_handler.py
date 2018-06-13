@@ -310,7 +310,7 @@ def handle_text(user_id, message):
     else:
         lang = db_operations.get_lang_from_redis(user)
     messages = {
-        'Сменить язык': change_lang,
+        'Язык': change_lang,
         'Language': change_lang,
         'Отмена': main_menu,
         'Cancel': main_menu,
@@ -319,7 +319,7 @@ def handle_text(user_id, message):
         'Назад/Back': change_lang,
         'Зманим': get_zmanim,
         'Zmanim': get_zmanim,
-        'Расширенные Зманим': ext_zmanim,
+        'Зманим (полные)': ext_zmanim,
         'Extended Zmanim': ext_zmanim,
         'Шаббат': shabbat,
         'Shabbos': shabbat,
@@ -331,7 +331,7 @@ def handle_text(user_id, message):
         'Fast days': fasts,
         'Даф Йоми': daf_yomi,
         'Daf Yomi': daf_yomi,
-        'Обновить местоположение': update_location,
+        'Местоположение': update_location,
         'Update location': update_location,
         'Назад': main_menu,
         'Back': main_menu,
@@ -339,7 +339,7 @@ def handle_text(user_id, message):
         'F.A.Q.': faq,
         '🇷🇺': faq,
         '🇱🇷': faq,
-        'Сообщить об ошибке': report,
+        'Обратная связь': report,
         'Contact': report,
         'Рош Ашана': rosh_hashana,
         'Rosh HaShanah': rosh_hashana,
