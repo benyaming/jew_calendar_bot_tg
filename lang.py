@@ -1,6 +1,6 @@
 import psycopg2
 import redis
-import config
+import settings
 import text_handler
 
 
@@ -49,17 +49,17 @@ def get_lang_by_id(user):
 
 
 def get_lang_from_redis(user):
-    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-    lang_in_redis = r.get(user)
-    if not lang_in_redis:
-        print('ЯЗЫКА НЕТУ')
-        lang_in_db = get_lang_by_id(user)
-        if not lang_in_db:
-            return text_handler.change_lang(user)
+    with redis.StrictRedis(host=settings.r_host, port=settings.r_port) as r:
+        lang_in_redis = r.get(user)
+        if not lang_in_redis:
+            print('ЯЗЫКА НЕТУ')
+            lang_in_db = get_lang_by_id(user)
+            if not lang_in_db:
+                return text_handler.change_lang(user)
+            else:
+                r.set(user, lang_in_db)
+                r.expire(user, 31536000)
+                lang = r.get(user).decode('unicode_escape')
         else:
-            r.set(user, lang_in_db)
-            r.expire(user, 31536000)
             lang = r.get(user).decode('unicode_escape')
-    else:
-        lang = r.get(user).decode('unicode_escape')
-    return lang
+        return lang
