@@ -155,7 +155,7 @@ if __name__ == '__main__':
             certificate=open(WEBHOOK_SSL_CERT, 'r')
         )
         server.listen(WEBHOOK_PORT)
-        IOLoop.current().start()
+        IOLoop().start()
     else:
         bot.remove_webhook()
         sleep(2)
