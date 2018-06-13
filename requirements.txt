@@ -1,0 +1,8 @@
+pytelegrambotapi
+tornado
+requests
+pytz
+psycopg2
+redis
+pillow
+pyluach

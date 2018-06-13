@@ -130,7 +130,6 @@ if __name__ == '__main__':
     if settings.IS_SERVER:
         logger = logging.getLogger('bot_logger')
         logger.setLevel(logging.INFO)
-        logfile_path = '/hdd/logs/bot_logger'
         handler = RotatingFileHandler('/hdd/logs/bot_logger',
                                       maxBytes=1024*1024*3,
                                       backupCount=20)

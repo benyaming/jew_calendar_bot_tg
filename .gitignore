@@ -2,9 +2,3 @@
 \.idea/
 
 __pycache__/
-
-requirements\.txt
-
-webhook_cert\.pem
-
-webhook_pkey\.pem
