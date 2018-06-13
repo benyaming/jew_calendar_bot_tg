@@ -22,3 +22,5 @@ db_parameters_string = f'dbname={dbname} ' \
                        f'host={host} ' \
                        f'port={port}'
 
+r_host = environ.get('redis_host')
+r_port = environ.get('redis_port')

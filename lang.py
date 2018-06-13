@@ -49,7 +49,7 @@ def get_lang_by_id(user):
 
 
 def get_lang_from_redis(user):
-    r = redis.StrictRedis()
+    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
     lang_in_redis = r.get(user)
     if not lang_in_redis:
         print('ЯЗЫКА НЕТУ')
