@@ -34,10 +34,12 @@ def get_holiday_menu(lang):
 def get_more_holiday_menu(lang: str) -> ReplyKeyboardMarkup:
     user_markup = ReplyKeyboardMarkup(True, False)
     if lang == 'Russian':
-        user_markup.row('Ту биШват', 'Лаг баОмер', 'Израильские праздники')
+        user_markup.row('Ту биШват', 'Лаг баОмер')
+        user_markup.row('Израильские праздники')
         user_markup.row('Основные праздники', 'Главное меню')
     elif lang == 'English':
-        user_markup.row('Tu BShevat', 'Lag BaOmer', 'Israel holidays')
+        user_markup.row('Tu BShevat', 'Lag BaOmer')
+        user_markup.row('Israel holidays')
         user_markup.row('Main holidays', 'Main menu')
     return user_markup
 
