@@ -5,6 +5,4 @@ __pycache__/
 
 requirements\.txt
 
-webhook_cert\.pem
 
-*.pem

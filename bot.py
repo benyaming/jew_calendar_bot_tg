@@ -62,7 +62,8 @@ def handle_start(message):
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
+    if settings.IS_SERVER:
+        logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
     db_operations.check_id_in_db(message.from_user)
     menu = telebot.types.ReplyKeyboardMarkup(True, False)
     menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
@@ -74,7 +75,8 @@ def handle_help(message):
 
 @bot.message_handler(commands=['report'])
 def handle_report(message):
-    logger.info(f' Command: \'\help\', from: {message.from_user.id}, REPORT')
+    if settings.IS_SERVER:
+        logger.info(f' Command: \'\help\', from: {message.from_user.id}, REPORT')
     db_operations.check_id_in_db(message.from_user)
     report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
                  't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
@@ -92,12 +94,12 @@ def handle_report(message):
                                                                'venue'])
 def handle_venue(message):
     db_operations.check_id_in_db(message.from_user)
-    if db_operations.check_location(message.from_user.id,
-                                    message.location.latitude,
-                                    message.location.longitude,
-                                    bot
-                                    ):
-
+    if db_operations.check_location(
+            message.from_user.id,
+            message.location.latitude,
+            message.location.longitude,
+            bot
+    ):
         text_handler.handle_text(message.from_user.id, 'Back')
         tz = f.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
