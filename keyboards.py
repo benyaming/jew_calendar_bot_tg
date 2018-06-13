@@ -20,10 +20,9 @@ def get_holiday_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
     if lang == 'Russian':
         user_markup.row('Рош Ашана', 'Йом Кипур', 'Суккот')
-        user_markup.row('Шмини Ацерет', 'Ханука', 'Ту биШват', 'Пурим')
-        user_markup.row('Пейсах', 'Лаг баОмер', 'Шавуот')
-        user_markup.row('Израильские праздники')
-        user_markup.row('Назад')
+        user_markup.row('Шмини Ацерет', 'Ханука', 'Ту биШват')
+        user_markup.row('Пурим', 'Пейсах', 'Лаг баОмер', 'Шавуот')
+        user_markup.row('Израильские праздники', 'Назад')
     elif lang == 'English':
         user_markup.row('Rosh HaShanah', 'Yom Kippur')
         user_markup.row('Succos', 'Shmini Atzeres')
