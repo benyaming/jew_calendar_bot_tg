@@ -21,15 +21,24 @@ def get_holiday_menu(lang):
     if lang == 'Russian':
         user_markup.row('Рош Ашана', 'Йом Кипур', 'Суккот')
         user_markup.row('Шмини Ацерет', 'Ханука', 'Пурим')
-        user_markup.row('Пейсах', 'Шавуот', 'Ещё...')
+        user_markup.row('Пейсах', 'Шавуот', 'Больше...')
         user_markup.row('Назад')
     elif lang == 'English':
-        user_markup.row('Rosh HaShanah', 'Yom Kippur')
-        user_markup.row('Succos', 'Shmini Atzeres')
-        user_markup.row('Chanukah', 'Tu BShevat', 'Purim')
-        user_markup.row('Pesach', 'Lag BaOmer', 'Shavuot')
-        user_markup.row('Tu BAv', 'Israel holidays')
+        user_markup.row('Rosh HaShanah', 'Yom Kippur', 'Succos')
+        user_markup.row('Shmini Atzeres', 'Chanukah', 'Purim')
+        user_markup.row('Pesach', 'Shavuot', 'More...')
         user_markup.row('Back')
+    return user_markup
+
+
+def get_more_holiday_menu(lang: str) -> ReplyKeyboardMarkup:
+    user_markup = ReplyKeyboardMarkup(True, False)
+    if lang == 'Russian':
+        user_markup.row('Ту биШват', 'Лаг баОмер', 'Израильские праздники')
+        user_markup.row('Основные праздники', 'Главное меню')
+    elif lang == 'English':
+        user_markup.row('Tu BShevat', 'Lag BaOmer', 'Israel holidays')
+        user_markup.row('Main holidays', 'Main menu')
     return user_markup
 
 
