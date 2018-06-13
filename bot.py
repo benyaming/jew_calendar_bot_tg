@@ -30,6 +30,7 @@ bot = telebot.TeleBot(settings.TOKEN)
 
 
 class WebhookServer(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
     def post(self):
         headers = self.request.headers
         if 'content-length' in headers and 'content-type' in headers and \
@@ -155,7 +156,7 @@ if __name__ == '__main__':
             certificate=open(WEBHOOK_SSL_CERT, 'r')
         )
         server.listen(WEBHOOK_PORT)
-        IOLoop().start()
+        IOLoop().current().start()
     else:
         bot.remove_webhook()
         sleep(2)
