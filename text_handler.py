@@ -51,8 +51,8 @@ def rosh_chodesh():
 
 def holidays():
     responses = {
-        'Russian': 'Выберите: (клавиатуру можно скроллить)',
-        'English': 'Choose: (scroll keyboard)'
+        'Russian': 'Выберите:',
+        'English': 'Choose:'
     }
     response = responses.get(lang, '')
     holiday_menu = keyboards.get_holiday_menu(lang)
@@ -111,6 +111,20 @@ def main_menu():
         return request_location()
     else:
         user_markup = keyboards.get_main_menu(lang)
+        responses = {
+            'Russian': 'Выберите:',
+            'English': 'Choose:'
+        }
+        response = responses.get(lang, '')
+        bot.send_message(user, response, reply_markup=user_markup)
+
+
+def more_holiday_menu():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        return request_location()
+    else:
+        user_markup = keyboards.get_more_holiday_menu(lang)
         responses = {
             'Russian': 'Выберите:',
             'English': 'Choose:'
@@ -232,7 +246,7 @@ def tu_beav():
         bot.send_message(user, response, parse_mode='Markdown')
 
 
-def israel():
+def israel_holidays():
     loc = db_operations.get_location_by_id(user)
     if not loc:
         return request_location()
@@ -310,7 +324,7 @@ def handle_text(user_id, message):
     else:
         lang = db_operations.get_lang_from_redis(user)
     messages = {
-        'Сменить язык': change_lang,
+        'Язык': change_lang,
         'Language': change_lang,
         'Отмена': main_menu,
         'Cancel': main_menu,
@@ -319,27 +333,33 @@ def handle_text(user_id, message):
         'Назад/Back': change_lang,
         'Зманим': get_zmanim,
         'Zmanim': get_zmanim,
-        'Расширенные Зманим': ext_zmanim,
-        'Extended Zmanim': ext_zmanim,
+        'Зманим (Полные)': ext_zmanim,
+        'Zmanim (Full)': ext_zmanim,
         'Шаббат': shabbat,
         'Shabbos': shabbat,
         'Рош Ходеш': rosh_chodesh,
         'Rosh Chodesh': rosh_chodesh,
         'Праздники': holidays,
         'Holidays': holidays,
+        'Больше...': more_holiday_menu,
+        'More...': more_holiday_menu,
+        'Основные праздники': holidays,
+        'Main holidays': holidays,
+        'Main menu': main_menu,
+        'Главное меню': main_menu,
         'Посты': fasts,
         'Fast days': fasts,
         'Даф Йоми': daf_yomi,
         'Daf Yomi': daf_yomi,
-        'Обновить местоположение': update_location,
-        'Update location': update_location,
+        'Местоположение': update_location,
+        'Location': update_location,
         'Назад': main_menu,
         'Back': main_menu,
         'ЧаВо': faq,
         'F.A.Q.': faq,
         '🇷🇺': faq,
         '🇱🇷': faq,
-        'Сообщить об ошибке': report,
+        'Обратная связь': report,
         'Contact': report,
         'Рош Ашана': rosh_hashana,
         'Rosh HaShanah': rosh_hashana,
@@ -363,8 +383,8 @@ def handle_text(user_id, message):
         'Shavuot': shavuot,
         '15 Ава': tu_beav,
         'Tu BAv': tu_beav,
-        'Израильские праздники': israel,
-        'Israel holidays': israel,
+        'Израильские праздники': israel_holidays,
+        'Israel holidays': israel_holidays,
         'Пост Гедалии': fast_gedaliah,
         'Tzom Gedaliah': fast_gedaliah,
         '10 Тевета': asarah_betevet,

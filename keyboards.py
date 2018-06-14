@@ -6,32 +6,41 @@ def get_main_menu(lang):
     if lang == 'English':
         user_markup.row('Zmanim', 'Shabbos', 'Holidays')
         user_markup.row('Daf Yomi', 'Rosh Chodesh', 'Fast days')
-        user_markup.row('Extended Zmanim', 'Update location')
+        user_markup.row('Zmanim (Full)', 'Zmanim by the date', 'Location')
         user_markup.row('Language', 'F.A.Q.', 'Contact')
     elif lang == 'Russian':
         user_markup.row('Зманим', 'Шаббат', 'Праздники')
         user_markup.row('Даф Йоми', 'Рош Ходеш', 'Посты')
-        user_markup.row('Расширенные Зманим', 'Обновить местоположение')
-        user_markup.row('Сменить язык', 'ЧаВо', 'Сообщить об ошибке')
+        user_markup.row('Зманим (Полные)', 'Зманим по дате', 'Местоположение')
+        user_markup.row('Язык', 'ЧаВо', 'Обратная связь')
     return user_markup
 
 
 def get_holiday_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
     if lang == 'Russian':
-        user_markup.row('Рош Ашана', 'Йом Кипур')
-        user_markup.row('Суккот', 'Шмини Ацерет')
-        user_markup.row('Ханука', 'Ту биШват', 'Пурим')
-        user_markup.row('Пейсах', 'Лаг баОмер', 'Шавуот')
-        user_markup.row('15 Ава', 'Израильские праздники')
+        user_markup.row('Рош Ашана', 'Йом Кипур', 'Суккот')
+        user_markup.row('Шмини Ацерет', 'Ханука', 'Пурим')
+        user_markup.row('Пейсах', 'Шавуот', 'Больше...')
         user_markup.row('Назад')
     elif lang == 'English':
-        user_markup.row('Rosh HaShanah', 'Yom Kippur')
-        user_markup.row('Succos', 'Shmini Atzeres')
-        user_markup.row('Chanukah', 'Tu BShevat', 'Purim')
-        user_markup.row('Pesach', 'Lag BaOmer', 'Shavuot')
-        user_markup.row('Tu BAv', 'Israel holidays')
+        user_markup.row('Rosh HaShanah', 'Yom Kippur', 'Succos')
+        user_markup.row('Shmini Atzeres', 'Chanukah', 'Purim')
+        user_markup.row('Pesach', 'Shavuot', 'More...')
         user_markup.row('Back')
+    return user_markup
+
+
+def get_more_holiday_menu(lang: str) -> ReplyKeyboardMarkup:
+    user_markup = ReplyKeyboardMarkup(True, False)
+    if lang == 'Russian':
+        user_markup.row('Ту биШват', 'Лаг баОмер')
+        user_markup.row('Израильские праздники')
+        user_markup.row('Основные праздники', 'Главное меню')
+    elif lang == 'English':
+        user_markup.row('Tu BShevat', 'Lag BaOmer')
+        user_markup.row('Israel holidays')
+        user_markup.row('Main holidays', 'Main menu')
     return user_markup
 
 
