@@ -10,48 +10,25 @@ import settings
 import text_handler
 import utils as f
 
-import tornado.web
-
-from tornado import httpserver
-from tornado.web import HTTPError
-from tornado.escape import json_decode
-from tornado.ioloop import IOLoop
-
+from flask import Flask, request
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
-WEBHOOK_SSL_CERT = '/hdd/certs/webhook_cert.pem'
-WEBHOOK_SSL_PRIV = '/hdd/certs//webhook_pkey.pem'
-WEBHOOK_URL_BASE = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
-WEBHOOK_URL_PATH = f'/{settings.TOKEN}/'
+ssl_cert = '/hdd/certs/webhook_cert.pem'
+ssl_cert_key = '/hdd/certs//webhook_pkey.pem'
+base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
+route_path = f'/{settings.TOKEN}/'
 
 
 bot = telebot.TeleBot(settings.TOKEN)
 
 
-class WebhookServer(tornado.web.RequestHandler):
-    def post(self):
-        headers = self.request.headers
-        if 'content-length' in headers and 'content-type' in headers and \
-                headers['content-type'] == 'application/json':
-
-            json_string = json_decode(self.request.body)
-            update = telebot.types.Update.de_json(json_string)
-            bot.process_new_updates([update])
-        else:
-            raise HTTPError(403)
-        #self.finish()
-
-
-application = tornado.web.Application([
-    (WEBHOOK_URL_PATH, WebhookServer),
-])
-
-
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
+        logger.info(
+            f' Command: \'\start\', from: {message.from_user.id}, START'
+        )
     db_operations.check_id_in_db(message.from_user)
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('Русский', 'English')
@@ -64,7 +41,9 @@ def handle_start(message):
 @bot.message_handler(commands=['help'])
 def handle_help(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
+        logger.info(
+            f' Command: \'\help\', from: {message.from_user.id}, START'
+        )
     db_operations.check_id_in_db(message.from_user)
     menu = telebot.types.ReplyKeyboardMarkup(True, False)
     menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
@@ -77,7 +56,9 @@ def handle_help(message):
 @bot.message_handler(commands=['report'])
 def handle_report(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\help\', from: {message.from_user.id}, REPORT')
+        logger.info(
+            f' Command: \'\help\', from: {message.from_user.id}, REPORT'
+        )
     db_operations.check_id_in_db(message.from_user)
     report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
                  't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
@@ -141,22 +122,29 @@ if __name__ == '__main__':
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-        server = httpserver.HTTPServer(
-            application,
-            ssl_options={
-                "certfile": WEBHOOK_SSL_CERT,
-                "keyfile": WEBHOOK_SSL_PRIV,
-            }
-        )
+        app = Flask(__name__)
+
+
+        @app.route(route_path, methods=['POST'])
+        def webhook():
+            json_string = request.get_data().decode('utf-8')
+            update = telebot.types.Update.de_json(json_string)
+            bot.process_new_updates([update])
+            return 'ok'
+
 
         bot.remove_webhook()
         sleep(2)
         bot.set_webhook(
-            url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
-            certificate=open(WEBHOOK_SSL_CERT, 'r')
+            url=f'{base_url}{route_path}',
+            certificate=open(ssl_cert, 'r')
         )
-        server.listen(WEBHOOK_PORT)
-        IOLoop().instance().start()
+
+        app.run(
+            port=settings.BOT_PORT,
+            ssl_context=(ssl_cert, ssl_cert_key)
+        )
+
     else:
         bot.remove_webhook()
         sleep(2)
