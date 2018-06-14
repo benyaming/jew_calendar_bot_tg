@@ -140,7 +140,7 @@ if __name__ == '__main__':
         )
 
         app.run(
-            host='0.0.0.0',
+            host='localhost',
             port=settings.BOT_PORT,
             ssl_context=(ssl_cert, ssl_cert_key)
         )
