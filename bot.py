@@ -26,7 +26,7 @@ WEBHOOK_URL_BASE = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 WEBHOOK_URL_PATH = f'/{settings.TOKEN}/'
 
 
-bot = telebot.TeleBot(settings.TOKEN)
+bot = telebot.TeleBot(settings.TOKEN, threaded=False)
 
 
 class WebhookServer(tornado.web.RequestHandler):
