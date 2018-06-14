@@ -40,7 +40,7 @@ class WebhookServer(tornado.web.RequestHandler):
             bot.process_new_updates([update])
         else:
             raise HTTPError(403)
-        self.finish()
+        #self.finish()
 
 
 application = tornado.web.Application([
@@ -156,7 +156,7 @@ if __name__ == '__main__':
             certificate=open(WEBHOOK_SSL_CERT, 'r')
         )
         server.listen(WEBHOOK_PORT)
-        IOLoop().current().start()
+        IOLoop().instance().start()
     else:
         bot.remove_webhook()
         sleep(2)
