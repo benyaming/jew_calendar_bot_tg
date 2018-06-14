@@ -139,11 +139,10 @@ if __name__ == '__main__':
             certificate=open(ssl_cert, 'r')
         )
 
-        app.run(
-            host='localhost',
-            port=settings.BOT_PORT,
-            ssl_context=(ssl_cert, ssl_cert_key)
-        )
+        # app.run(
+        #     port=settings.BOT_PORT,
+        #     ssl_context=(ssl_cert, ssl_cert_key)
+        # )
 
     else:
         bot.remove_webhook()
