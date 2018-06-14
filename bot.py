@@ -22,6 +22,16 @@ route_path = f'/{settings.TOKEN}/'
 
 bot = telebot.TeleBot(settings.TOKEN)
 
+app = Flask(__name__)
+
+
+@app.route(route_path, methods=['POST'])
+def webhook():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return 'ok'
+
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -121,17 +131,6 @@ if __name__ == '__main__':
                                       )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-
-        app = Flask(__name__)
-
-
-        @app.route(route_path, methods=['POST'])
-        def webhook():
-            json_string = request.get_data().decode('utf-8')
-            update = telebot.types.Update.de_json(json_string)
-            bot.process_new_updates([update])
-            return 'ok'
-
 
         bot.remove_webhook()
         sleep(2)
