@@ -19,6 +19,18 @@ ssl_cert_key = '/hdd/certs//webhook_pkey.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.TOKEN}/'
 
+logger = logging.getLogger('bot_logger')
+logger.setLevel(logging.INFO)
+handler = RotatingFileHandler('/hdd/logs/bot_logger',
+                              maxBytes=1024*1024*3,
+                              backupCount=20)
+formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' 
+                                  '%(levelname)-8s [%(asctime)s]  '
+                                  '%(message)s'
+                              )
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 bot = telebot.TeleBot(settings.TOKEN)
 
@@ -120,29 +132,12 @@ def handle_text_message(message):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        logger = logging.getLogger('bot_logger')
-        logger.setLevel(logging.INFO)
-        handler = RotatingFileHandler('/hdd/logs/bot_logger',
-                                      maxBytes=1024*1024*3,
-                                      backupCount=20)
-        formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' 
-                                          '%(levelname)-8s [%(asctime)s]  '
-                                          '%(message)s'
-                                      )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
         bot.remove_webhook()
         sleep(2)
         bot.set_webhook(
             url=f'{base_url}{route_path}',
             certificate=open(ssl_cert, 'r')
         )
-
-        # app.run(
-        #     port=settings.BOT_PORT,
-        #     ssl_context=(ssl_cert, ssl_cert_key)
-        # )
 
     else:
         bot.remove_webhook()
