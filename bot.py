@@ -30,7 +30,6 @@ bot = telebot.TeleBot(settings.TOKEN)
 
 
 class WebhookServer(tornado.web.RequestHandler):
-    @tornado.web.asynchronous
     def post(self):
         headers = self.request.headers
         if 'content-length' in headers and 'content-type' in headers and \
@@ -41,6 +40,7 @@ class WebhookServer(tornado.web.RequestHandler):
             bot.process_new_updates([update])
         else:
             raise HTTPError(403)
+        #self.finish()
 
 
 application = tornado.web.Application([
