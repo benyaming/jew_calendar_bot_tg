@@ -40,7 +40,7 @@ class WebhookServer(tornado.web.RequestHandler):
             bot.process_new_updates([update])
         else:
             raise HTTPError(403)
-        #self.finish()
+        self.finish()
 
 
 application = tornado.web.Application([
