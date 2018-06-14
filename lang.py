@@ -29,23 +29,24 @@ def set_lang(user, lang):
 
 
 def get_lang_by_id(user):
-    conn = psycopg2.connect(dbname='jcalendarbot',
-                            user='cloud-user',
-                            host=settings.HOST,
-                            password='qwerty',
-                            port=5432
-                            )
-    cur = conn.cursor()
-    query = f'SELECT lang FROM lang WHERE id = {user}'
-    cur.execute(query)
-    lang_in_bd = cur.fetchone()[0]
-    if not lang_in_bd:
-        return False
-    else:
-        r = redis.StrictRedis()
-        r.set(f'{user}', lang_in_bd[0])
-        r.expire(f'{user}', 31536000)
-        return lang_in_bd
+    with psycopg2.connect(
+            dbname='jcalendarbot',
+            user='cloud-user',
+            host=settings.host,
+            password='qwerty',
+            port=5432
+    ) as conn:
+        cur = conn.cursor()
+        query = f'SELECT lang FROM lang WHERE id = {user}'
+        cur.execute(query)
+        lang_in_bd = cur.fetchone()[0]
+        if not lang_in_bd:
+            return False
+        else:
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+            r.set(f'{user}', lang_in_bd[0])
+            r.expire(f'{user}', 31536000)
+            return lang_in_bd
 
 
 def get_lang_from_redis(user):
@@ -55,7 +56,8 @@ def get_lang_from_redis(user):
             print('ЯЗЫКА НЕТУ')
             lang_in_db = get_lang_by_id(user)
             if not lang_in_db:
-                return text_handler.change_lang(user)
+                #TODO test
+                return text_handler.change_lang()
             else:
                 r.set(user, lang_in_db)
                 r.expire(user, 31536000)

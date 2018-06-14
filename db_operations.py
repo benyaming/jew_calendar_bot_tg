@@ -127,12 +127,9 @@ def set_lang(user, lang):
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
-            with redis.StrictRedis(
-                    host=settings.r_host,
-                    port=settings.r_port
-            ) as r:
-                r.set(f'{user}', lang)
-                r.expire(f'{user}', 31536000)
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+            r.set(f'{user}', lang)
+            r.expire(f'{user}', 31536000)
 
 
 def get_lang_by_id(user):
@@ -144,29 +141,26 @@ def get_lang_by_id(user):
         if not lang_in_bd:
             response = False
         else:
-            with redis.StrictRedis(
-                    host=settings.r_host,
-                    port=settings.r_port
-            ) as r:
-                r.set(f'{user}', lang_in_bd[0])
-                r.expire(f'{user}', 31536000)
-                response = lang_in_bd
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+            r.set(f'{user}', lang_in_bd[0])
+            r.expire(f'{user}', 31536000)
+            response = lang_in_bd
         return response
 
 
 def get_lang_from_redis(user):
-    with redis.StrictRedis(host=settings.r_host, port=settings.r_port) as r:
-         lang_in_redis = r.get(user)
-         if not lang_in_redis:
-             lang_in_db = get_lang_by_id(user)
-             if not lang_in_db:
-                 response = text_handler.change_lang()
-             else:
-                 r.set(user, lang_in_db)
-                 r.expire(user, 31536000)
-                 lang = r.get(user).decode('unicode_escape')
-                 response = lang
-         else:
-             lang = r.get(user).decode('unicode_escape')
-             response = lang
-         return response
+    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+    lang_in_redis = r.get(user)
+    if not lang_in_redis:
+        lang_in_db = get_lang_by_id(user)
+        if not lang_in_db:
+            response = text_handler.change_lang()
+        else:
+            r.set(user, lang_in_db)
+            r.expire(user, 31536000)
+            lang = r.get(user).decode('unicode_escape')
+            response = lang
+    else:
+        lang = r.get(user).decode('unicode_escape')
+        response = lang
+    return response
