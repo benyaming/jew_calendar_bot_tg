@@ -133,7 +133,7 @@ def handle_text_message(message):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        print('STARTING WEBHOOK...')
+        logger.info('STARTING WEBHOOK...')
         bot.remove_webhook()
         sleep(2)
         bot.set_webhook(
@@ -142,7 +142,7 @@ if __name__ == '__main__':
         )
 
     else:
-        print('STARTING POLLING....')
+        logger.info('STARTING POLLING....')
         bot.remove_webhook()
         sleep(2)
         bot.polling(True)
