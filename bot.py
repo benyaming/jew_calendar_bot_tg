@@ -24,15 +24,16 @@ logger.setLevel(logging.INFO)
 handler = RotatingFileHandler('/hdd/logs/bot_logger',
                               maxBytes=1024*1024*3,
                               backupCount=20)
-formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' 
-                                  '%(levelname)-8s [%(asctime)s]  '
-                                  '%(message)s'
-                              )
+formatter = logging.Formatter(
+    fmt='%(filename)s[LINE:%(lineno)d]# ' 
+    '%(levelname)-8s [%(asctime)s]  '
+    '%(message)s'
+)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-bot = telebot.TeleBot(settings.TOKEN)
+bot = telebot.TeleBot(settings.TOKEN, threaded=False)
 
 app = Flask(__name__)
 
@@ -140,6 +141,7 @@ if __name__ == '__main__':
         )
 
     else:
+        print('STARTING WEBHOOK....')
         bot.remove_webhook()
         sleep(2)
         bot.polling(True)
