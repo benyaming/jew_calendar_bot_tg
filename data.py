@@ -146,6 +146,7 @@ jewish_months_a = {
     'Tishrei': 'Тишрея',
     'Tishri': 'Тишрея',
     'Cheshvan': 'Хешвана',
+    'Heshvan': 'Хешвана',
     'Kislev': 'Кислева',
     'Teves': 'Тевета',
     'Tevet': 'Тевета',
