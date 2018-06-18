@@ -67,7 +67,8 @@ def handle_date():
         if text in ['Отмена', 'Cancel']:
             states.delete_state(user)
             main_menu()
-        incorrect_date('incorrect_date_format')
+        else:
+            incorrect_date('incorrect_date_format')
 
 
 def get_zmanim_by_the_date(day: int, month: int, year: int) -> None:
