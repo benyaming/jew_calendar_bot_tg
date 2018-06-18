@@ -3,6 +3,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 from time import sleep
 
+from time import sleep
+from os import path
+
 import telebot
 import db_operations
 
@@ -10,47 +13,53 @@ import settings
 import text_handler
 import utils as f
 
-import tornado.web
-
-from tornado import httpserver
-from tornado.web import HTTPError
-from tornado.escape import json_decode
-from tornado.ioloop import IOLoop
-
+from flask import Flask, request
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
-WEBHOOK_SSL_CERT = '/hdd/certs/webhook_cert.pem'
-WEBHOOK_SSL_PRIV = '/hdd/certs//webhook_pkey.pem'
-WEBHOOK_URL_BASE = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
-WEBHOOK_URL_PATH = f'/{settings.TOKEN}/'
+ssl_cert = '/hdd/certs/webhook_cert.pem'
+ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
+base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
+route_path = f'/{settings.TOKEN}/'
+
+logger = logging.getLogger('bot_logger')
+logger.setLevel(logging.INFO)
+handler = RotatingFileHandler(
+    path.join(
+        settings.logs_path,
+        'jcb_logfile.log'
+    ),
+    maxBytes=1024*1024*3,
+    backupCount=20
+)
+formatter = logging.Formatter(
+    fmt='%(filename)s[LINE:%(lineno)d]# ' 
+    '%(levelname)-8s [%(asctime)s]  '
+    '%(message)s'
+)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
-bot = telebot.TeleBot(settings.TOKEN)
+bot = telebot.TeleBot(settings.TOKEN, threaded=False)
+
+app = Flask(__name__)
 
 
-class WebhookServer(tornado.web.RequestHandler):
-    def post(self):
-        headers = self.request.headers
-        if 'content-length' in headers and 'content-type' in headers and \
-                headers['content-type'] == 'application/json':
-
-            json_string = json_decode(self.request.body)
-            update = telebot.types.Update.de_json(json_string)
-            bot.process_new_updates([update])
-        else:
-            raise HTTPError(403)
-
-
-application = tornado.web.Application([
-    (WEBHOOK_URL_PATH, WebhookServer),
-])
+@app.route(route_path, methods=['POST'])
+def webhook():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return 'ok'
 
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\start\', from: {message.from_user.id}, START')
+        logger.info(
+            f' Command: \'\start\', from: {message.from_user.id}, START'
+        )
     db_operations.check_id_in_db(message.from_user)
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('Русский', 'English')
@@ -63,7 +72,9 @@ def handle_start(message):
 @bot.message_handler(commands=['help'])
 def handle_help(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\help\', from: {message.from_user.id}, START')
+        logger.info(
+            f' Command: \'\help\', from: {message.from_user.id}, START'
+        )
     db_operations.check_id_in_db(message.from_user)
     menu = telebot.types.ReplyKeyboardMarkup(True, False)
     menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
@@ -76,7 +87,9 @@ def handle_help(message):
 @bot.message_handler(commands=['report'])
 def handle_report(message):
     if settings.IS_SERVER:
-        logger.info(f' Command: \'\help\', from: {message.from_user.id}, REPORT')
+        logger.info(
+            f' Command: \'\help\', from: {message.from_user.id}, REPORT'
+        )
     db_operations.check_id_in_db(message.from_user)
     report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
                  't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
@@ -128,35 +141,16 @@ def handle_text_message(message):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        logger = logging.getLogger('bot_logger')
-        logger.setLevel(logging.INFO)
-        handler = RotatingFileHandler('/hdd/logs/bot_logger',
-                                      maxBytes=1024*1024*3,
-                                      backupCount=20)
-        formatter = logging.Formatter(fmt='%(filename)s[LINE:%(lineno)d]# ' 
-                                          '%(levelname)-8s [%(asctime)s]  '
-                                          '%(message)s'
-                                      )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        server = httpserver.HTTPServer(
-            application,
-            ssl_options={
-                "certfile": WEBHOOK_SSL_CERT,
-                "keyfile": WEBHOOK_SSL_PRIV,
-            }
-        )
-
+        logger.info('STARTING WEBHOOK...')
         bot.remove_webhook()
         sleep(2)
         bot.set_webhook(
-            url=f'{WEBHOOK_URL_BASE}{WEBHOOK_URL_PATH}',
-            certificate=open(WEBHOOK_SSL_CERT, 'r')
+            url=f'{base_url}{route_path}',
+            certificate=open(ssl_cert, 'r')
         )
-        server.listen(WEBHOOK_PORT)
-        IOLoop.instance().start()
+
     else:
+        logger.info('STARTING POLLING....')
         bot.remove_webhook()
         sleep(2)
         bot.polling(True)

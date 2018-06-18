@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import re
+from datetime import datetime
+
 from telebot import TeleBot
 
 import db_operations
@@ -8,6 +11,7 @@ import shabbos
 import rosh_hodesh
 import daf
 import settings
+import states
 
 import localization as l
 import holidays as h
@@ -31,6 +35,70 @@ def ext_zmanim():
         bot.send_message(user, response, parse_mode='Markdown')
 
 
+def request_date():
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        request_location()
+    else:
+        states.set_state(user, 'waiting_for_date')
+        response = l.Utils.request_date(lang)
+        keyboard = keyboards.get_cancel_keyboard(lang)
+        bot.send_message(
+            user,
+            response,
+            parse_mode='Markdown',
+            reply_markup=keyboard
+        )
+
+
+def handle_date():
+    reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
+    extracted_date = re.search(reg_pattern, text)
+    if extracted_date:
+        day = int(extracted_date.group().split('.')[0])
+        month = int(extracted_date.group().split('.')[1])
+        year = int(extracted_date.group().split('.')[2])
+        try:
+            datetime(year, month, day)
+            get_zmanim_by_the_date(day, month, year)
+        except ValueError:
+            incorrect_date('incorrect_date_value')
+    else:
+        if text in ['Отмена', 'Cancel']:
+            states.delete_state(user)
+            main_menu()
+        else:
+            incorrect_date('incorrect_date_format')
+
+
+def get_zmanim_by_the_date(day: int, month: int, year: int):
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        states.delete_state(user)
+        result = request_location
+    else:
+        response = zmanim.get_ext_zmanim(user, lang, day, month, year)
+        bot.send_message(user, response, parse_mode='Markdown')
+        states.delete_state(user)
+        result = main_menu
+    return result
+
+
+def incorrect_date(error_type: str) -> None:
+    responses = {
+        'incorrect_date_format': l.Utils.incorrect_date_format(lang),
+        'incorrect_date_value': l.Utils.incorrect_date_value(lang)
+    }
+    response = responses.get(error_type, '')
+    keyboard = keyboards.get_cancel_keyboard(lang)
+    bot.send_message(
+        user,
+        response,
+        parse_mode='Markdown',
+        reply_markup=keyboard
+    )
+
+
 def shabbat():
     loc = db_operations.get_location_by_id(user)
     if not loc:
@@ -51,8 +119,8 @@ def rosh_chodesh():
 
 def holidays():
     responses = {
-        'Russian': 'Выберите:',
-        'English': 'Choose:'
+        'Russian': 'Выберите: (клавиатуру можно скроллить)',
+        'English': 'Choose: (scroll keyboard)'
     }
     response = responses.get(lang, '')
     holiday_menu = keyboards.get_holiday_menu(lang)
@@ -108,23 +176,9 @@ def set_lang():
 def main_menu():
     auth = db_operations.get_location_by_id(user)
     if not auth:
-        return request_location()
+        request_location()
     else:
         user_markup = keyboards.get_main_menu(lang)
-        responses = {
-            'Russian': 'Выберите:',
-            'English': 'Choose:'
-        }
-        response = responses.get(lang, '')
-        bot.send_message(user, response, reply_markup=user_markup)
-
-
-def more_holiday_menu():
-    auth = db_operations.get_location_by_id(user)
-    if not auth:
-        return request_location()
-    else:
-        user_markup = keyboards.get_more_holiday_menu(lang)
         responses = {
             'Russian': 'Выберите:',
             'English': 'Choose:'
@@ -246,7 +300,7 @@ def tu_beav():
         bot.send_message(user, response, parse_mode='Markdown')
 
 
-def israel_holidays():
+def israel():
     loc = db_operations.get_location_by_id(user)
     if not loc:
         return request_location()
@@ -311,10 +365,11 @@ def incorrect_text():
     bot.send_message(user, response)
 
 
-def handle_text(user_id, message):
-    global bot, user, lang
+def handle_text(user_id: int, message: str) -> None:
+    global bot, user, lang, text
     bot = TeleBot(settings.TOKEN)
     user = user_id
+    text = message
     if message in ['Русский', 'English']:
         langs = {
             'Русский': 'Russian',
@@ -323,78 +378,90 @@ def handle_text(user_id, message):
         lang = langs.get(message, '')
     else:
         lang = db_operations.get_lang_from_redis(user)
-    messages = {
-        'Язык': change_lang,
-        'Language': change_lang,
-        'Отмена': main_menu,
-        'Cancel': main_menu,
-        'Русский': set_lang,
-        'English': set_lang,
-        'Назад/Back': change_lang,
-        'Зманим': get_zmanim,
-        'Zmanim': get_zmanim,
-        'Зманим (Полные)': ext_zmanim,
-        'Zmanim (Full)': ext_zmanim,
-        'Шаббат': shabbat,
-        'Shabbos': shabbat,
-        'Рош Ходеш': rosh_chodesh,
-        'Rosh Chodesh': rosh_chodesh,
-        'Праздники': holidays,
-        'Holidays': holidays,
-        'Больше...': more_holiday_menu,
-        'More...': more_holiday_menu,
-        'Основные праздники': holidays,
-        'Main holidays': holidays,
-        'Main menu': main_menu,
-        'Главное меню': main_menu,
-        'Посты': fasts,
-        'Fast days': fasts,
-        'Даф Йоми': daf_yomi,
-        'Daf Yomi': daf_yomi,
-        'Местоположение': update_location,
-        'Location': update_location,
-        'Назад': main_menu,
-        'Back': main_menu,
-        'ЧаВо': faq,
-        'F.A.Q.': faq,
-        '🇷🇺': faq,
-        '🇱🇷': faq,
-        'Обратная связь': report,
-        'Contact': report,
-        'Рош Ашана': rosh_hashana,
-        'Rosh HaShanah': rosh_hashana,
-        'Йом Кипур': yom_kippur,
-        'Yom Kippur': yom_kippur,
-        'Суккот': succot,
-        'Succos': succot,
-        'Шмини Ацерет': shmini_atzeret,
-        'Shmini Atzeres': shmini_atzeret,
-        'Ханука': chanukah,
-        'Chanukah': chanukah,
-        'Ту биШват': tu_beshvat,
-        'Tu BShevat': tu_beshvat,
-        'Пурим': purim,
-        'Purim': purim,
-        'Пейсах': pesach,
-        'Pesach': pesach,
-        'Лаг баОмер': lag_baomer,
-        'Lag BaOmer': lag_baomer,
-        'Шавуот': shavuot,
-        'Shavuot': shavuot,
-        '15 Ава': tu_beav,
-        'Tu BAv': tu_beav,
-        'Израильские праздники': israel_holidays,
-        'Israel holidays': israel_holidays,
-        'Пост Гедалии': fast_gedaliah,
-        'Tzom Gedaliah': fast_gedaliah,
-        '10 Тевета': asarah_betevet,
-        'Asarah BTevet': asarah_betevet,
-        'Пост Эстер': fast_esther,
-        'Taanit Esther': fast_esther,
-        '17 Таммуза': sheva_asar_betammuz,
-        'Shiva Asar BTammuz': sheva_asar_betammuz,
-        '9 Ава': tisha_beav,
-        'Tisha BAv': tisha_beav,
-    }
-    func = messages.get(message, incorrect_text)
-    func()
+    user_has_state = states.check_state(user_id)
+    if user_has_state['ok']:
+        user_states = {
+            'waiting_for_date': handle_date
+        }
+        func = user_states.get(user_has_state['state'], '')
+        func()
+    else:
+        if message in ['Русский', 'English']:
+            langs = {
+                'Русский': 'Russian',
+                'English': 'English'
+            }
+            lang = langs.get(message, '')
+        else:
+            lang = db_operations.get_lang_from_redis(user)
+        messages = {
+            'Язык': change_lang,
+            'Language': change_lang,
+            'Отмена': main_menu,
+            'Cancel': main_menu,
+            'Русский': set_lang,
+            'English': set_lang,
+            'Назад/Back': change_lang,
+            'Зманим': get_zmanim,
+            'Zmanim': get_zmanim,
+            'Зманим (Полные)': ext_zmanim,
+            'Зманим по дате': request_date,
+            'Zmanim by the date': request_date,
+            'Zmanim (Full)': ext_zmanim,
+            'Шаббат': shabbat,
+            'Shabbos': shabbat,
+            'Рош Ходеш': rosh_chodesh,
+            'Rosh Chodesh': rosh_chodesh,
+            'Праздники': holidays,
+            'Holidays': holidays,
+            'Посты': fasts,
+            'Fast days': fasts,
+            'Даф Йоми': daf_yomi,
+            'Daf Yomi': daf_yomi,
+            'Местоположение': update_location,
+            'Location': update_location,
+            'Назад': main_menu,
+            'Back': main_menu,
+            'ЧаВо': faq,
+            'F.A.Q.': faq,
+            '🇷🇺': faq,
+            '🇱🇷': faq,
+            'Обратная связь': report,
+            'Contact': report,
+            'Рош Ашана': rosh_hashana,
+            'Rosh HaShanah': rosh_hashana,
+            'Йом Кипур': yom_kippur,
+            'Yom Kippur': yom_kippur,
+            'Суккот': succot,
+            'Succos': succot,
+            'Шмини Ацерет': shmini_atzeret,
+            'Shmini Atzeres': shmini_atzeret,
+            'Ханука': chanukah,
+            'Chanukah': chanukah,
+            'Ту биШват': tu_beshvat,
+            'Tu BShevat': tu_beshvat,
+            'Пурим': purim,
+            'Purim': purim,
+            'Пейсах': pesach,
+            'Pesach': pesach,
+            'Лаг баОмер': lag_baomer,
+            'Lag BaOmer': lag_baomer,
+            'Шавуот': shavuot,
+            'Shavuot': shavuot,
+            '15 Ава': tu_beav,
+            'Tu BAv': tu_beav,
+            'Израильские праздники': israel,
+            'Israel holidays': israel,
+            'Пост Гедалии': fast_gedaliah,
+            'Tzom Gedaliah': fast_gedaliah,
+            '10 Тевета': asarah_betevet,
+            'Asarah BTevet': asarah_betevet,
+            'Пост Эстер': fast_esther,
+            'Taanit Esther': fast_esther,
+            '17 Таммуза': sheva_asar_betammuz,
+            'Shiva Asar BTammuz': sheva_asar_betammuz,
+            '9 Ава': tisha_beav,
+            'Tisha BAv': tisha_beav,
+        }
+        func = messages.get(message, incorrect_text)
+        func()

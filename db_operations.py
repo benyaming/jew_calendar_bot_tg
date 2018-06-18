@@ -127,9 +127,9 @@ def set_lang(user, lang):
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
-        r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-        r.set(f'{user}', lang)
-        r.expire(f'{user}', 31536000)
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+            r.set(f'{user}', lang)
+            r.expire(f'{user}', 31536000)
 
 
 def get_lang_by_id(user):
