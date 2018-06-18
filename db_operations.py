@@ -127,9 +127,9 @@ def set_lang(user, lang):
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
-        r = redis.StrictRedis()
-        r.set(f'{user}', lang)
-        r.expire(f'{user}', 31536000)
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+            r.set(f'{user}', lang)
+            r.expire(f'{user}', 31536000)
 
 
 def get_lang_by_id(user):
@@ -141,7 +141,7 @@ def get_lang_by_id(user):
         if not lang_in_bd:
             response = False
         else:
-            r = redis.StrictRedis()
+            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
             r.set(f'{user}', lang_in_bd[0])
             r.expire(f'{user}', 31536000)
             response = lang_in_bd
@@ -149,7 +149,7 @@ def get_lang_by_id(user):
 
 
 def get_lang_from_redis(user):
-    r = redis.StrictRedis()
+    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
     lang_in_redis = r.get(user)
     if not lang_in_redis:
         lang_in_db = get_lang_by_id(user)

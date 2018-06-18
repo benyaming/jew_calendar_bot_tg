@@ -1,6 +1,6 @@
 import psycopg2
 import redis
-import config
+import settings
 import text_handler
 
 
