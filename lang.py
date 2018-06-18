@@ -58,9 +58,5 @@ def get_lang_from_redis(user):
         if not lang_in_db:
             return text_handler.change_lang()
         else:
-            r.set(user, lang_in_db)
-            r.expire(user, 31536000)
             lang = r.get(user).decode('unicode_escape')
-    else:
-        lang = r.get(user).decode('unicode_escape')
-    return lang
+        return lang
