@@ -3,6 +3,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 from time import sleep
 
+from time import sleep
+from os import path
+
 import telebot
 import db_operations
 
@@ -15,15 +18,20 @@ from flask import Flask, request
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
 ssl_cert = '/hdd/certs/webhook_cert.pem'
-ssl_cert_key = '/hdd/certs//webhook_pkey.pem'
+ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.TOKEN}/'
 
 logger = logging.getLogger('bot_logger')
 logger.setLevel(logging.INFO)
-handler = RotatingFileHandler('/hdd/logs/bot_logger',
-                              maxBytes=1024*1024*3,
-                              backupCount=20)
+handler = RotatingFileHandler(
+    path.join(
+        settings.logs_path,
+        'jcb_logfile.log'
+    ),
+    maxBytes=1024*1024*3,
+    backupCount=20
+)
 formatter = logging.Formatter(
     fmt='%(filename)s[LINE:%(lineno)d]# ' 
     '%(levelname)-8s [%(asctime)s]  '

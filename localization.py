@@ -563,12 +563,23 @@ class Utils(object):
 
     # некорректная дата
     @staticmethod
-    def incorrect_date(lang: str) -> str:
+    def incorrect_date_format(lang: str) -> str:
         responses = {
             'Russian': 'Вы ввели некорректную дату. \nПожалуйста, введите '
                        'дату в *формате ДД.ММ.ГГГГ*',
             'English': 'Incorrect date. \nPlease input date *in '
                        'the format DD.MM.YYYY*'
+        }
+        response = responses.get(lang, '')
+        return response
+
+
+    @staticmethod
+    def incorrect_date_value(lang: str) -> str:
+        responses = {
+            'Russian': 'Введенная дата не существует. \nПожалуйста, введите '
+                       'корректную дату в *формате ДД.ММ.ГГГГ*',
+            'English': 'заменить текст'
         }
         response = responses.get(lang, '')
         return response
