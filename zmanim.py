@@ -96,6 +96,10 @@ def get_ext_zmanim(
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     if custom_day and custom_month and custom_year:
+        if len(str(custom_year)) == 2:
+            custom_year = f'00{custom_year}'
+        elif len(str(custom_year)) == 3:
+            custom_year = f'0{custom_year}'
         date_str = f'{custom_month}/{custom_day}/{custom_year}'
     else:
         date_str = f'{now.month}/{now.day}/{now.year}'

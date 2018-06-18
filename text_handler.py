@@ -38,7 +38,7 @@ def ext_zmanim():
 def request_date():
     loc = db_operations.get_location_by_id(user)
     if not loc:
-        return request_location()
+        request_location()
     else:
         states.set_state(user, 'waiting_for_date')
         response = l.Utils.request_date(lang)
@@ -71,15 +71,17 @@ def handle_date():
             incorrect_date('incorrect_date_format')
 
 
-def get_zmanim_by_the_date(day: int, month: int, year: int) -> None:
+def get_zmanim_by_the_date(day: int, month: int, year: int):
     loc = db_operations.get_location_by_id(user)
     if not loc:
-        request_location()
+        states.delete_state(user)
+        result = request_location
     else:
         response = zmanim.get_ext_zmanim(user, lang, day, month, year)
         bot.send_message(user, response, parse_mode='Markdown')
         states.delete_state(user)
-        main_menu()
+        result = main_menu
+    return result
 
 
 def incorrect_date(error_type: str) -> None:
