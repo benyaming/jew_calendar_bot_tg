@@ -5,13 +5,13 @@ def get_main_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
     if lang == 'English':
         user_markup.row('Zmanim', 'Shabbos', 'Holidays')
-        user_markup.row('Daf Yomi', 'Rosh Chodesh', 'Fast days')
-        user_markup.row('Zmanim (Full)', 'Zmanim by the date', 'Location')
+        user_markup.row('Zmanim (Full)', 'Rosh Chodesh', 'Fast days')
+        user_markup.row('Zmanim by the date', 'Daf Yomi', 'Location')
         user_markup.row('Language', 'F.A.Q.', 'Contact')
     elif lang == 'Russian':
         user_markup.row('Зманим', 'Шаббат', 'Праздники')
-        user_markup.row('Даф Йоми', 'Рош Ходеш', 'Посты')
-        user_markup.row('Зманим (Полные)', 'Зманим по дате', 'Местоположение')
+        user_markup.row('Зманим (Полные)', 'Рош Ходеш', 'Посты')
+        user_markup.row('Зманим по дате', 'Даф Йоми', 'Местоположение')
         user_markup.row('Язык', 'ЧаВо', 'Обратная связь')
     return user_markup
 

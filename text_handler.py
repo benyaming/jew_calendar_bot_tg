@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from datetime import datetime
 
 from telebot import TeleBot
 
@@ -51,36 +52,41 @@ def request_date():
 
 
 def handle_date():
-    date_is_correct = False
-    reg_pattern = r'(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.(\d)*'
+    reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
     extracted_date = re.search(reg_pattern, text)
     if extracted_date:
-        date_is_correct = True
-    if date_is_correct:
         day = int(extracted_date.group().split('.')[0])
         month = int(extracted_date.group().split('.')[1])
         year = int(extracted_date.group().split('.')[2])
-        get_zmanim_by_the_date(day, month, year)
+        try:
+            datetime(year, month, day)
+            get_zmanim_by_the_date(day, month, year)
+        except ValueError:
+            incorrect_date('incorrect_date_value')
     else:
         if text in ['Отмена', 'Cancel']:
             states.delete_state(user)
-            return main_menu()
-        return incorrect_date()
+            main_menu()
+        incorrect_date('incorrect_date_format')
 
 
 def get_zmanim_by_the_date(day: int, month: int, year: int) -> None:
     loc = db_operations.get_location_by_id(user)
     if not loc:
-        return request_location()
+        request_location()
     else:
         response = zmanim.get_ext_zmanim(user, lang, day, month, year)
         bot.send_message(user, response, parse_mode='Markdown')
         states.delete_state(user)
-        return main_menu()
+        main_menu()
 
 
-def incorrect_date() -> None:
-    response = l.Utils.incorrect_date(lang)
+def incorrect_date(error_type: str) -> None:
+    responses = {
+        'incorrect_date_format': l.Utils.incorrect_date_format(lang),
+        'incorrect_date_value': l.Utils.incorrect_date_value(lang)
+    }
+    response = responses.get(error_type, '')
     keyboard = keyboards.get_cancel_keyboard(lang)
     bot.send_message(
         user,
@@ -167,7 +173,7 @@ def set_lang():
 def main_menu():
     auth = db_operations.get_location_by_id(user)
     if not auth:
-        return request_location()
+        request_location()
     else:
         user_markup = keyboards.get_main_menu(lang)
         responses = {
