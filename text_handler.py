@@ -201,6 +201,20 @@ def report():
     bot.send_message(user, response, disable_web_page_preview=True)
 
 
+def more_holiday_menu():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        return request_location()
+    else:
+        user_markup = keyboards.get_more_holiday_menu(lang)
+        responses = {
+            'Russian': 'Выберите:',
+            'English': 'Choose:'
+        }
+        response = responses.get(lang, '')
+        bot.send_message(user, response, reply_markup=user_markup)
+
+
 def rosh_hashana():
     loc = db_operations.get_location_by_id(user)
     if not loc:
@@ -428,6 +442,12 @@ def handle_text(user_id: int, message: str) -> None:
             '🇱🇷': faq,
             'Обратная связь': report,
             'Contact': report,
+            'Больше...': more_holiday_menu,
+            'More...': more_holiday_menu,
+            'Основные праздники': holidays,
+            'Main holidays': holidays,
+            'Main menu': main_menu,
+            'Главное меню': main_menu,
             'Рош Ашана': rosh_hashana,
             'Rosh HaShanah': rosh_hashana,
             'Йом Кипур': yom_kippur,
