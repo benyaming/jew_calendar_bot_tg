@@ -61,6 +61,7 @@ def handle_date():
         try:
             datetime(year, month, day)
             get_zmanim_by_the_date(day, month, year)
+            main_menu()
         except ValueError:
             incorrect_date('incorrect_date_value')
     else:
