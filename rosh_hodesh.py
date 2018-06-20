@@ -211,8 +211,27 @@ def get_rh(loc, lang):
     tz = f.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
-    hebrew_date = dates.GregorianDate(now.year,
-                                      now.month, now.day).to_heb().tuple()
+    hebrew_date = dates.GregorianDate(
+        now.year,
+        now.month,
+        now.day
+    ).to_heb().tuple()
+
+    #проверка на то что сегодня не рош ходеш
+    print(hebrew_date)
+    if hebrew_date[2] == 30:
+        hebrew_date = (
+            hebrew_date[0],
+            hebrew_date[1],
+            29
+        )
+    elif hebrew_date[2] == 1:
+        hebrew_date = (
+            hebrew_date[0],
+            hebrew_date[1] - 1,
+            29
+        )
+    print(hebrew_date)
 
     # проверка на рош ашану
     if hebrew_date[1] == 6:
