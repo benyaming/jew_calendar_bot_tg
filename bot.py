@@ -41,7 +41,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-bot = telebot.TeleBot(settings.TOKEN, threaded=False)
+bot = telebot.TeleBot(settings.TOKEN)
 
 app = Flask(__name__)
 
