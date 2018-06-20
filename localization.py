@@ -579,7 +579,8 @@ class Utils(object):
         responses = {
             'Russian': 'Введенная дата не существует. \nПожалуйста, введите '
                        'корректную дату в *формате ДД.ММ.ГГГГ*',
-            'English': 'заменить текст'
+            'English': 'The date that you entered doesn\'t exist, '
+                       'please enter the correct date in format DD.MM.YYYY'
         }
         response = responses.get(lang, '')
         return response
