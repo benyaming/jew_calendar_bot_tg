@@ -6,7 +6,7 @@ from telebot import TeleBot
 
 import db_operations
 import keyboards
-import zmanim
+import zmanim, converter
 import shabbos
 import rosh_hodesh
 import daf
@@ -18,21 +18,16 @@ import holidays as h
 
 
 def get_zmanim():
-    loc = db_operations.get_location_by_id(user)
-    if not loc:
-        return request_location()
-    else:
-        response = zmanim.get_zmanim(user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+    # loc = db_operations.get_location_by_id(user)
+    # if not loc:
+    #     return request_location()
+    # else:
+    response = zmanim.get_zmanim(user, lang)
+    # , parse_mode='Markdown'
+    bot.send_message(user, response)
 
 
-def ext_zmanim():
-    loc = db_operations.get_location_by_id(user)
-    if not loc:
-        return request_location()
-    else:
-        response = zmanim.get_ext_zmanim(user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+
 
 
 def request_date():
@@ -41,7 +36,7 @@ def request_date():
         request_location()
     else:
         states.set_state(user, 'waiting_for_date')
-        response = l.Utils.request_date(lang)
+        response = l.Utils.request_date_for_zmanim(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
         bot.send_message(
             user,
@@ -78,7 +73,8 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
         states.delete_state(user)
         result = request_location
     else:
-        response = zmanim.get_ext_zmanim(user, lang, day, month, year)
+        custom_date = (day, month, year)
+        response = zmanim.get_zmanim(user, lang, custom_date)
         bot.send_message(user, response, parse_mode='Markdown')
         states.delete_state(user)
         result = main_menu
@@ -105,7 +101,7 @@ def shabbat():
     if not loc:
         return request_location()
     else:
-        response = shabbos.get_shabbos_string(loc, lang)
+        response = shabbos.get_shabbos_string(loc, lang, user)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -120,8 +116,8 @@ def rosh_chodesh():
 
 def holidays():
     responses = {
-        'Russian': 'Выберите: (клавиатуру можно скроллить)',
-        'English': 'Choose: (scroll keyboard)'
+        'Russian': 'Выберите интересующий вас праздник:',
+        'English': 'Choose:'
     }
     response = responses.get(lang, '')
     holiday_menu = keyboards.get_holiday_menu(lang)
@@ -380,6 +376,121 @@ def incorrect_text():
     bot.send_message(user, response)
 
 
+def settings_menu():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        user_markup = keyboards.get_settings_menu(lang)
+        responses = {
+            'Russian': 'Добро пожаловать в настройки!',
+            'English': 'Welcome to settings!'
+        }
+        response = responses.get(lang, '')
+        bot.send_message(user, response, reply_markup=user_markup)
+
+
+def select_zmanim():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        user_markup = keyboards.get_zmanim_callback_menu(lang, user)
+        responses = {
+            'Russian': 'Выберите зманим для отображения',
+            'English': 'Choose zmanim that will shown'
+        }
+        response = responses.get(lang, '')
+        bot.send_message(user, response, reply_markup=user_markup)
+        # TODO init
+
+
+def select_candle_offset():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        user_markup = keyboards.get_candle_offset_callback_menu(user)
+        response = l.Shabos.shabos_candle_offset(lang)
+        bot.send_message(user, response, reply_markup=user_markup)
+        # TODO предупреждение о настройках
+        # TODO init
+
+
+def select_diaspora():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        user_markup = keyboards.get_diaspora_callback_menu(lang, user)
+        diaspora_status = db_operations.get_diaspora_status(user)
+        response = l.Utils.diaspora(lang, diaspora_status)
+        bot.send_message(
+            user,
+            response,
+            reply_markup=user_markup,
+            parse_mode='Markdown'
+        )
+        # TODO предупреждение о настройках
+        # TODO init
+
+
+def converter_startup():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        response = l.Utils.welcome_to_converter(lang)
+        markup = keyboards.get_converter_menu(lang)
+        bot.send_message(user, response, reply_markup=markup)
+
+
+def converter_greg_to_heb():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        states.set_state(user, 'waiting_for_greg_date')
+        response = l.Utils.request_date_for_converter_greg(lang)
+        keyboard = keyboards.get_cancel_keyboard(lang)
+        bot.send_message(
+            user,
+            response,
+            parse_mode='Markdown',
+            reply_markup=keyboard
+        )
+
+
+def handle_greg_date():
+    reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
+    extracted_date = re.search(reg_pattern, text)
+    if extracted_date:
+        day = int(extracted_date.group().split('.')[0])
+        month = int(extracted_date.group().split('.')[1])
+        year = int(extracted_date.group().split('.')[2])
+        try:
+            datetime(year, month, day)
+            date = (year, month, day)
+            response = converter.convert_greg_to_heb(date, lang)
+            keyboard = keyboards.get_zmanim_for_converter_button(date, lang)
+            bot.send_message(
+                user,
+                response,
+                parse_mode='Markdown',
+                reply_markup=keyboard
+            )
+            states.delete_state(user)
+            main_menu()
+        except Exception as e:
+            print('Exeption: ', e)
+            incorrect_date('incorrect_date_value')
+    else:
+        if text in ['Отмена', 'Cancel']:
+            states.delete_state(user)
+            main_menu()
+        else:
+            incorrect_date('incorrect_date_format')
+
 def handle_text(user_id: int, message: str) -> None:
     global bot, user, lang, text
     bot = TeleBot(settings.TOKEN)
@@ -396,7 +507,8 @@ def handle_text(user_id: int, message: str) -> None:
     user_has_state = states.check_state(user_id)
     if user_has_state['ok']:
         user_states = {
-            'waiting_for_date': handle_date
+            'waiting_for_date': handle_date,
+            'waiting_for_greg_date': handle_greg_date
         }
         func = user_states.get(user_has_state['state'], '')
         func()
@@ -419,10 +531,8 @@ def handle_text(user_id: int, message: str) -> None:
             'Назад/Back': change_lang,
             'Зманим': get_zmanim,
             'Zmanim': get_zmanim,
-            'Зманим (Полные)': ext_zmanim,
             'Зманим по дате': request_date,
             'Zmanim by the date': request_date,
-            'Zmanim (Full)': ext_zmanim,
             'Шаббат': shabbat,
             'Shabbos': shabbat,
             'Рош Ходеш': rosh_chodesh,
@@ -441,8 +551,6 @@ def handle_text(user_id: int, message: str) -> None:
             'F.A.Q.': faq,
             '🇷🇺': faq,
             '🇱🇷': faq,
-            'Обратная связь': report,
-            'Contact': report,
             'Больше...': more_holiday_menu,
             'More...': more_holiday_menu,
             'Основные праздники': holidays,
@@ -483,6 +591,19 @@ def handle_text(user_id: int, message: str) -> None:
             'Shiva Asar BTammuz': sheva_asar_betammuz,
             '9 Ава': tisha_beav,
             'Tisha BAv': tisha_beav,
+            'Настройки': settings_menu,
+            'Settings': settings_menu,
+            'Выбрать зманим': select_zmanim,
+            'Select zmanim': select_zmanim,
+            'Зажигание свечей': select_candle_offset,
+            'Candle lighting': select_candle_offset,
+            'Диаспора': select_diaspora,
+            'Diaspora': select_diaspora,
+            'Конвертер дат': converter_startup,
+            'Date converter': converter_startup,
+            'Григорианский ➡️ Еврейский': converter_greg_to_heb,
+            'Gregorian ➡️ Hebrew': converter_greg_to_heb,
+
         }
         func = messages.get(message, incorrect_text)
         func()

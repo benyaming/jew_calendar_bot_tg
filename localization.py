@@ -281,6 +281,29 @@ class Shabos(object):
                          f'✨ *Tzeit hakochavim:* {th}'
         return shabos_str
 
+    # настройки сдвига зажиганий
+    @staticmethod
+    def shabos_candle_offset(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите, за сколько минут до Шкии '
+                       'будет зажигание свечей:',
+            'English': '',  # TODO перевод
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # выбран тот же сдвиг
+    @staticmethod
+    def same_offset_error(lang: str) -> str:
+        responses = {
+            'Russian': 'Чтобы изменить сдвиг, выберите другое значение.',
+            'English': '',  # TODO перевод
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ЗМАНИМ
 class Zmanim(object):
@@ -297,179 +320,15 @@ class Zmanim(object):
                             ' because of polar night/day.'
         return error_message
 
-    # обычные зманим
+    # названия зманим для настроек
     @staticmethod
-    def get_regular_zmanim(
-            lang: str,
-            h_day: int,
-            h_month: str,
-            h_year: int,
-            alos_ma: str,
-            talis_ma: str,
-            sunrise: str,
-            shma_gra: str,
-            tfila_gra: str,
-            chatzot: str,
-            minha_gdola_ma: str,
-            sunset: str,
-            tzeis: str
-    ) -> str:
-        zmanim_str = ''
+    def get_zman_name(zman: str, lang: str) -> str:
+        zman_name = ''
         if lang == 'Russian':
-            zmanim_str = f'*Зманим*\n\n*Еврейская дата:* {h_day} ' \
-                         f'{data.jewish_months_a[h_month]} {h_year}\n' \
-                         f'*Рассвет* _(Алот Ашахар)_ *—* {alos_ma}\n' \
-                         f'*Самое раннее время надевания ' \
-                         f'талита и тфилин* _(Мишеякир)_ *—* {talis_ma}\n' \
-                         f'*Восход солнца* _(Нец Ахама)_ *—* {sunrise}\n' \
-                         f'*Конец времени чтения Шма* *—* {shma_gra}\n' \
-                         f'*Конец времени чтения молитвы ' \
-                         f'Амида* *—* {tfila_gra}\n' \
-                         f'*Полдень* _(Хацот)_ *—* {chatzot}\n' \
-                         f'*Самое раннее время Минхи*' \
-                         f' _(Минха Гдола)_ *—* {minha_gdola_ma}\n' \
-                         f'*Заход солнца* _(Шкия)_ *—* {sunset}\n' \
-                         f'*Выход звезд* _(Цет Акохавим)_ *—* {tzeis}\n'
+            zman_name = data.zmanim_ru[zman]
         elif lang == 'English':
-            zmanim_str = f'*Zmanim*\n\n*Hebrew date:* ' \
-                         f'{h_day} {h_month} {h_year}\n' \
-                         f'*Alot Hashachar —* {alos_ma}\n' \
-                         f'*Misheyakir —* {talis_ma}\n' \
-                         f'*Hanetz Hachama —* {sunrise}\n' \
-                         f'*Sof Zman Shema —* {shma_gra}\n' \
-                         f'*Sof Zman Tefilah —* {tfila_gra}\n' \
-                         f'*Chatzot Hayom —* {chatzot}\n' \
-                         f'*Mincha Gedolah —* {minha_gdola_ma}\n' \
-                         f'*Shkiat Hachama —* {sunset}\n' \
-                         f'*Tzeit Hakochavim —* {tzeis}\n'
-        return zmanim_str
-
-    # расширенные зманим (обычные)
-    @staticmethod
-    def get_extended_zmanim(lang: str, zmanim_dict: dict) -> str:
-        zmanim_str = ''
-        if lang == 'Russian':
-            zmanim_str = '*Расширенные зманим*\n\n' \
-                         '*Еврейская дата:* {} {} {}\n' \
-                         '*Рассвет* _(Алот Ашахар)_ *—* {:.5s}\n' \
-                         '*Самое раннее время надевания ' \
-                         'талита и тфилин* _(Мишеякир)_ *—* {:.5s}\n' \
-                         '*Восход солнца* _(Нец Ахама)_ *—* {:.5s}\n'\
-                .format(zmanim_dict['day'],
-                        data.jewish_months_a[zmanim_dict['month']],
-                        zmanim_dict['year'], zmanim_dict['alos_ma'],
-                        zmanim_dict['talis_ma'],
-                        zmanim_dict['sunrise'])
-            if zmanim_dict['sof_zman_shema_ma'] or \
-                    zmanim_dict['sof_zman_tefila_ma']:
-                zmanim_str += '*Конец времени чтения Шма' \
-                         ' [Маген Авраам]* *—* {:.5s}\n' \
-                         '*Конец времени чтения Шма [АГРО]* *—* {:.5s}\n' \
-                         '*Конец времени чтения молитвы Амида ' \
-                         '[Маген Авраам]* *—*  {:.5s}\n' \
-                         '*Конец времени чтения' \
-                         ' молитвы Амида [АГРО]* *—* {:.5s}\n'\
-                         .format(zmanim_dict['sof_zman_shema_ma'],
-                                 zmanim_dict['sof_zman_shema_gra'],
-                                 zmanim_dict['sof_zman_tefila_ma'],
-                                 zmanim_dict['sof_zman_tefila_gra'])
-            else:
-                zmanim_str += '*Конец времени чтения Шма' \
-                              ' [АГРО]* *—* {:.5s}\n' \
-                              '*Конец времени чтения' \
-                              ' молитвы Амида [АГРО]* *—* {:.5s}\n' \
-                    .format(zmanim_dict['sof_zman_shema_gra'],
-                            zmanim_dict['sof_zman_tefila_gra'])
-            zmanim_str += '*Полдень* _(Хацот)_ *—* {:.5s}\n' \
-                          '*Самое раннее время Минхи*' \
-                          ' _(Минха Гдола)_ *—* {:.5s}\n' \
-                          '*Малая Минха* _(Минха Ктана)_ *—* {:.5s}\n' \
-                          '*Полу-Минха* _(Плаг Минха)_ *—* {:.5s}\n' \
-                          '*Заход солнца* _(Шкия)_ *—* {:.5s}\n'\
-                .format(zmanim_dict['chatzos'],
-                        zmanim_dict['mincha_gedola_ma'],
-                        zmanim_dict['mincha_ketana_gra'],
-                        zmanim_dict['plag_mincha_ma'],
-                        zmanim_dict['sunset'])
-            if zmanim_dict['tzeis_595_degrees']:
-                zmanim_str += '*Выход звезд [595 градусов]*' \
-                         ' _(Цет Акохавим)_ *—* {:.5s}\n'\
-                         .format(zmanim_dict['tzeis_595_degrees'])
-            if zmanim_dict['tzeis_850_degrees']:
-                zmanim_str += '*Выход звезд [850 градусов]*' \
-                         ' _(Цет Акохавим)_ *—* {:.5s}\n'\
-                         .format(zmanim_dict['tzeis_850_degrees'])
-            zmanim_str += '*Выход звезд [42 минуты]*' \
-                          ' _(Цет Акохавим)_  *—* {:.5s}\n' \
-                          '*Выход звезд [72 минуты]*' \
-                          ' _(Цет Акохавим)_ *—* {:.5s}\n' \
-                          '*Полночь* _(Хацот Алайла)_ *—* {:.5s}\n\n' \
-                          '*Астрономический час [АГРО]* *—* {:.4s}\n'\
-                .format(zmanim_dict['tzeis_42_minutes'],
-                        zmanim_dict['tzeis_72_minutes'],
-                        zmanim_dict['chazot_laila'],
-                        zmanim_dict['gra_hour'])
-            if zmanim_dict['sof_zman_shema_ma'] \
-                    or zmanim_dict['sof_zman_tefila_ma']:
-                zmanim_str += '*Астрономический час' \
-                              ' [Маген Авраам]* *—*  {:.4s}'\
-                    .format(zmanim_dict['ma_hour'])
-
-        elif lang == 'English':
-            zmanim_str = '*Extended Zmanim*\n\n*Hebrew date:* {} {} {}\n' \
-                         '*Alot Hashachar* *—* {:.5s}\n' \
-                         '*Misheyakir* *—* {:.5s}\n' \
-                         '*Hanetz Hachama* *—* {:.5s}\n' \
-                .format(zmanim_dict['day'],
-                        zmanim_dict['month'],
-                        zmanim_dict['year'], zmanim_dict['alos_ma'],
-                        zmanim_dict['talis_ma'],
-                        zmanim_dict['sunrise'])
-            if zmanim_dict['sof_zman_shema_ma'] or \
-                    zmanim_dict['sof_zman_tefila_ma']:
-                zmanim_str += '*Sof Zman Shema [M"A]* *—* {:.5s}\n' \
-                              '*Sof Zman Shema [GR"A]* *—* {:.5s}\n' \
-                              '*Sof Zman Tefilah [M"A]* *—* {:.5s}\n' \
-                              '*Sof Zman Tefilah [GR"A]* *—* {:.5s}\n' \
-                    .format(zmanim_dict['sof_zman_shema_ma'],
-                            zmanim_dict['sof_zman_shema_gra'],
-                            zmanim_dict['sof_zman_tefila_ma'],
-                            zmanim_dict['sof_zman_tefila_gra'])
-            else:
-                zmanim_str += '*Sof Zman Shema [GR"A]* *—* {:.5s}\n' \
-                              '*Sof Zman Tefilah [GR"A]* *—* {:.5s}\n' \
-                    .format(zmanim_dict['sof_zman_shema_gra'],
-                            zmanim_dict['sof_zman_tefila_gra'])
-            zmanim_str += '*Chatzot Hayom* *—* {:.5s}\n' \
-                          '*Mincha Gedolah* *—* {:.5s}\n' \
-                          '*Mincha Ketanah* *—* {:.5s}\n' \
-                          '*Plag Mincha* *—* {:.5s}\n' \
-                          '*Shkiat Hachama* *—* {:.5s}\n' \
-                .format(zmanim_dict['chatzos'],
-                        zmanim_dict['mincha_gedola_ma'],
-                        zmanim_dict['mincha_ketana_gra'],
-                        zmanim_dict['plag_mincha_ma'],
-                        zmanim_dict['sunset'])
-            if zmanim_dict['tzeis_595_degrees']:
-                zmanim_str += '*Tzeit Hakochavim [595 degrees]* *—* {:.5s}\n' \
-                    .format(zmanim_dict['tzeis_595_degrees'])
-            if zmanim_dict['tzeis_850_degrees']:
-                zmanim_str += '*Tzeit Hakochavim [850 degrees]* *—* {:.5s}\n' \
-                    .format(zmanim_dict['tzeis_850_degrees'])
-            zmanim_str += '*Tzeit Hakochavim [42 minutes]*  *—* {:.5s}\n' \
-                          '*Tzeit Hakochavim [72 minutes]*  *—* {:.5s}\n' \
-                          '*Chatzot Halaylah* *—* {:.5s}\n\n' \
-                          '*Astronomical Hour [GR"A]* *—* {:.4s}\n' \
-                .format(zmanim_dict['tzeis_42_minutes'],
-                        zmanim_dict['tzeis_72_minutes'],
-                        zmanim_dict['chazot_laila'],
-                        zmanim_dict['gra_hour'])
-            if zmanim_dict['sof_zman_shema_ma'] \
-                    or zmanim_dict['sof_zman_tefila_ma']:
-                zmanim_str += '*Astronomical Hour [M"A]* *—* {:.4s}' \
-                    .format(zmanim_dict['ma_hour'])
-
-        return zmanim_str
+            zman_name = ''
+        return zman_name
 
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ВСПОМОГАТЕЛЬНЫХ ФУНКЦИЙ
@@ -551,11 +410,24 @@ class Utils(object):
 
     # запрос даты для зманим
     @staticmethod
-    def request_date(lang: str) -> str:
+    def request_date_for_zmanim(lang: str) -> str:
         responses = {
             'Russian': 'Пожалуйста, введите дату, на которую вы '
                        'хотите получить _зманим_ *в формате ДД.ММ.ГГГГ*',
             'English': 'Please enter the date to calculate the _Zmanim_  '
+                       'for your selection *in the format DD.MM.YYYY*'
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # запрос даты для григ конвертера
+    @staticmethod
+    def request_date_for_converter_greg(lang: str) -> str:
+        responses = {
+            'Russian': 'Пожалуйста, введите дату грегорианского календаря, '
+                       'которую вы хотите сконвертировать '
+                       '*в формате ДД.ММ.ГГГГ*',
+            'English': 'Please enter the gregorian date to convert '
                        'for your selection *in the format DD.MM.YYYY*'
         }
         response = responses.get(lang, '')
@@ -573,7 +445,6 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
-
     @staticmethod
     def incorrect_date_value(lang: str) -> str:
         responses = {
@@ -585,6 +456,51 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    # вкл/откл израильский режим
+    @staticmethod
+    def diaspora(lang: str, status: bool) -> str:
+        if status:
+            diaspora_activated = data.diaspora_mode_activated[lang]
+        else:
+            diaspora_activated = data.diaspora_mode_deactivated[lang]
+        responses = {
+            'Russian': f'Режим диаспоры {diaspora_activated}\n'
+                       f'Чтобы изменить режим, нажмите на кнопку.',
+            'English': '',  # TODO перевод
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    @staticmethod
+    def diaspora_status_allert(lang: str, status: bool) -> str:
+        if status:
+            responses = {
+                'Russian': 'Режим диаспоры включен!',
+                'English': 'Diaspora mode enabled!',  #
+                'Hebrew': ''  # TODO перевод
+            }
+        else:
+            responses = {
+                'Russian': 'Режим диаспоры выключен!',
+                'English': 'Diaspora mode disabled!',  #
+                'Hebrew': ''  # TODO перевод
+            }
+        response = responses.get(lang, '')
+        return response
+
+    @staticmethod
+    def welcome_to_converter(lang: str) -> str:
+        responses = {
+            'Russian': 'Здесь вы можете сконвертировать даты из '
+                       'григорианского календаря в еврейский и обратно, а '
+                       'также получить зманим на сконвертированную дату.\n'
+                       'Выберите подходящий вам вариант:',
+            'English': '',  # TODO перевод
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
@@ -1091,3 +1007,30 @@ class Holidays(object):
                              f' {data.hdays_of_7_en[weekday]}'
 
         return holiday_number
+
+
+class Converter(object):
+
+    # конвертирование грегорианской даты
+    @staticmethod
+    def convert_greg_to_heb(
+            greg_date: tuple,
+            heb_date: tuple,
+            lang: str
+    ) -> str:
+        response = ''
+        if lang == 'Russian':
+            response = f'Грегорианская дата: *{greg_date[2]} ' \
+                       f'{data.gr_months_index[greg_date[1]]} ' \
+                       f'{greg_date[0]}* года\n\n' \
+                       f'Еврейская дата: *{heb_date[2]} ' \
+                       f'{data.jewish_months_a[heb_date[1]]} {heb_date[0]}*'
+        elif lang == 'English':
+            response = f'Gregorian date: *{greg_date[2]} ' \
+                       f'{data.greg_months_en[greg_date[1]]} ' \
+                       f'{greg_date[0]}*\n\n' \
+                       f'Hebrew date: *{heb_date[2]} ' \
+                       f'{heb_date[1]} {heb_date[0]}*'
+        elif lang == 'Hebrew':
+            response = f''
+        return response

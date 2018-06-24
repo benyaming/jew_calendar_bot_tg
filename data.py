@@ -37,6 +37,21 @@ gr_months = {
     'December': 'Декабря'
 }
 
+greg_months_en = {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'June',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December',
+}
+
 gr_months_index = {
     1: 'Января',
     2: 'Февраля',
@@ -140,6 +155,7 @@ jewish_months_a = {
     'Nisan': 'Ниcана',
     'Iyar': 'Ияра',
     'Sivan': 'Сивана',
+    'Tamuz': 'Тамуза',
     'Tammuz': 'Тамуза',
     'Av': 'Ава',
     'Elul': 'Элула',
@@ -420,12 +436,110 @@ holidays_name_en = {
     'AsarahBTevet': 'Asarah BTevet'
 }
 
-lang = {
-    'Русский': 'r',
-    'English': 'e'
+zmanim_ru = {
+    'sunrise': 'Нец Ахама',
+    'sof_zman_tefila_gra': 'Зман Тфила [АГРО]',
+    'sof_zman_tefila_ma': 'Зман Тфила [М"А]',
+    'talis_ma': 'Мишеякир',
+    'sof_zman_shema_gra': 'Зман Шма [АГРО]',
+    'sof_zman_shema_ma': 'Зман Шма [М"А]',
+    'chatzos': 'Хацот',
+    'mincha_ketana_gra': 'Минха Ктана',
+    'mincha_gedola_ma': 'Минха Гдола',
+    'alot_ma': 'Алот Ашахар',
+    'plag_mincha': 'Плаг Минха',
+    'sunset': 'Шкия',
+    'tzeis_850d': 'Выход звезд [850 градусов]',
+    'tzeis_rt': 'Выход звезд [Рабейну Там]',
+    'tzeis_42m': 'Выход звезд [42 минуты]',
+    'tzeis_595d': 'Выход звезд [595 градусов]',
+    'chatzos_laila': 'Хацот Алайла',
+    'astronomical_hour_ma': 'Астрономический час [М"А]',
+    'astronomical_hour_gra': 'Астрономический час [АГРО]'
 }
 
-short_lang = {
-    'r': 'Русский',
-    'e': 'English'
+zmanim_en = {
+    'sunrise': 'Hanetz Hachama',
+    'sof_zman_tefila_gra': 'Sof Zman Tefilah [GR"A]',
+    'sof_zman_tefila_ma': 'Sof Zman Tefilah [M"A]',
+    'talis_ma': 'Misheyakir',
+    'sof_zman_shema_gra': 'Sof Zman Shema [GR"A]',
+    'sof_zman_shema_ma': 'Sof Zman Shema [M"A]',
+    'chatzos': 'Chatzot Hayom',
+    'mincha_ketana_gra': 'Mincha Ketanah',
+    'mincha_gedola_ma': 'Mincha Gedolah',
+    'alot_ma': 'Alot Hashachar',
+    'plag_mincha': 'Plag Mincha',
+    'sunset': 'Shkiat Hachama',
+    'tzeis_850d': 'Tzeit Hakochavim [850 degrees]',
+    'tzeis_rt': 'Tzeit Hakochavim [Rabeinu Tam]',
+    'tzeis_42m': 'Tzeit Hakochavim [42 minutes]',
+    'tzeis_595d': 'Tzeit Hakochavim [595 degrees]',
+    'chatzos_laila': 'Chatzot Halaylah',
+    'astronomical_hour_ma': 'Astronomical Hour [M"A]',
+    'astronomical_hour_gra': 'Astronomical Hour [GR"A]'
+}
+
+zmanim_names_to_codes = {
+    'alot_ma': 0,
+    'talis_ma': 1,
+    'sunrise': 2,
+    'sof_zman_shema_ma': 3,
+    'sof_zman_shema_gra': 4,
+    'sof_zman_tefila_ma': 5,
+    'sof_zman_tefila_gra': 6,
+    'chatzos': 7,
+    'mincha_gedola_ma': 8,
+    'mincha_ketana_gra': 9,
+    'plag_mincha': 10,
+    'sunset': 11,
+    'tzeis_595d': 12,
+    'tzeis_850d': 13,
+    'tzeis_42m': 14,
+    'tzeis_rt': 15,
+    'astronomical_hour_ma': 16,
+    'astronomical_hour_gra': 17,
+    'chatzos_laila': 18
+}
+
+diaspora_button_on = {
+    'Russian': 'Включить режим диаспоры',
+    'English': 'Turn diaspora mode on',
+    'Hebrew': ''  # TODO перевод
+}
+
+diaspora_button_off = {
+    'Russian': 'Выключить режим диаспоры',
+    'English': 'Turn diaspora mode off',
+    'Hebrew': ''  # TODO перевод
+}
+
+diaspora_mode_activated = {
+    'Russian': '*активирован*',
+    'English': '*is active*',
+    'Hebrew': ''  # TODO перевод
+}
+
+diaspora_mode_deactivated = {
+    'Russian': '*деактивирован*',
+    'English': '*disabled*',
+    'Hebrew': ''  # TODO перевод
+}
+
+converter_buttons_name_greg_to_heb = {
+    'Russian': 'Григорианский ➡️ Еврейский',
+    'English': 'Gregorian ➡️ Hebrew',
+    'Hebrew': ''  # TODO перевод
+}
+
+converter_buttons_name_heb_to_greg = {
+    'Russian': 'Еврейский ➡️ Григорианский',
+    'English': 'Hebrew ➡️ Gregorian',
+    'Hebrew': ''  # TODO перевод
+}
+
+get_zmanim_button_converter = {
+    'Russian': 'Получить зманим на этот день',
+    'English': 'Get zmanim for this day',
+    'Hebrew': ''  # TODO перевод
 }

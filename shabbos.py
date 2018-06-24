@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import utils as f
 import localization as l
+import db_operations
 
 
 URL = 'http://db.ou.org/zmanim/getCalendarData.php'
@@ -17,7 +18,7 @@ def get_next_weekday(startdate, weekday):
     return (d + t).strftime('%Y-%m-%d')
 
 
-def get_shabbos_string(loc, lang):
+def get_shabbos_string(loc, lang, user):
     tz = f.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
@@ -26,25 +27,20 @@ def get_shabbos_string(loc, lang):
     month = shabbat_date[5:7:]
     day = shabbat_date[8::]
     year = shabbat_date[:4:]
-    if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
-        params = {'mode': 'day',
-                  'timezone': tz,
-                  'dateBegin': f'{month}/{day}/{year}',
-                  'lat': loc[0],
-                  'lng': loc[1],
-                  'israel_holidays': 'true'
-                  }
-    else:
-        params = {
-            'mode': 'day',
-            'timezone': tz,
-            'dateBegin': f'{month}/{day}/{year}',
-            'lat': loc[0],
-            'lng': loc[1]
-        }
+    diaspora = db_operations.get_diaspora_status(user)
+    candle_offset = db_operations.get_candle_offset(user)
+    params = {
+        'mode': 'day',
+        'timezone': tz,
+        'dateBegin': f'{month}/{day}/{year}',
+        'lat': loc[0],
+        'lng': loc[1],
+        'candles_offset': candle_offset
+    }
+    if not diaspora:
+        params['israel_holidays'] = True
     shabbat = requests.get(URL, params=params)
     shabbat_dict = shabbat.json()
-
     if shabbat_dict['zmanim']['sunset'] == 'X:XX:XX':
         shabbat_str = l.Shabos.shabos_with_latitude_error(
             lang,
@@ -76,26 +72,6 @@ def get_shabbos_string(loc, lang):
             shabbat_dict['candle_lighting_shabbos'][:-3:],
             shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
         )
-
-    if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
-        sunset = datetime.strptime(shabbat_dict['zmanim']['sunset'],
-                                   "%H:%M:%S")
-        delta_18 = timedelta(minutes=18)
-        delta_30 = timedelta(minutes=30)
-        delta_40 = timedelta(minutes=40)
-        candle_18 = str(datetime.time(sunset - delta_18))
-        candle_30 = str(datetime.time(sunset - delta_30))
-        candle_40 = str(datetime.time(sunset - delta_40))
-        shabbat_str = l.Shabos.shabos_in_israel(
-            lang,
-            shabbat_dict['parsha_shabbos'],
-            candle_18[:-3],
-            candle_30[:-3],
-            candle_40[:-3],
-            shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
-        )
+    # TODO предупреждения
     response = shabbat_str
     return response
-
-if __name__ == '__main__':
-    pass

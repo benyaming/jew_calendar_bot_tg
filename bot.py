@@ -7,11 +7,7 @@ from time import sleep
 from os import path
 
 import telebot
-import db_operations
-
-import settings
-import text_handler
-import utils as f
+import db_operations, settings, text_handler, callback_handler, utils
 
 from flask import Flask, request
 
@@ -84,6 +80,9 @@ def handle_help(message):
                      reply_markup=menu)
 
 
+# TODO /settings
+
+
 @bot.message_handler(commands=['report'])
 def handle_report(message):
     if settings.IS_SERVER:
@@ -103,8 +102,9 @@ def handle_report(message):
                      disable_web_page_preview=True)
 
 
-@bot.message_handler(func=lambda message: True, content_types=['location',
-                                                               'venue'])
+@bot.message_handler(
+    func=lambda message: True, content_types=['location', 'venue']
+)
 def handle_venue(message):
     db_operations.check_id_in_db(message.from_user)
     if db_operations.check_location(
@@ -114,7 +114,7 @@ def handle_venue(message):
             bot
     ):
         text_handler.handle_text(message.from_user.id, 'Back')
-        tz = f.get_tz_by_location(
+        tz = utils.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
         # 'Получил геометку')
@@ -128,7 +128,7 @@ def handle_reg(message):
         loc = message.text.split(sep=',')
     if db_operations.check_location(message.from_user.id, loc[0], loc[1], bot):
         text_handler.handle_text(message.from_user.id, 'Back')
-        tz = f.get_tz_by_location(
+        tz = utils.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
 
@@ -137,6 +137,11 @@ def handle_reg(message):
 def handle_text_message(message):
     db_operations.check_id_in_db(message.from_user)
     text_handler.handle_text(message.from_user.id, message.text)
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle_callback(call):
+    callback_handler.handle_callback(call.from_user.id, call)
 
 
 if __name__ == '__main__':

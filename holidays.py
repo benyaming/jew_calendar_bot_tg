@@ -26,7 +26,7 @@ def send_request(param, url=URL_Cal):
 
 # Получаем словарь , index - индекс в общем json'е
 def get_holidays_dict(holi_index, holi_id):
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     year = now.year
@@ -83,7 +83,7 @@ def get_holiday_name(holidays_dict, lang):
 
 # Получаем данные по празднику
 def get_holiday_data(holidays_dict, holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     year = now.year
@@ -194,7 +194,7 @@ def get_holiday_data(holidays_dict, holi_id, lang):
 # Начало и конец поста
 def fast(get_dict, holi_id, lang):
     loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     year = now.year
@@ -336,7 +336,7 @@ def fast(get_dict, holi_id, lang):
 
 # Время зажигания и Авдолы Рош-Ашана, Шавуота
 def rosh_ash(get_dict, holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     loc = db_operations.get_location_by_id(holi_id)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
@@ -437,7 +437,7 @@ def rosh_ash(get_dict, holi_id, lang):
 # Время зажигания и Авдолы Йом-Кипура
 def yom_kippurim(get_dict, holi_id, lang):
     loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     year = now.year
@@ -496,7 +496,7 @@ def yom_kippurim(get_dict, holi_id, lang):
 # Время зажигания и Авдолы Пейсаха и Суккота
 def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
     loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     year = now.year
@@ -850,7 +850,7 @@ def succos(holi_id, lang):
 
 
 def shmini_atzeres_simhat(holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
+    tz = db_operations.get_tz_by_id(int(holi_id))
     ind_0 = index(19, holi_id)
     ind_1 = index(20, holi_id)
     shmini_atzeres_simhat_name = get_holiday_name(ind_0, lang)

@@ -164,3 +164,67 @@ def get_lang_from_redis(user):
         lang = r.get(user).decode('unicode_escape')
         response = lang
     return response
+
+
+def get_candle_offset(user_id: int) -> int:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT candle_offset FROM shabos_settings ' \
+                f'WHERE user_id = {user_id}'
+        cur.execute(query)
+        offset = cur.fetchone()
+        response = offset[0]
+        return response
+
+
+def update_candle_offset(user_id: int, new_offset: int) -> bool:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        result = True
+        old_offset = get_candle_offset(user_id)
+        if new_offset == old_offset:
+            result = None
+        cur = conn.cursor()
+        query = f'UPDATE shabos_settings SET candle_offset = {new_offset} ' \
+                f'WHERE user_id = {user_id}'
+        cur.execute(query)
+        conn.commit()
+        return result
+
+
+def get_zmanim_set(user: int) -> str:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT zmanim_set FROM zmanim_settings WHERE ' \
+                f'user_id = {user}'
+        cur.execute(query)
+        zmanim_set = cur.fetchone()[0]
+        return zmanim_set
+
+
+def update_zmanim_set(user: int, zmanim_set: str) -> None:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'UPDATE zmanim_settings SET zmanim_set = \'{zmanim_set}\' ' \
+                f'WHERE user_id = {user}'
+        cur.execute(query)
+        conn.commit()
+
+
+def get_diaspora_status(user: int) -> bool:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT diaspora_status FROM diaspora_settings WHERE ' \
+                f'user_id = {user}'
+        cur.execute(query)
+        diaspora_status = cur.fetchone()[0]
+        return diaspora_status
+
+
+def toggle_diaspora_status(user: int) -> None:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'UPDATE diaspora_settings ' \
+                f'SET diaspora_status = NOT diaspora_status ' \
+                f'WHERE user_id = {user}'
+        cur.execute(query)
+        conn.commit()
