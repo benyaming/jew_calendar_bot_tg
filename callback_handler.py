@@ -1,9 +1,7 @@
 from telebot import TeleBot
 from telebot.types import CallbackQuery
 
-import settings, data, keyboards, db_operations, localization
-
-from db_operations import get_zmanim_set, update_zmanim_set
+import settings, data, keyboards, db_operations, localization, zmanim
 
 
 def update_zmanim_set(zmanim_set: str, zman_code: int) -> str:
@@ -16,9 +14,9 @@ def update_zmanim_set(zmanim_set: str, zman_code: int) -> str:
 def edit_zman_status():
     zman_name = call.data.split('-')[1]
     zman_code = data.zmanim_names_to_codes[zman_name]
-    old_set = get_zmanim_set(user)
+    old_set = db_operations.get_zmanim_set(user)
     new_set = update_zmanim_set(old_set, zman_code)
-    update_zmanim_set(user, new_set)
+    db_operations.update_zmanim_set(user, new_set)
     bot.answer_callback_query(call.id)
     edited_reply_markup = keyboards.get_zmanim_callback_menu(lang, user)
     bot.edit_message_reply_markup(
@@ -42,6 +40,18 @@ def edit_candle_offset():
     else:
         allert_text = localization.Shabos.same_offset_error(lang)
         bot.answer_callback_query(call.id, allert_text)
+
+
+def get_zmanim_by_date():
+    raw_date = call.data.split('-')[1]
+    custom_date = (
+        raw_date.split('.')[0],
+        raw_date.split('.')[1],
+        raw_date.split('.')[2])
+    response = zmanim.get_zmanim(user, lang, custom_date)
+    bot.answer_callback_query(call.id)
+    bot.send_message(user, response, parse_mode='Markdown')
+
 
 
 def edit_diaspora():
@@ -71,6 +81,8 @@ def handle_callback(user_id: int, callback: CallbackQuery) -> None:
         'zmanim': edit_zman_status,
         'candle_offset': edit_candle_offset,
         'diaspora': edit_diaspora,
+        'get_zmanim': get_zmanim_by_date,
+
 
     }
     func = prefixes.get(payload_prefix, '')

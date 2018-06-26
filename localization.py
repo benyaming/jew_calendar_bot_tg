@@ -122,16 +122,16 @@ class RoshHodesh(object):
         day_of_week = ''
         if second_day:
             if lang == 'Russian':
-                day_of_week = f'{data.days_r[first_day]}-' \
-                              f'{data.days_r[second_day]}'
+                day_of_week = f'{data.days_ru[first_day]}-' \
+                              f'{data.days_ru[second_day]}'
             elif lang == 'English':
-                day_of_week = f'{data.days_e[first_day]}-' \
-                              f'{data.days_e[second_day]}'
+                day_of_week = f'{data.days_en[first_day]}-' \
+                              f'{data.days_en[second_day]}'
         elif not second_day:
             if lang == 'Russian':
-                day_of_week = f'{data.days_r[first_day]}'
+                day_of_week = f'{data.days_ru[first_day]}'
             elif lang == 'English':
-                day_of_week = f'{data.days_e[first_day]}'
+                day_of_week = f'{data.days_en[first_day]}'
         return day_of_week
 
     # определяем молад
@@ -428,7 +428,23 @@ class Utils(object):
                        'которую вы хотите сконвертировать '
                        '*в формате ДД.ММ.ГГГГ*',
             'English': 'Please enter the gregorian date to convert '
-                       'for your selection *in the format DD.MM.YYYY*'
+                       'for your selection *in the format DD.MM.YYYY*',
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # запрос даты для евр конвертера
+    @staticmethod
+    def request_date_for_converter_heb(lang: str) -> str:
+        responses = {
+            'Russian': 'Пожалуйста, введите дату еврейского календаря, '
+                       'которую вы хотите сконвертировать '
+                       '*в формате ДД.ММ.ГГГГ*\n_Первый месяц — Нисан!_',
+            'English': 'Please enter the hebrew date to convert '
+                       'for your selection *in the format DD.MM.YYYY*\n'
+                       '_First month is Nissan!_',
+            'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
         return response
@@ -496,7 +512,7 @@ class Utils(object):
                        'григорианского календаря в еврейский и обратно, а '
                        'также получить зманим на сконвертированную дату.\n'
                        'Выберите подходящий вам вариант:',
-            'English': '',  # TODO перевод
+            'English': 'W',  # TODO перевод
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
@@ -1015,6 +1031,7 @@ class Converter(object):
     @staticmethod
     def convert_greg_to_heb(
             greg_date: tuple,
+            day_of_week: int,
             heb_date: tuple,
             lang: str
     ) -> str:
@@ -1022,15 +1039,56 @@ class Converter(object):
         if lang == 'Russian':
             response = f'Грегорианская дата: *{greg_date[2]} ' \
                        f'{data.gr_months_index[greg_date[1]]} ' \
-                       f'{greg_date[0]}* года\n\n' \
+                       f'{greg_date[0]}* года, {data.days_ru[day_of_week]}\n' \
                        f'Еврейская дата: *{heb_date[2]} ' \
                        f'{data.jewish_months_a[heb_date[1]]} {heb_date[0]}*'
         elif lang == 'English':
             response = f'Gregorian date: *{greg_date[2]} ' \
                        f'{data.greg_months_en[greg_date[1]]} ' \
-                       f'{greg_date[0]}*\n\n' \
+                       f'{greg_date[0]}*, {data.days_en[day_of_week]}\n' \
                        f'Hebrew date: *{heb_date[2]} ' \
                        f'{heb_date[1]} {heb_date[0]}*'
         elif lang == 'Hebrew':
-            response = f''
+            response = f''  # TODO перевод
         return response
+
+    # конвертирование еврейской даты
+    @staticmethod
+    def convert_heb_to_greg(
+            heb_date: tuple,
+            day_of_week: int,
+            greg_date: tuple,
+            lang: str
+    ) -> str:
+        response = ''
+        if lang == 'Russian':
+            response = f'Еврейская дата: *{heb_date[2]} ' \
+                       f'{data.heb_months_codes_ru[heb_date[1]]} ' \
+                       f'{heb_date[0]}*\nГрегорианская дата: *{greg_date[2]} '\
+                       f'{data.gr_months_index[greg_date[1]]} ' \
+                       f'{greg_date[0]}* года, {data.days_ru[day_of_week]}'
+
+        elif lang == 'English':
+            response = f'Hebrew date: *{heb_date[2]} ' \
+                       f'{data.heb_months_codes_en[heb_date[1]]} ' \
+                       f'{heb_date[0]}*\nGregorian date: *{greg_date[2]} ' \
+                       f'{data.greg_months_en[greg_date[1]]} ' \
+                       f'{greg_date[0]}*, {data.days_en[day_of_week]}' \
+
+        elif lang == 'Hebrew':
+            response = f''  # TODO перевод
+        return response
+
+    # выдать название месяца
+    @staticmethod
+    def get_month_name(lang:str, name:str) -> str:
+        response = ''
+        if lang == 'Russian':
+            response = data.heb_months_names_ru[name]
+        elif lang == 'English':
+            response = data.heb_months_names_en[name]
+        elif lang == 'Hebrew':
+            response = data.heb_months_names_he[name]
+        return response
+
+

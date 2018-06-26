@@ -1,4 +1,4 @@
-days_r = {
+days_ru = {
     0: 'Понедельник',
     1: 'Вторник',
     2: 'Среда',
@@ -10,7 +10,7 @@ days_r = {
     8: 'Вторник'
 }
 
-days_e = {
+days_en = {
     0: 'Monday',
     1: 'Tuesday',
     2: 'Wednesday',
@@ -542,4 +542,103 @@ get_zmanim_button_converter = {
     'Russian': 'Получить зманим на этот день',
     'English': 'Get zmanim for this day',
     'Hebrew': ''  # TODO перевод
+}
+
+heb_months_names_ru = {
+    'нисан': 1,
+    'ияр': 2,
+    'сиван': 3,
+    'тамуз': 4,
+    'ав': 5,
+    'элул': 6,
+    'тишрей': 7,
+    'хешван': 8,
+    'кислев': 9,
+    'тевет': 10,
+    'шват': 11,
+    'адар': 12,
+    'адар 2': 13
+}
+
+heb_months_names_en = {
+    'nisan': 1,
+    'iyar': 2,
+    'sivan': 3,
+    'tamuz': 4,
+    'av': 5,
+    'elul': 6,
+    'tishrei': 7,
+    'cheshvan': 8,
+    'kislev': 9,
+    'tevet': 10,
+    'shvat': 11,
+    'adar': 12,
+    'adar 2': 13
+}
+
+heb_months_names_he = {  # TODO перевод
+    'nisan': 1,
+    'iyar': 2,
+    'sivan': 3,
+    'tamuz': 4,
+    'av': 5,
+    'elul': 6,
+    'tishrei': 7,
+    'cheshvan': 8,
+    'kislev': 9,
+    'tevet': 10,
+    'shvat': 11,
+    'adar': 12,
+    'adar 2': 13
+}
+
+heb_months_codes_ru = {
+    1: 'Нисан',
+    2: 'Ияр',
+    3: 'Сиван',
+    4: 'Тамуз',
+    5: 'Ав',
+    6: 'Элул',
+    7: 'Тишрей',
+    8: 'Хешван',
+    9: 'Кислев',
+    10: 'Тевет',
+    11: 'Шват',
+    12: 'Адар',
+    13: 'Адар I',
+    14: 'Адар II'
+}
+
+heb_months_codes_en = {
+    1: 'Nisan',
+    2: 'Iyar',
+    3: 'Сивана',
+    4: 'Tamuz',
+    5: 'Av',
+    6: 'Elul',
+    7: 'Tishrei',
+    8: 'Cheshvan',
+    9: 'Kislev',
+    10: 'Tevet',
+    11: 'Shevat',
+    12: 'Adar',
+    13: 'Adar I',
+    14: 'Adar II'
+}
+
+heb_months_codes_he = {  # TODO перевод
+    1: 'Nisan',
+    2: 'Iyar',
+    3: 'Сивана',
+    4: 'Tamuz',
+    5: 'Av',
+    6: 'Elul',
+    7: 'Tishrei',
+    8: 'Cheshvan',
+    9: 'Kislev',
+    10: 'Tevet',
+    11: 'Shevat',
+    12: 'Adar',
+    13: 'Adar I',
+    14: 'Adar II'
 }

@@ -156,6 +156,7 @@ if __name__ == '__main__':
 
     else:
         logger.info('STARTING POLLING....')
-        bot.remove_webhook()
-        sleep(2)
+        # bot.remove_webhook()
+        # sleep(2)
+        telebot.apihelper.proxy = {'https':'socks5://tg_user_356:qrx59Opri@188.42.54.74:5185'}
         bot.polling(True)

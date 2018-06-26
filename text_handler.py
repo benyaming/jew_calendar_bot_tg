@@ -6,7 +6,7 @@ from telebot import TeleBot
 
 import db_operations
 import keyboards
-import zmanim, converter
+import zmanim, converter, localization, data
 import shabbos
 import rosh_hodesh
 import daf
@@ -60,11 +60,7 @@ def handle_date():
         except ValueError:
             incorrect_date('incorrect_date_value')
     else:
-        if text in ['Отмена', 'Cancel']:
-            states.delete_state(user)
-            main_menu()
-        else:
-            incorrect_date('incorrect_date_format')
+        incorrect_date('incorrect_date_format')
 
 
 def get_zmanim_by_the_date(day: int, month: int, year: int):
@@ -73,7 +69,7 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
         states.delete_state(user)
         result = request_location
     else:
-        custom_date = (day, month, year)
+        custom_date = (year, month, day)
         response = zmanim.get_zmanim(user, lang, custom_date)
         bot.send_message(user, response, parse_mode='Markdown')
         states.delete_state(user)
@@ -302,15 +298,6 @@ def shavuot():
         bot.send_message(user, response, parse_mode='Markdown')
 
 
-def tu_beav():
-    loc = db_operations.get_location_by_id(user)
-    if not loc:
-        return request_location()
-    else:
-        response = h.tu_bav(user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
-
-
 def israel():
     loc = db_operations.get_location_by_id(user)
     if not loc:
@@ -461,6 +448,22 @@ def converter_greg_to_heb():
         )
 
 
+def convert_heb_to_greg():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        states.set_state(user, 'waiting_for_heb_date')
+        response = l.Utils.request_date_for_converter_heb(lang)
+        keyboard = keyboards.get_cancel_keyboard(lang)
+        bot.send_message(
+            user,
+            response,
+            parse_mode='Markdown',
+            reply_markup=keyboard
+        )
+
+
 def handle_greg_date():
     reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
     extracted_date = re.search(reg_pattern, text)
@@ -482,14 +485,69 @@ def handle_greg_date():
             states.delete_state(user)
             main_menu()
         except Exception as e:
-            print('Exeption: ', e)
             incorrect_date('incorrect_date_value')
     else:
-        if text in ['Отмена', 'Cancel']:
-            states.delete_state(user)
-            main_menu()
+        incorrect_date('incorrect_date_format')
+
+
+def handle_heb_date():
+    year, month, day = None, None, None
+    input_data = text.split()
+    if len(input_data) in [3, 4]:
+        # check day
+        if input_data[0].isdigit():
+            day = int(input_data[0])
+            if not 0 < day < 31:
+                return incorrect_date('incorrect_date_value')
+        # check month
+        if len(input_data) == 3:
+            # all exept adar ii
+            if input_data[1] in data.heb_months_names_ru or \
+                  input_data[1] in data.heb_months_names_en or \
+                      input_data[1] in data.heb_months_names_he:
+                month = localization.Converter.get_month_name(
+                    lang,
+                    input_data[1]
+                )
+            else:
+                return incorrect_date('incorrect_date_format')
+        elif len(input_data) == 4 \
+            and input_data[1] in ['adar', 'адар', 'qqqq'] \
+                and input_data[2] == ['1']:
+            month = localization.Converter.get_month_name(
+                    lang,
+                    f'{input_data[1]} 2'
+            )
         else:
-            incorrect_date('incorrect_date_format')
+            return incorrect_date('incorrect_date_format')
+        # check year
+        if input_data[-1].isdigit():
+            year = int(input_data[-1])
+            if year < 0:
+                return incorrect_date('incorrect_date_value')
+            # final calculation
+            else:
+                hebrew_date = (year, month, day)
+                response = converter.convert_heb_to_greg(hebrew_date, lang)
+                if response:
+                    message_text = response['response']
+                    keyboard = keyboards.get_zmanim_for_converter_button(
+                        response['date'],
+                        lang
+                    )
+                    bot.send_message(
+                        user,
+                        message_text,
+                        parse_mode='Markdown',
+                        reply_markup=keyboard
+                    )
+                    states.delete_state(user)
+                    main_menu()
+                else:
+                    return incorrect_date('incorrect_date_value')
+    else:
+        return incorrect_date('incorrect_date_format')
+
 
 def handle_text(user_id: int, message: str) -> None:
     global bot, user, lang, text
@@ -506,12 +564,18 @@ def handle_text(user_id: int, message: str) -> None:
         lang = db_operations.get_lang_from_redis(user)
     user_has_state = states.check_state(user_id)
     if user_has_state['ok']:
-        user_states = {
-            'waiting_for_date': handle_date,
-            'waiting_for_greg_date': handle_greg_date
-        }
-        func = user_states.get(user_has_state['state'], '')
-        func()
+        if text in ['Отмена', 'Cancel']:
+            states.delete_state(user)
+            main_menu()
+        else:
+            user_states = {
+                'waiting_for_date': handle_date,
+                'waiting_for_greg_date': handle_greg_date,
+                'waiting_for_heb_date': handle_heb_date
+
+            }
+            func = user_states.get(user_has_state['state'], '')
+            func()
     else:
         if message in ['Русский', 'English']:
             langs = {
@@ -577,8 +641,6 @@ def handle_text(user_id: int, message: str) -> None:
             'Lag BaOmer': lag_baomer,
             'Шавуот': shavuot,
             'Shavuot': shavuot,
-            '15 Ава': tu_beav,
-            'Tu BAv': tu_beav,
             'Израильские праздники': israel,
             'Israel holidays': israel,
             'Пост Гедалии': fast_gedaliah,
@@ -603,6 +665,9 @@ def handle_text(user_id: int, message: str) -> None:
             'Date converter': converter_startup,
             'Григорианский ➡️ Еврейский': converter_greg_to_heb,
             'Gregorian ➡️ Hebrew': converter_greg_to_heb,
+            'Еврейский ➡️ Григорианский': convert_heb_to_greg,
+            'Hebrew ➡️ Gregorian': convert_heb_to_greg,
+
 
         }
         func = messages.get(message, incorrect_text)

@@ -6,7 +6,7 @@ import re
 import pytz, requests
 import db_operations, data
 
-import localization as l
+import localization
 
 URL = 'http://db.ou.org/zmanim/getCalendarData.php'
 
@@ -75,7 +75,7 @@ def get_sof_zman_tefila_gra(zmanim_dict: dict, lang: str) -> str:
 
 def get_chatzos(zmanim_dict: dict, lang: str)-> str:
     if zmanim_dict['chatzos'] == 'X:XX:XX':
-        zmanim_dict['chatzos'] = l.Zmanim.get_polar_error(lang)
+        zmanim_dict['chatzos'] = localization.Zmanim.get_polar_error(lang)
     return zmanim_dict['chatzos']
 
 
@@ -116,7 +116,6 @@ def get_tzeis_72_minutes(zmanim_dict: dict, lang: str) -> str:
 
 
 def get_astronomical_hour_ma(zmanim_dict: dict, lang: str) -> str:
-    print(zmanim_dict['sof_zman_shema_ma'])
     if zmanim_dict['sof_zman_shema_ma'] and zmanim_dict['sof_zman_tefila_ma']:
         begin_hour_ma = datetime.strptime(
             zmanim_dict['sof_zman_shema_ma'],
@@ -192,7 +191,6 @@ def collect_custom_zmanim(
                 zman_name = data.zmanim_en[zman_code]
             else:
                 zman_name = ''
-            print(zman_name, func(zmanim_dict, lang))
             # [:-3]
             zman_string = f'{zman_name} — {func(zmanim_dict, lang)}\n'
             user_zmanim_str += zman_string
@@ -202,18 +200,18 @@ def collect_custom_zmanim(
 def get_zmanim_dict(user: int, custom_date=None) -> dict:
     tz = db_operations.get_tz_by_id(user)
     loc = db_operations.get_location_by_id(user)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
     if custom_date:
-        custom_year = custom_date[2]
+        custom_year = custom_date[0]
         custom_month = custom_date[1]
-        custom_day = custom_date[0]
+        custom_day = custom_date[2]
         if len(str(custom_year)) == 2:
             custom_year = f'00{custom_year}'
         elif len(str(custom_year)) == 3:
             custom_year = f'0{custom_year}'
         date_str = f'{custom_month}/{custom_day}/{custom_year}'
     else:
+        tz_time = pytz.timezone(tz)
+        now = datetime.now(tz_time)
         date_str = f'{now.month}/{now.day}/{now.year}'
     params = {
         'mode': 'day',
@@ -230,7 +228,6 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
     zmanim_dict['day'] = year_day[0]
     zmanim_dict['month'] = month
     zmanim_dict['year'] = year_day[1]
-    print(zmanim_dict)
     return zmanim_dict
 
 

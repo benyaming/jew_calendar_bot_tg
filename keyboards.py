@@ -115,7 +115,7 @@ def get_converter_menu(lang: str) -> ReplyKeyboardMarkup:
     cancel = {
         'Russian': 'Отмена',
         'English': 'Cancel',
-        'Hebrew': ''
+        'Hebrew': ''  # TODO перевод
     }
     markup = ReplyKeyboardMarkup(True, False)
     markup.row(data.converter_buttons_name_greg_to_heb[lang])
@@ -553,7 +553,7 @@ def get_zmanim_for_converter_button(
     keyboard.add(
         InlineKeyboardButton(
             text=data.get_zmanim_button_converter[lang],
-            callback_data=f'get_zmanim-{date}'
+            callback_data=f'get_zmanim-{date[0]}.{date[1]}.{date[2]}'
         )
     )
     return keyboard
