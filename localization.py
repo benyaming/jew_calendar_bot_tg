@@ -420,35 +420,6 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
-    # запрос даты для григ конвертера
-    @staticmethod
-    def request_date_for_converter_greg(lang: str) -> str:
-        responses = {
-            'Russian': 'Пожалуйста, введите дату грегорианского календаря, '
-                       'которую вы хотите сконвертировать '
-                       '*в формате ДД.ММ.ГГГГ*',
-            'English': 'Please enter the gregorian date to convert '
-                       'for your selection *in the format DD.MM.YYYY*',
-            'Hebrew': ''  # TODO перевод
-        }
-        response = responses.get(lang, '')
-        return response
-
-    # запрос даты для евр конвертера
-    @staticmethod
-    def request_date_for_converter_heb(lang: str) -> str:
-        responses = {
-            'Russian': 'Пожалуйста, введите дату еврейского календаря, '
-                       'которую вы хотите сконвертировать '
-                       '*в формате ДД.ММ.ГГГГ*\n_Первый месяц — Нисан!_',
-            'English': 'Please enter the hebrew date to convert '
-                       'for your selection *in the format DD.MM.YYYY*\n'
-                       '_First month is Nissan!_',
-            'Hebrew': ''  # TODO перевод
-        }
-        response = responses.get(lang, '')
-        return response
-
     # некорректная дата
     @staticmethod
     def incorrect_date_format(lang: str) -> str:
@@ -461,6 +432,7 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    # сообщение об ошибке в дате
     @staticmethod
     def incorrect_date_value(lang: str) -> str:
         responses = {
@@ -505,18 +477,6 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
-    @staticmethod
-    def welcome_to_converter(lang: str) -> str:
-        responses = {
-            'Russian': 'Здесь вы можете сконвертировать даты из '
-                       'григорианского календаря в еврейский и обратно, а '
-                       'также получить зманим на сконвертированную дату.\n'
-                       'Выберите подходящий вам вариант:',
-            'English': 'W',  # TODO перевод
-            'Hebrew': ''  # TODO перевод
-        }
-        response = responses.get(lang, '')
-        return response
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
@@ -1027,6 +987,56 @@ class Holidays(object):
 
 class Converter(object):
 
+    @staticmethod
+    def welcome_to_converter(lang: str) -> str:
+        responses = {
+            'Russian': 'Здесь вы можете сконвертировать даты из '
+                       'григорианского календаря в еврейский и обратно, а '
+                       'также получить зманим на сконвертированную дату.\n'
+                       'Выберите подходящий вам вариант:',
+            'English': 'W',  # TODO перевод
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # запрос даты для григ конвертера
+    @staticmethod
+    def request_date_for_converter_greg(lang: str) -> str:
+        responses = {
+            'Russian': 'Пожалуйста, введите дату грегорианского календаря, '
+                       'которую вы хотите сконвертировать '
+                       '*в формате ДД.ММ.ГГГГ*',
+            'English': 'Please enter the gregorian date to convert '
+                       'for your selection *in the format DD.MM.YYYY*',
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # запрос даты для евр конвертера
+    @staticmethod
+    def request_date_for_converter_heb(lang: str) -> str:
+        responses = {
+            'Russian': 'Пожалуйста, введите дату еврейского календаря, '
+                       'которую вы хотите сконвертировать '
+                       '*в формате ДД месяц ГГГГ* (например: `4 ияр 5778)`\n\n'
+                       '_Обратите внимание на правильные названия '
+                       'еврейских месяцев!_\nнисан, ияр, сиван, тамуз, ав, '
+                       'элуль, тишрей, хешван, кислев, тевет, шват, адар, '
+                       'адар 1, адар 2',
+            'English': 'Please enter the hebrew date to convert '
+                       'for your selection *in the format DD month YYYY* '
+                       '(For example: `4 iyar 5778`)\n\n'
+                       '_Pay attention to the correct names of hebrew '
+                       'months!_\nnisan, iyar, sivan, tamuz, av, elul, '
+                       'tishrei, cheshvan, kislev, tevet, shevat, adar, adar 1'
+                       ', adar 2',
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
     # конвертирование грегорианской даты
     @staticmethod
     def convert_greg_to_heb(
@@ -1091,4 +1101,43 @@ class Converter(object):
             response = data.heb_months_names_he[name]
         return response
 
+    # некорректная дата
+    @staticmethod
+    def incorrect_heb_date_format(lang: str) -> str:
+        responses = {
+            'Russian': 'Вы ввели некорректную дату. \nПожалуйста, введите '
+                       'дату в *формате ДД месяц ГГГГ*\n\n'
+                       '_Обратите внимание на правильные названия '
+                       'еврейских месяцев!_\nнисан, ияр, сиван, тамуз, ав, '
+                       'элуль, тишрей, хешван, кислев, тевет, шват, адар, '
+                       'адар 1, адар 2',
+            'English': 'Incorrect date. \nPlease input date *in '
+                       'the format DD month YYYY*_pay attention to the '
+                       'correct names of hebrew months!_\nnisan, iyar, sivan, '
+                       'tamuz, av, elul, tishrei, cheshvan, kislev, tevet, '
+                       'shevat, adar, adar 1, adar 2',
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
 
+    # сообщение об ошибке в дате
+    @staticmethod
+    def incorrect_heb_date_value(lang: str) -> str:
+        responses = {
+            'Russian': 'Введенная дата не существует! \nПожалуйста, введите '
+                       'дату в *формате ДД месяц ГГГГ*\n\n'
+                       '_Обратите внимание на правильные названия '
+                       'еврейских месяцев!_\nнисан, ияр, сиван, тамуз, ав, '
+                       'элуль, тишрей, хешван, кислев, тевет, шват, адар, '
+                       'адар 1, адар 2',
+            'English': 'The date that you entered doesn\'t exist. \n'
+                       'Please input date *in the format DD month YYYY*\n'
+                       '_pay attention to the correct names of hebrew '
+                       'months!_\nnisan, iyar, sivan, tamuz, av, elul, '
+                       'tishrei, cheshvan, kislev, tevet, shevat, adar, '
+                       'adar 1, adar 2',
+            'Hebrew': ''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response

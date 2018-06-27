@@ -27,9 +27,6 @@ def get_zmanim():
     bot.send_message(user, response)
 
 
-
-
-
 def request_date():
     loc = db_operations.get_location_by_id(user)
     if not loc:
@@ -80,7 +77,11 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
 def incorrect_date(error_type: str) -> None:
     responses = {
         'incorrect_date_format': l.Utils.incorrect_date_format(lang),
-        'incorrect_date_value': l.Utils.incorrect_date_value(lang)
+        'incorrect_date_value': l.Utils.incorrect_date_value(lang),
+        'incorrect_heb_date_format': l.Converter.incorrect_heb_date_format(
+            lang
+        ),
+        'incorrect_heb_date_value': l.Converter.incorrect_heb_date_value(lang)
     }
     response = responses.get(error_type, '')
     keyboard = keyboards.get_cancel_keyboard(lang)
@@ -427,7 +428,7 @@ def converter_startup():
     if not auth:
         request_location()
     else:
-        response = l.Utils.welcome_to_converter(lang)
+        response = l.Converter.welcome_to_converter(lang)
         markup = keyboards.get_converter_menu(lang)
         bot.send_message(user, response, reply_markup=markup)
 
@@ -438,7 +439,7 @@ def converter_greg_to_heb():
         request_location()
     else:
         states.set_state(user, 'waiting_for_greg_date')
-        response = l.Utils.request_date_for_converter_greg(lang)
+        response = l.Converter.request_date_for_converter_greg(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
         bot.send_message(
             user,
@@ -454,7 +455,7 @@ def convert_heb_to_greg():
         request_location()
     else:
         states.set_state(user, 'waiting_for_heb_date')
-        response = l.Utils.request_date_for_converter_heb(lang)
+        response = l.Converter.request_date_for_converter_heb(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
         bot.send_message(
             user,
@@ -498,33 +499,31 @@ def handle_heb_date():
         if input_data[0].isdigit():
             day = int(input_data[0])
             if not 0 < day < 31:
-                return incorrect_date('incorrect_date_value')
+                return incorrect_date('incorrect_heb_date_value')
         # check month
         if len(input_data) == 3:
             # all exept adar ii
-            if input_data[1] in data.heb_months_names_ru or \
-                  input_data[1] in data.heb_months_names_en or \
-                      input_data[1] in data.heb_months_names_he:
+            if input_data[1].lower() in data.heb_months_names_ru or \
+                    input_data[1].lower() in data.heb_months_names_en or \
+                    input_data[1].lower() in data.heb_months_names_he:
                 month = localization.Converter.get_month_name(
                     lang,
-                    input_data[1]
+                    input_data[1].lower()
                 )
-            else:
-                return incorrect_date('incorrect_date_format')
         elif len(input_data) == 4 \
-            and input_data[1] in ['adar', 'адар', 'qqqq'] \
-                and input_data[2] == ['1']:
+                and input_data[1].lower() in ['adar', 'адар', 'qqqq'] \
+                and input_data[2] in ['1', '2']:
             month = localization.Converter.get_month_name(
-                    lang,
-                    f'{input_data[1]} 2'
+                lang,
+                f'{input_data[1].lower()} {input_data[2]}'
             )
         else:
-            return incorrect_date('incorrect_date_format')
+            return incorrect_date('incorrect_heb_date_format')
         # check year
         if input_data[-1].isdigit():
             year = int(input_data[-1])
             if year < 0:
-                return incorrect_date('incorrect_date_value')
+                return incorrect_date('incorrect_heb_date_value')
             # final calculation
             else:
                 hebrew_date = (year, month, day)
@@ -544,9 +543,9 @@ def handle_heb_date():
                     states.delete_state(user)
                     main_menu()
                 else:
-                    return incorrect_date('incorrect_date_value')
+                    return incorrect_date('incorrect_heb_date_value')
     else:
-        return incorrect_date('incorrect_date_format')
+        return incorrect_date('incorrect_heb_date_format')
 
 
 def handle_text(user_id: int, message: str) -> None:
@@ -667,7 +666,6 @@ def handle_text(user_id: int, message: str) -> None:
             'Gregorian ➡️ Hebrew': converter_greg_to_heb,
             'Еврейский ➡️ Григорианский': convert_heb_to_greg,
             'Hebrew ➡️ Gregorian': convert_heb_to_greg,
-
 
         }
         func = messages.get(message, incorrect_text)

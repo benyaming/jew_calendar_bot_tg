@@ -557,6 +557,7 @@ heb_months_names_ru = {
     'тевет': 10,
     'шват': 11,
     'адар': 12,
+    'адар 1': 12,
     'адар 2': 13
 }
 
@@ -612,7 +613,7 @@ heb_months_codes_ru = {
 heb_months_codes_en = {
     1: 'Nisan',
     2: 'Iyar',
-    3: 'Сивана',
+    3: 'Sivan',
     4: 'Tamuz',
     5: 'Av',
     6: 'Elul',
