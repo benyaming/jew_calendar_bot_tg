@@ -5,8 +5,7 @@ import re
 import pytz
 
 import localization as l
-import utils as f
-
+from picture_maker import RoshHodeshSender
 from datetime import datetime
 from pyluach import dates
 
@@ -207,16 +206,23 @@ def get_molad(chodesh_dict, lang):
     return molad
 
 
-def get_rh(loc, lang):
-    tz = f.get_tz_by_location(loc)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    hebrew_date = dates.GregorianDate(
-        now.year,
-        now.month,
-        now.day
-    ).to_heb().tuple()
-
+def get_rh(loc, lang, date=None):
+    # tz = f.get_tz_by_location(loc)
+    tz = 'Europe/Moscow'
+    if not date:
+        tz_time = pytz.timezone(tz)
+        now = datetime.now(tz_time)
+        hebrew_date = dates.GregorianDate(
+            now.year,
+            now.month,
+            now.day
+        ).to_heb().tuple()
+    else:
+        hebrew_date = dates.GregorianDate(
+            date[0],
+            date[1],
+            date[2]
+        ).to_heb().tuple()
     # проверка на то что сегодня не рош ходеш
     if hebrew_date[2] == 30:
         hebrew_date = (
@@ -240,11 +246,12 @@ def get_rh(loc, lang):
     params = {'hebrewYear': hebrew_date[0]}
     chodesh_dict = get_chodesh_dict(hebrew_date, params)
     length_of_rh = get_rh_lenght(hebrew_date)
-    rh = l.RoshHodesh.get_rh_str(
+    rh_string = l.RoshHodesh.get_rh_str(
         lang,
         get_month_name(chodesh_dict),
         length_of_rh,
         get_rh_date_and_day(hebrew_date, length_of_rh, lang),
         get_molad(chodesh_dict, lang)
     )
-    return rh
+    rh_pic = RoshHodeshSender(lang).get_rh_picture(rh_string)
+    return rh_pic

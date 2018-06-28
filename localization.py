@@ -20,6 +20,12 @@ class DafYomi(object):
 # ЛОКАЛИЗАЦИЯ ДЛЯ РОШ ХОДЕША
 class RoshHodesh(object):
 
+    titles = {
+        'Russian': 'РОШ ХОДЕШ',
+        'English': 'ROSH CHODESH',
+        'Hebrew': '' # TODO p
+    }
+
     # если два дня РХ в разных годах
     @staticmethod
     def two_days_in_different_years(
@@ -29,11 +35,11 @@ class RoshHodesh(object):
     ) -> str:
         rh_days = ''
         if lang == 'Russian':
-            rh_days = f'31 декабря {first_year} года и 1 ' \
-                      f'января {second_year} года'
+            rh_days = f'31 декабря {first_year} года и *1 ' \
+                      f'января {second_year} года*'
         elif lang == 'English':
-            rh_days = f'31 December {first_year} and 1 ' \
-                      f'January {second_year}'
+            rh_days = f'31 December {first_year} and *1 ' \
+                      f'January {second_year}*'
         return rh_days
 
     # если 2 дня РХ в разных месяцах, но в одном году
@@ -48,11 +54,11 @@ class RoshHodesh(object):
         rh_days = ''
         if lang == 'Russian':
             rh_days = f'{first_day} и 1 {data.gr_months_index[first_month]} ' \
-                      f'и {data.gr_months_index[second_month]} {year} года'
+                      f'и {data.gr_months_index[second_month]} {year} года*'
         elif lang == 'English':
             rh_days = f'{first_day} and 1 ' \
                       f'{data.gr_months_index_en[first_month]}' \
-                      f' and {data.gr_months_index_en[second_month]} {year}'
+                      f' and {data.gr_months_index_en[second_month]} {year}*'
         return rh_days
 
     # если в РХ 2 дня
@@ -67,10 +73,10 @@ class RoshHodesh(object):
         rh_days = ''
         if lang == 'Russian':
             rh_days = f'{first_day} и {second_day} ' \
-                      f'{data.gr_months_index[month]} {year} года'
+                      f'{data.gr_months_index[month]} {year} года*'
         elif lang == 'English':
             rh_days = f'{first_day} and {second_day} ' \
-                      f'{data.gr_months_index_en[month]} {year}'
+                      f'{data.gr_months_index_en[month]} {year}*'
         return rh_days
 
     # если в РХ 1 день выпадает на 1 января
@@ -175,15 +181,15 @@ class RoshHodesh(object):
     ) -> str:
         rh = ''
         if lang == 'Russian':
-            rh = f'Месяц:|{data.jewish_months[month]}\n' \
-                 f'Число дней:|{length} ' \
+            rh = f'Месяц: |{data.jewish_months[month]}\n' \
+                 f'Число дней: |{length} ' \
                  f'{data.length_r[f"{length}"]}\n' \
-                 f'Дата:|{rosh_hodesh}\nМолад:|{molad}'
+                 f'Дата: |{rosh_hodesh}\nМолад: |{molad}'
         elif lang == 'English':
-            rh = f'Month:|{month}\n' \
-                 f'Number of days:|{length} ' \
+            rh = f'Month: |{month}\n' \
+                 f'Number of days: |{length} ' \
                  f'{data.length_e[f"{length}"]}\n' \
-                 f'Date:|{rosh_hodesh}\nMolad:|{molad}'
+                 f'Date: |{rosh_hodesh}\nMolad: |{molad}'
         return rh
 
 
@@ -983,6 +989,7 @@ class Holidays(object):
         return holiday_number
 
 
+# ЛОКАЛИЗАЦИЯ ДЛЯ КОНВЕРТЕРА
 class Converter(object):
 
     @staticmethod
