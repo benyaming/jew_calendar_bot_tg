@@ -217,8 +217,7 @@ def get_rh(loc, lang):
         now.day
     ).to_heb().tuple()
 
-    #проверка на то что сегодня не рош ходеш
-    print(hebrew_date)
+    # проверка на то что сегодня не рош ходеш
     if hebrew_date[2] == 30:
         hebrew_date = (
             hebrew_date[0],
@@ -231,8 +230,6 @@ def get_rh(loc, lang):
             hebrew_date[1] - 1,
             29
         )
-    print(hebrew_date)
-
     # проверка на рош ашану
     if hebrew_date[1] == 6:
         hebrew_date = (

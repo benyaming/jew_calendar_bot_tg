@@ -1,54 +1,88 @@
-import data, localization, converter
+from PIL import Image, ImageDraw, ImageFont
+import rosh_hodesh
+import os
 
+lang = {
+    'r': 'Russian',
+    'e': 'English',
+    'h': 'Hebrew'
+}
 
-def handle_heb_date(text, lang):
-    year, month, day = None, None, None
-    input_data = text.split()
-    if len(input_data) in [3, 4]:
-        # check day
-        if input_data[0].isdigit():
-            day = int(input_data[0])
-            if not 0 < day < 31:
-                return 'incorrect_date_value'
-        # check month
-        if len(input_data) == 3:
-            # all exept adar ii
-            if input_data[1] in data.heb_months_names_ru or \
-                  input_data[1] in data.heb_months_names_en or \
-                      input_data[1] in data.heb_months_names_he:
-                month = localization.Converter.get_month_name(
-                    lang,
-                    input_data[1]
-                )
-            else:
-                return 'incorrect_date_format'
-        elif len(input_data) == 4 \
-            and input_data[1] in ['adar', 'адар', 'qqqq'] \
-                and input_data[2] == ['1']:
-            month = localization.Converter.get_month_name(
-                    lang,
-                    f'{input_data[1]} 2'
-            )
-        else:
-            return 'incorrect_date_format'
-        # check year
-        if input_data[-1].isdigit():
-            year = int(input_data[-1])
-            if year < 0:
-                return 'incorrect_date_value'
-            # final calculation
-            else:
-                hebrew_date = (year, month, day)
-                response = converter.convert_heb_to_greg(hebrew_date, lang)
-                if response:
-                    message_text = response['response']
-                    return message_text
-                else:
-                    return 'incorrect_date_value'
+'''
+text example:
+
+Месяц:|Ав
+Число дней:|1 день
+Дата:|13 Июля 2018 года, Пятница
+Молад:|13 Июля, Пятница,^6 часов 49 минут и 8 частей
+'''
+
+# opening background
+background = Image.open('res/backgrounds/rosh_hodesh.jpeg')
+
+# define bold and regular fonts
+thin_font_path = os.path.join(
+    'C:\\Users\Benyomin\PycharmProjects'
+    'jew_calendar_bot_tgres\\fonts\\',
+    'Roboto-Light.ttf'
+)
+bold_font_path = os.path.join(
+    'C:\\Users\Benyomin\PycharmProjects'
+    'jew_calendar_bot_tgres\\fonts\\',
+    'Roboto-Bold.ttf'
+)
+
+# define draw object
+draw = ImageDraw.Draw(background)
+# get rh string
+text = rosh_hodesh.get_rh((55.56, 38.17), lang['r'])
+# split text to lines
+text_lines = text.split('\n')
+
+# draw title
+draw.text(
+    (145, 50),
+    'РОШ ХОДЕШ',
+    font=ImageFont.truetype(bold_font_path, size=40)
+)
+
+# define coordinates for main block
+start_position_y = 120
+start_position_x = 35
+
+x_offset = 150
+y_offset = 40
+
+# draw main block line-by-line
+for line in text_lines:
+    # definition part separetes from value part by '|' symbol
+    line_parts = line.split('|')
+    # draw definitions with bold font
+    draw.text(
+        (start_position_x, start_position_y),  # coordinates
+        line_parts[0],
+        font=ImageFont.truetype(bold_font_path, size=20)
+    )
+    # draw values with regular font and x-offsets
+    if '^' not in line_parts[1]:
+        draw.text(
+            (start_position_x + x_offset, start_position_y),
+            line_parts[1],
+            font=ImageFont.truetype(thin_font_path, size=20)
+        )
     else:
-        return 'incorrect_date_format'
+        # molad is too long, so it separeted by '^' symbol
+        molad_parts = line_parts[1].split('^')
+        for molad_part in molad_parts:
+            # draw two lines of molad with offsets
+            draw.text(
+                (start_position_x + x_offset, start_position_y),
+                molad_part,
+                font=ImageFont.truetype(thin_font_path, size=20)
+            )
+            start_position_y += y_offset - 15
+    # increasing y-offset
+    start_position_y += y_offset
 
-
-while(True):
-    text = input('#')
-    print(handle_heb_date(text, 'English'))
+# saving the image
+background.save('test.jpeg')

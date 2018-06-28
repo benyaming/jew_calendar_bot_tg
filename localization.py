@@ -144,20 +144,19 @@ class RoshHodesh(object):
             nhours: int,
             hours: str,
             nminutes: int,
-            # minutes: str,
             nchalakim: int,
             chalakim: str
     ) -> str:
         molad_str = ''
         if lang == 'Russian':
             molad_str = f'{day} {data.gr_months[month]}, ' \
-                        f'{data.gr_dayofweek[day_of_week]}, ' \
+                        f'{data.gr_dayofweek[day_of_week]},^' \
                         f'{nhours} {data.hours.get(hours[-1:], "часов")} ' \
                         f'{nminutes} ' \
                         f'{data.minutes.get(nminutes, "минут")} и ' \
                         f'{nchalakim} {data.chalakim.get(chalakim, "частей")}'
         elif lang == 'English':
-            molad_str = f'{day} {month}, {day_of_week}, ' \
+            molad_str = f'{day} {month}, {day_of_week},^' \
                         f'{nhours} {data.hours_e.get(hours, "hours")} ' \
                         f'{nminutes} ' \
                         f'{data.minutes_e.get(nminutes, "minutes")} and ' \
@@ -176,16 +175,15 @@ class RoshHodesh(object):
     ) -> str:
         rh = ''
         if lang == 'Russian':
-            rh = f'*Рош ходеш* 🌒\n\n' \
-                 f'*Месяц:* {data.jewish_months[month]}\n' \
-                 f'*Продолжительность Рош Ходеша:* {length}' \
-                 f' {data.length_r[f"{length}"]}\n' \
-                 f'*Рош Ходеш:* {rosh_hodesh}\n*Молад:* {molad}'
+            rh = f'Месяц:|{data.jewish_months[month]}\n' \
+                 f'Число дней:|{length} ' \
+                 f'{data.length_r[f"{length}"]}\n' \
+                 f'Дата:|{rosh_hodesh}\nМолад:|{molad}'
         elif lang == 'English':
-            rh = f'*Rosh Chodesh* 🌒\n\n*Month:* {month}\n' \
-                 f'*Rosh Chodesh duration:* {length}' \
-                 f' {data.length_e[f"{length}"]}\n' \
-                 f'*Rosh Chodesh:* {rosh_hodesh}\n*Molad:* {molad}'
+            rh = f'Month:|{month}\n' \
+                 f'Number of days:|{length} ' \
+                 f'{data.length_e[f"{length}"]}\n' \
+                 f'Date:|{rosh_hodesh}\nMolad:|{molad}'
         return rh
 
 
