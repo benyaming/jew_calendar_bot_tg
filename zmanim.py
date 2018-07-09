@@ -233,7 +233,6 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
 
 def get_zmanim(user: int, lang: str, custom_date=None) -> str:
     # TODO разобраться с полярными ошибками
-    # TODO инициализация настроек zmanim_set
     zmanim_dict = get_zmanim_dict(user, custom_date)
     user_zmanim_set = db_operations.get_zmanim_set(user)
     user_zmanim_str = collect_custom_zmanim(zmanim_dict, user_zmanim_set, lang)

@@ -98,17 +98,19 @@ def shabbat():
     if not loc:
         return request_location()
     else:
-        response = shabbos.get_shabbos_string(loc, lang, user)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = shabbos.get_shabbos(loc, lang, user)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
-def rosh_chodesh():
+def rosh_chodesh() -> None:
     loc = db_operations.get_location_by_id(user)
     if not loc:
         return request_location()
     else:
         response_pic = rosh_hodesh.get_rh(loc, lang)
         bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def holidays():
@@ -131,13 +133,14 @@ def fasts():
     bot.send_message(user, response, reply_markup=fast_menu)
 
 
-def daf_yomi():
+def daf_yomi() -> None:
     loc = db_operations.get_location_by_id(user)
     if not loc:
         return request_location()
     else:
-        response = daf.get_daf(loc, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = daf.get_daf(loc, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def update_location():

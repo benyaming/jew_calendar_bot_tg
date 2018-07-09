@@ -75,9 +75,11 @@ def handle_help(message):
     menu = telebot.types.ReplyKeyboardMarkup(True, False)
     menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
     help_str = 'Пожалуйста, выберите язык справки'
-    bot.send_message(message.from_user.id,
-                     help_str,
-                     reply_markup=menu)
+    bot.send_message(
+        message.from_user.id,
+        help_str,
+        reply_markup=menu
+    )
 
 
 # TODO /settings

@@ -1,10 +1,9 @@
-import requests
-import calendar
-import re
-
-import pytz
+import requests, pytz
+import calendar, re
 
 import localization as l
+
+from io import BytesIO
 from picture_maker import RoshHodeshSender
 from datetime import datetime
 from pyluach import dates
@@ -206,7 +205,7 @@ def get_molad(chodesh_dict, lang):
     return molad
 
 
-def get_rh(loc, lang, date=None):
+def get_rh(loc, lang, date=None) -> BytesIO:
     # tz = f.get_tz_by_location(loc)
     tz = 'Europe/Moscow'
     if not date:

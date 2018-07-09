@@ -173,8 +173,13 @@ def get_candle_offset(user_id: int) -> int:
                 f'WHERE user_id = {user_id}'
         cur.execute(query)
         offset = cur.fetchone()
-        response = offset[0]
-        return response
+        if offset:
+            return offset[0]
+        else:
+            query = f'INSERT INTO shabos_settings VALUES ({user_id}, DEFAULT)'
+            cur.execute(query)
+            conn.commit()
+            return get_candle_offset(user_id)
 
 
 def update_candle_offset(user_id: int, new_offset: int) -> bool:
@@ -197,8 +202,14 @@ def get_zmanim_set(user: int) -> str:
         query = f'SELECT zmanim_set FROM zmanim_settings WHERE ' \
                 f'user_id = {user}'
         cur.execute(query)
-        zmanim_set = cur.fetchone()[0]
-        return zmanim_set
+        zmanim_set = cur.fetchone()
+        if not zmanim_set:
+            query = f'INSERT INTO zmanim_settings VALUES ({user}, DEFAULT)'
+            cur.execute(query)
+            conn.commit()
+            return get_zmanim_set(user)
+        else:
+            return zmanim_set[0]
 
 
 def update_zmanim_set(user: int, zmanim_set: str) -> None:
@@ -216,8 +227,14 @@ def get_diaspora_status(user: int) -> bool:
         query = f'SELECT diaspora_status FROM diaspora_settings WHERE ' \
                 f'user_id = {user}'
         cur.execute(query)
-        diaspora_status = cur.fetchone()[0]
-        return diaspora_status
+        diaspora_status = cur.fetchone()
+        if diaspora_status:
+            return diaspora_status[0]
+        else:
+            query = f'INSERT INTO diaspora_settings VALUES ({user}, DEFAULT)'
+            cur.execute(query)
+            conn.commit()
+            return get_diaspora_status(user)
 
 
 def toggle_diaspora_status(user: int) -> None:

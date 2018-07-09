@@ -5,15 +5,21 @@ import data
 # ЛОКАЛИЗАЦИЯ ДЛЯ ДАФ ЙОМИ
 class DafYomi(object):
 
+    titles = {
+        'Russian': 'ДАФ ЙОМИ',
+        'English': 'DAF YOMI',
+        'Hebrew': ''  # TODO p
+    }
+
     @staticmethod
     def get_str(lang: str, masechta: str, daf: str) -> str:
         daf_str = ''
         if lang == 'Russian':
-            daf_str = f'*Даф Йоми*\n\n📗 *Трактат:* {data.talmud[masechta]} ' \
-                      f'\n📄 *Лист:* {daf}'
+            daf_str = f'Трактат: |{data.talmud[masechta]} ' \
+                      f'\nЛист: |{daf}'
         elif lang == 'English':
-            daf_str = f'*Daf Yomi*\n\n📗 *Masechta:* {masechta}\n ' \
-                      f'📄 *Daf:* {daf}'
+            daf_str = f'Masechta: |{masechta}\n ' \
+                      f'Daf: |{daf}'
         return daf_str
 
 
@@ -195,20 +201,24 @@ class RoshHodesh(object):
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ШАББАТА
 class Shabos(object):
+    titles = {
+        'Russian': 'Шаббат',
+        'English': 'SHABBOS',
+        'Hebrew': ''  # TODO p
+    }
 
     # для шаббатов, в которых невозможно вычислить зманим
     @staticmethod
     def shabos_with_latitude_error(lang: str, parasha: str) -> str:
         shabos_str = ''
         if lang == 'Russian':
-            shabos_str = f'*Шаббат*\n\n📜 *Недельная глава:* ' \
-                         f'{data.parashat[parasha]}\n\n' \
-                         f'В данных широтах невозможно определить ' \
-                         f'зманим из-за полярного дня/полярной ночи.'
+            shabos_str = f'Недельная глава: |{data.parashat[parasha]}?' \
+                         f'В данных широтах невозможно\nопределить ' \
+                         f'зманим из-за\nполярного дня/полярной ночи.'
         elif lang == 'English':
-            shabos_str = f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n\n' \
-                         f'In these latitudes zmanim is impossible' \
-                         f' to determine because of polar night/day.'
+            shabos_str = f'Parshat hashavua: |{parasha}?' \
+                         f'For this location zmanim is impossible\n' \
+                         f'to determine because of polar night/day.'
         return shabos_str
 
     # для шаббатов в северных широтах с предупреждением о раннем зажигании
@@ -221,18 +231,17 @@ class Shabos(object):
     ) -> str:
         shabos_str = ''
         if lang == 'Russian':
-            shabos_str = f'*Шаббат*\n\n📜 *Недельная глава:* ' \
-                         f'{data.parashat[parasha]}\n' \
-                         f'🕯 *Зажигание свечей:* {cl}\n' \
-                         f'✨ *Выход звёзд:* {th}\n\n' \
-                         f'*Внимание!* Необходимо уточнить' \
-                         f' время зажигания свечей у раввина общины!'
+            shabos_str = f'Недельная глава: |{data.parashat[parasha]}\n' \
+                         f'Зажигание свечей: |{cl}\n' \
+                         f'Выход звёзд:  |{th}%' \
+                         f'Внимание! Необходимо уточнить ' \
+                         f'время \nзажигания свечей у раввина общины!'
         elif lang == 'English':
-            shabos_str = f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n' \
-                         f'🕯 *Candle lighting:* {cl}\n' \
-                         f'✨ *Tzeit hakochavim:* {th}\n\n' \
-                         f'*Notice!* You should specify time of candle' \
-                         f' lighting with the rabbi of your community.'
+            shabos_str = f'Parshat hashavua: |{parasha}\n' \
+                         f'Candle lighting: |{cl}\n' \
+                         f'Tzeit hakochavim: |{th}%' \
+                         f'Notice! You should specify time of candle\n' \
+                         f'lighting with the rabbi of your community.'
         return shabos_str
 
     # для обычных шаббатов
@@ -245,16 +254,15 @@ class Shabos(object):
     ) -> str:
         shabos_str = ''
         if lang == 'Russian':
-            shabos_str = f'*Шаббат*\n\n📜 *Недельная глава:* ' \
-                         f'{data.parashat[parasha]}\n' \
-                         f'🕯 *Зажигание свечей:* {cl}\n' \
-                         f'✨ *Выход звёзд:* {th}'
+            shabos_str = f'Недельная глава: |{data.parashat[parasha]}\n' \
+                         f'Зажигание свечей: |{cl}\n' \
+                         f'Выход звёзд:  |{th}'
         elif lang == 'English':
             if parasha == 'PESACH_VIII':
                 parasha = 'PESACH'
-            shabos_str = f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n' \
-                         f'🕯 *Candle lighting:* {cl}\n' \
-                         f'✨ *Tzeit hakochavim:* {th}'
+            shabos_str = f'Parshat hashavua: |{parasha}\n' \
+                         f'Candle lighting: |{cl}\n' \
+                         f'Tzeit hakochavim: |{th}'
         return shabos_str
 
     # для шаббатов в израиле
@@ -320,7 +328,7 @@ class Zmanim(object):
             error_message = 'В данных широтах невозможно определить ' \
                             'зманим из-за полярного дня/полярной ночи.'
         elif lang == 'English':
-            error_message = 'In these latitudes it is impossible to determine'\
+            error_message = 'For this location it is impossible to determine'\
                             ' because of polar night/day.'
         return error_message
 
@@ -337,6 +345,7 @@ class Zmanim(object):
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ВСПОМОГАТЕЛЬНЫХ ФУНКЦИЙ
 class Utils(object):
+
     # координаты получены
     @staticmethod
     def location_received(lang: str) -> str:
@@ -481,6 +490,20 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    @staticmethod
+    def report_string(lang: str) -> str:
+        responses = {
+            {
+                'Russian': 'Чтобы сообщить об ошибке, пожалуйста, напишите '
+                           'однаму из разработчиков: \n@benyomin\n'
+                           '@Meir_Yartzev\n@APJIAC \2nПожалуйста,'\
+                ' убедитесь, что вы ознакомились с часто задаваемыми' \
+                ' вопросами, доступными по команде /help',
+                'English': 'Diaspora mode enabled!',  #
+                'Hebrew': ''  # TODO перевод
+            }
+        }
+
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
@@ -493,7 +516,7 @@ class Holidays(object):
             ra_time = '\nВ данных широтах невозможно определить' \
                          ' зманим из-за полярного дня/полярной ночи'
         elif lang == 'English':
-            ra_time = '\nIn these latitudes zmanim is impossible' \
+            ra_time = '\nFor this location zmanim is impossible' \
                         ' to determine because of polar night/day'
 
         return ra_time
@@ -1113,13 +1136,13 @@ class Converter(object):
             'Russian': 'Вы ввели некорректную дату. \nПожалуйста, введите '
                        'дату в *формате ДД месяц ГГГГ*\n\n'
                        '_Обратите внимание на правильные названия '
-                       'еврейских месяцев!_\nнисан, ияр, сиван, тамуз, ав, '
+                       'еврейских месяцев!_\nнисан, ияр, сиван, таммуз, ав, '
                        'элуль, тишрей, хешван, кислев, тевет, шват, адар, '
                        'адар 1, адар 2',
             'English': 'Incorrect date. \nPlease input date *in '
                        'the format DD month YYYY*_pay attention to the '
                        'correct names of hebrew months!_\nnisan, iyar, sivan, '
-                       'tamuz, av, elul, tishrei, cheshvan, kislev, tevet, '
+                       'tammuz, av, elul, tishrei, cheshvan, kislev, tevet, '
                        'shevat, adar, adar 1, adar 2',
             'Hebrew': ''  # TODO перевод
         }
@@ -1133,13 +1156,13 @@ class Converter(object):
             'Russian': 'Введенная дата не существует! \nПожалуйста, введите '
                        'дату в *формате ДД месяц ГГГГ*\n\n'
                        '_Обратите внимание на правильные названия '
-                       'еврейских месяцев!_\nнисан, ияр, сиван, тамуз, ав, '
+                       'еврейских месяцев!_\nнисан, ияр, сиван, таммуз, ав, '
                        'элуль, тишрей, хешван, кислев, тевет, шват, адар, '
                        'адар 1, адар 2',
             'English': 'The date that you entered doesn\'t exist. \n'
                        'Please input date *in the format DD month YYYY*\n'
                        '_pay attention to the correct names of hebrew '
-                       'months!_\nnisan, iyar, sivan, tamuz, av, elul, '
+                       'months!_\nnisan, iyar, sivan, tammuz, av, elul, '
                        'tishrei, cheshvan, kislev, tevet, shevat, adar, '
                        'adar 1, adar 2',
             'Hebrew': ''  # TODO перевод

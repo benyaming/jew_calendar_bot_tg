@@ -53,24 +53,24 @@ class RoshHodeshSender(PictureSender):
 
     def __init__(self, lang: str):
         self._lang = lang
-        self._regular_font_size = 46
+        self._data_font_size = 46
         self._regular_font = ImageFont.truetype(
             self._regular_font_path,
-            size=self._regular_font_size
+            size=self._data_font_size
         )
         self._bold_font = ImageFont.truetype(
             self._bold_font_path,
-            size=self._regular_font_size
+            size=self._data_font_size
         )
         self._bold_font_offset = self._bold_font.getsize
-        self._background_path = 'res/backgrounds/rh.png'
+        self._background_path = 'res/backgrounds/rosh_hodesh.png'
         self._draw = self._get_draw(self._background_path)
 
     def _regular_font_offset(self, text):
         offset = self._regular_font.getsize(text)[0]
         return offset
 
-    def _draw_data(self, data: str):
+    def _draw_rh_data(self, data: str):
         start_position_y = 370
         start_position_x = 100
         y_offset = 80
@@ -138,12 +138,164 @@ class RoshHodeshSender(PictureSender):
     def get_rh_picture(
             self,
             text: str,
-    ):
+    ) -> BytesIO:
         self._draw_title(
             self._draw,
             localization.RoshHodesh.titles[self._lang],
             self._lang
         )
-        self._draw_data(text)
+        self._draw_rh_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+class DafYomiSender(PictureSender):
+    def __init__(self, lang: str):
+        self._lang = lang
+        self._data_font_size = 90
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+        self._background_path = 'res/backgrounds/daf_yomi.png'
+        self._draw = self._get_draw(self._background_path)
+
+    def _regular_font_offset(self, text):
+        offset = self._regular_font.getsize(text)[0]
+        return offset
+
+    def _draw_daf_data(self, data: str):
+        start_position_y = 470
+        start_position_x = 100
+        y_offset = 100
+        text_lines = data.split('\n')
+        draw = self._draw
+
+        for line in text_lines:
+            # definition part separetes from value part by '|' symbol
+            line_parts = line.split('|')
+            draw.text(
+                (start_position_x, start_position_y),  # coordinates
+                line_parts[0] + ' ',
+                font=self._bold_font
+            )
+            draw.text(
+                (
+                    start_position_x +
+                    self._regular_font_offset(line_parts[0]),
+                    start_position_y
+                ),
+                line_parts[1],
+                font=self._regular_font
+            )
+            start_position_y += y_offset
+
+    def get_daf_picture(self, text: str) -> BytesIO:
+        self._draw_title(
+            self._draw,
+            localization.DafYomi.titles[self._lang],
+            self._lang
+        )
+        self._draw_daf_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+class ShabbosSender(PictureSender):
+
+    def __init__(self, lang: str):
+        self._lang = lang
+        self._data_font_size = 60
+        self._warning_font_size_s = 48
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._warning_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._warning_font_size_s
+        )
+        self._bold_font_offset = self._bold_font.getsize
+        self._background_path = 'res/backgrounds/shabbos.png'
+        self._draw = self._get_draw(self._background_path)
+
+    def _regular_font_offset(self, text):
+        offset = self._regular_font.getsize(text)[0]
+        return offset
+
+    def _draw_shabbos_data(self, data: str, shabbos_warning: bool):
+        start_position_y = 400
+        start_position_x = 100
+        y_offset = 80
+        draw = self._draw
+        if shabbos_warning:
+            if '%' in data:
+                text_lines = data.split('%')[0].split('\n')
+            else:
+                text_lines = data.split('?')[0].split('\n')
+                start_position_y = 470
+        else:
+            text_lines = data.split('\n')
+        for line in text_lines:
+            # definition part separetes from value part by '|' symbol
+            line_parts = line.split('|')
+            draw.text(
+                (start_position_x, start_position_y),  # coordinates
+                line_parts[0] + ' ',
+                font=self._bold_font
+            )
+            draw.text(
+                (
+                    start_position_x +
+                    self._regular_font_offset(line_parts[0]),
+                    start_position_y
+                ),
+                line_parts[1],
+                font=self._regular_font
+            )
+            start_position_y += y_offset
+
+        if shabbos_warning:
+            if '?' in data:
+                start_position_y = 810
+                if self._lang == 'English':
+                    start_position_y = 830
+                warning_lines = data.split('?')[1].split('\n')
+            else:
+                warning_lines = data.split('%')[1].split('\n')
+                start_position_y = 830
+            start_position_x = 100
+            y_offset = 50
+            for line in warning_lines:
+                draw.text(
+                    (start_position_x, start_position_y),  # coordinates
+                    line,
+                    font=self._warning_font,
+                    fill='#ff5959'
+                )
+                start_position_y += y_offset
+
+    def get_shabbos_picture(self, text: str) -> BytesIO:
+        shabbos_warning = False
+        if '%' or '?' in text:
+            shabbos_warning = True
+            self._background_path = 'res/backgrounds/shabbos_attention.png'
+            self._draw = self._get_draw(self._background_path)
+        self._draw_title(
+            self._draw,
+            localization.Shabos.titles[self._lang],
+            self._lang
+        )
+        self._draw_shabbos_data(text, shabbos_warning)
+        pic = self._convert_img_to_bytes_io(self._image)
+        self._image.save('test.png')
         return pic
