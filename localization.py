@@ -13,13 +13,15 @@ class DafYomi(object):
 
     @staticmethod
     def get_str(lang: str, masechta: str, daf: str) -> str:
-        daf_str = ''
-        if lang == 'Russian':
-            daf_str = f'Трактат: |{data.talmud[masechta]} ' \
-                      f'\nЛист: |{daf}'
-        elif lang == 'English':
-            daf_str = f'Masechta: |{masechta}\n ' \
-                      f'Daf: |{daf}'
+        responses = {
+            'Russian': f'*Даф Йоми*\n\n📗 *Трактат:* {data.talmud[masechta]}'
+                       f' \n📄 *Лист:* {daf}',
+            'English': f'*Daf Yomi*\n\n📗 *Masechta:* {masechta}\n '
+                       f'📄 *Daf:* {daf}',
+            'Hebrew': f'*דף יומי*\n\n📗 *מסכתא:* {data.talmud_he[masechta]}\n '
+                      f'📄 *דף*: {daf}'
+        }
+        daf_str = responses.get(lang, '')
         return daf_str
 
 
@@ -39,13 +41,15 @@ class RoshHodesh(object):
             first_year: int,
             second_year: int
     ) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'31 декабря {first_year} года и *1 ' \
-                      f'января {second_year} года*'
-        elif lang == 'English':
-            rh_days = f'31 December {first_year} and *1 ' \
-                      f'January {second_year}*'
+        responses = {
+            'Russian': f'31 декабря {first_year} года и 1 '
+                       f'января {second_year} года',
+            'English': f'31 December {first_year} and 1 '
+                       f'January {second_year}',
+            'Hebrew': f' ו {first_year} בדצמבר 31'
+                      f'{second_year} בינואר'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # если 2 дня РХ в разных месяцах, но в одном году
@@ -57,14 +61,17 @@ class RoshHodesh(object):
             second_month: int,
             year: int
     ) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'{first_day} и 1 {data.gr_months_index[first_month]} ' \
-                      f'и {data.gr_months_index[second_month]} {year} года*'
-        elif lang == 'English':
-            rh_days = f'{first_day} and 1 ' \
-                      f'{data.gr_months_index_en[first_month]}' \
-                      f' and {data.gr_months_index_en[second_month]} {year}*'
+        responses = {
+            'Russian': f'{first_day} и 1 {data.gr_months_index[first_month]} '
+                       f'и {data.gr_months_index[second_month]} {year} года',
+            'English': f'{first_day} and 1 '
+                       f'{data.gr_months_index_en[first_month]}'
+                       f' and {data.gr_months_index_en[second_month]} {year}',
+            'Hebrew':  f'{first_day} ו 1 '
+                       f'{data.gr_months_index_he[first_month]}'
+                       f' ו {data.gr_months_index_he[second_month]} {year}'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # если в РХ 2 дня
@@ -76,23 +83,26 @@ class RoshHodesh(object):
             month: int,
             year: int
     ) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'{first_day} и {second_day} ' \
-                      f'{data.gr_months_index[month]} {year} года*'
-        elif lang == 'English':
-            rh_days = f'{first_day} and {second_day} ' \
-                      f'{data.gr_months_index_en[month]} {year}*'
+        responses = {
+            'Russian': f'{first_day} и {second_day} '
+                       f'{data.gr_months_index[month]} {year} года',
+            'English': f'{first_day} and {second_day} '
+                       f'{data.gr_months_index_en[month]} {year}',
+            'Hebrew': f'{first_day} ו {second_day} '
+                      f'{data.gr_months_index_he[month]} {year}'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # если в РХ 1 день выпадает на 1 января
     @staticmethod
     def one_day_first_day_of_jan(lang: str, year: int) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'1 января {year} года'
-        elif lang == 'English':
-            rh_days = f'1 January {year}'
+        responses = {
+            'Russian': f'1 января {year} года',
+            'English': f'1 January {year}',
+            'Hebrew': f'1 {year} בינואר'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # если в РХ 1 день выпадает на начало месяца
@@ -102,11 +112,12 @@ class RoshHodesh(object):
             month: int,
             year: int
     ) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'1 {data.gr_months_index[month]} {year} года'
-        elif lang == 'English':
-            rh_days = f'1 {data.gr_months_index_en[month]} {year}'
+        responses = {
+            'Russian': f'1 {data.gr_months_index[month]} {year} года',
+            'English': f'1 {data.gr_months_index_en[month]} {year}',
+            'Hebrew': f'1 {data.gr_months_index_he[month]} {year}'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # если в РХ 1 день
@@ -117,11 +128,12 @@ class RoshHodesh(object):
             month: int,
             year: int
     ) -> str:
-        rh_days = ''
-        if lang == 'Russian':
-            rh_days = f'{day} {data.gr_months_index[month]} {year} года'
-        elif lang == 'English':
-            rh_days = f'{day} {data.gr_months_index_en[month]} {year}'
+        responses = {
+            'Russian': f'{day} {data.gr_months_index[month]} {year} года',
+            'English': f'{day} {data.gr_months_index_en[month]} {year}',
+            'Hebrew': f'{day} {data.gr_months_index_he[month]} {year}'
+        }
+        rh_days = responses.get(lang, '')
         return rh_days
 
     # определяем день недели
@@ -131,19 +143,23 @@ class RoshHodesh(object):
             first_day: int,
             second_day=None
     ) -> str:
-        day_of_week = ''
+        responses = ''
         if second_day:
-            if lang == 'Russian':
-                day_of_week = f'{data.days_ru[first_day]}-' \
-                              f'{data.days_ru[second_day]}'
-            elif lang == 'English':
-                day_of_week = f'{data.days_en[first_day]}-' \
-                              f'{data.days_en[second_day]}'
+            responses = {
+                'Russian': f'{data.days_r[first_day]}-'
+                           f'{data.days_r[second_day]}',
+                'English': f'{data.days_e[first_day]}-'
+                           f'{data.days_e[second_day]}',
+                'Hebrew': f'{data.days_h[first_day]}-'
+                          f'{data.days_h[second_day]}'
+            }
         elif not second_day:
-            if lang == 'Russian':
-                day_of_week = f'{data.days_ru[first_day]}'
-            elif lang == 'English':
-                day_of_week = f'{data.days_en[first_day]}'
+            responses = {
+                'Russian': f'{data.days_r[first_day]}',
+                'English': f'{data.days_e[first_day]}',
+                'Hebrew': f'{data.days_h[first_day]}'
+            }
+        day_of_week = responses.get(lang, '')
         return day_of_week
 
     # определяем молад
@@ -156,24 +172,32 @@ class RoshHodesh(object):
             nhours: int,
             hours: str,
             nminutes: int,
+            # minutes: str,
             nchalakim: int,
             chalakim: str
     ) -> str:
-        molad_str = ''
-        if lang == 'Russian':
-            molad_str = f'{day} {data.gr_months[month]}, ' \
-                        f'{data.gr_dayofweek[day_of_week]},^' \
-                        f'{nhours} {data.hours.get(hours[-1:], "часов")} ' \
-                        f'{nminutes} ' \
-                        f'{data.minutes.get(nminutes, "минут")} и ' \
-                        f'{nchalakim} {data.chalakim.get(chalakim, "частей")}'
-        elif lang == 'English':
-            molad_str = f'{day} {month}, {day_of_week},^' \
-                        f'{nhours} {data.hours_e.get(hours, "hours")} ' \
-                        f'{nminutes} ' \
-                        f'{data.minutes_e.get(nminutes, "minutes")} and ' \
-                        f'{nchalakim} ' \
-                        f'{data.chalakim_e.get(chalakim, "chalakim")}'
+        responses = {
+            'Russian': f'{day} {data.gr_months[month]}, '
+                       f'{data.gr_dayofweek[day_of_week]}, '
+                       f'{nhours} {data.hours.get(hours[-1:], "часов")} '
+                       f'{nminutes} '
+                       f'{data.minutes.get(nminutes, "минут")} и '
+                       f'{nchalakim} {data.chalakim.get(chalakim, "частей")}',
+            'English': f'{day} {month}, {day_of_week}, '
+                       f'{nhours} {data.hours_e.get(hours, "hours")} '
+                       f'{nminutes} '
+                       f'{data.minutes_e.get(nminutes, "minutes")} and '
+                       f'{nchalakim} '
+                       f'{data.chalakim_e.get(chalakim, "chalakim")}',
+            'Hebrew': f'{day} {data.gr_months_he[month]}, '
+                      f'{data.gr_dayofweek_he[day_of_week]}, '
+                      f'{nhours} {data.hours_h.get(hours, "שעות")} '
+                      f'{nminutes} '
+                      f'{data.minutes_h.get(nminutes, "דקות")} '
+                      f'ו {nchalakim}'
+                      f' {data.chalakim_h.get(chalakim, "חלקים")}'
+        }
+        molad_str = responses.get(lang, '')
         return molad_str
 
     # определяем РХ
@@ -185,19 +209,22 @@ class RoshHodesh(object):
             rosh_hodesh: str,
             molad: str
     ) -> str:
-        rh = ''
-        if lang == 'Russian':
-            rh = f'Месяц: |{data.jewish_months[month]}\n' \
-                 f'Число дней: |{length} ' \
-                 f'{data.length_r[f"{length}"]}\n' \
-                 f'Дата: |{rosh_hodesh}\nМолад: |{molad}'
-        elif lang == 'English':
-            rh = f'Month: |{month}\n' \
-                 f'Number of days: |{length} ' \
-                 f'{data.length_e[f"{length}"]}\n' \
-                 f'Date: |{rosh_hodesh}\nMolad: |{molad}'
+        responses = {
+            'Russian': f'Месяц: |{data.jewish_months[month]}\n'
+                       f'Число дней: |{length} '
+                       f'{data.length_r[f"{length}"]}\n'
+                       f'Дата: |{rosh_hodesh}\nМолад: |{molad}',
+            'English': f'Month: |{month}\n'
+                       f'Number of days: |{length} '
+                       f'{data.length_e[f"{length}"]}\n'
+                       f'Date: |{rosh_hodesh}\nMolad: |{molad}',
+            'Hebrew': f'\n*חודש:* {data.jewish_months_he[month]}\n'
+                      f' *משך ראש חודש:*'
+                      f' {data.length_he[f"{length}"]}\n '
+                      f'ראש חודש: {rosh_hodesh}\nמולד: {molad}'
+        }
+        rh = responses.get(lang, '')
         return rh
-
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ШАББАТА
 class Shabos(object):

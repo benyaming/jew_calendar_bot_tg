@@ -1,6 +1,11 @@
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from data import main_menu_buttons as main
+from data import holiday_menu_buttons as holiday
+from data import fast_menu_buttons as fast
+from data import settings_menu_buttons as setting
+
 from localization import Zmanim
 from zmanim import ZmanimList
 
@@ -9,76 +14,69 @@ import db_operations, data
 
 def get_main_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
-    if lang == 'English':
-        user_markup.row('Zmanim', 'Shabbos', 'Holidays')
-        user_markup.row('Rosh Chodesh', 'Daf Yomi', 'Fast days')
-        user_markup.row('Zmanim by the date', 'Date converter')
-        user_markup.row('Language', 'Help', 'Settings')
-    elif lang == 'Russian':
-        user_markup.row('Зманим', 'Шаббат', 'Праздники')
-        user_markup.row('Рош Ходеш', 'Даф Йоми', 'Посты')
-        user_markup.row('Зманим по дате', 'Конвертер дат')
-        user_markup.row('Язык', 'Помощь', 'Настройки')
+    user_markup.row(main['Zmanim'][lang],
+                    main['Shabbos'][lang],
+                    main['Holidays'][lang])
+    user_markup.row(main['Rosh Chodesh'][lang],
+                    main['Daf Yomi'][lang],
+                    main['Fast days'][lang])
+    user_markup.row(main['Zmanim by the date'][lang],
+                    main['Date converter'][lang])
+    user_markup.row(main['Language'][lang],
+                    main['Help'][lang],
+                    main['Settings'][lang])
     return user_markup
-
 
 def get_settings_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
-    if lang == 'English':
-        user_markup.row('Select zmanim', 'Candle lighting', 'Language')
-        user_markup.row('Diaspora', 'Location', 'Back')
-    elif lang == 'Russian':
-        user_markup.row('Выбрать зманим', 'Зажигание свечей', 'Язык')
-        user_markup.row('Диаспора', 'Локация', 'Назад')
+    user_markup.row(setting['Select zmanim'][lang],
+                    setting['Candle lighting'][lang],
+                    setting['Language'][lang])
+    user_markup.row(setting['Diaspora'][lang],
+                    setting['Location'][lang],
+                    setting['Back'][lang])
     return user_markup
 
 
 def get_holiday_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
-    if lang == 'Russian':
-        user_markup.row('Рош Ашана', 'Йом Кипур', 'Суккот')
-        user_markup.row('Шмини Ацерет', 'Ханука', 'Пурим')
-        user_markup.row('Пейсах', 'Шавуот', 'Больше...')
-        user_markup.row('Назад')
-    elif lang == 'English':
-        user_markup.row('Rosh HaShanah', 'Yom Kippur', 'Succos')
-        user_markup.row('Shmini Atzeres', 'Chanukah', 'Purim')
-        user_markup.row('Pesach', 'Shavuot', 'More...')
-        user_markup.row('Back')
+    user_markup.row(holiday['Rosh HaShanah'][lang],
+                    holiday['Yom Kippur'][lang],
+                    holiday['Succos'][lang])
+    user_markup.row(holiday['Shmini Atzeres'][lang],
+                    holiday['Chanukah'][lang],
+                    holiday['Purim'][lang])
+    user_markup.row(holiday['Pesach'][lang],
+                    holiday['Shavuot'][lang],
+                    holiday['More'][lang])
+    user_markup.row(holiday['Back'][lang])
     return user_markup
 
 
 def get_more_holiday_menu(lang: str) -> ReplyKeyboardMarkup:
     user_markup = ReplyKeyboardMarkup(True, False)
-    if lang == 'Russian':
-        user_markup.row('Ту биШват', 'Лаг баОмер')
-        user_markup.row('Израильские праздники')
-        user_markup.row('Основные праздники', 'Главное меню')
-    elif lang == 'English':
-        user_markup.row('Tu BShevat', 'Lag BaOmer')
-        user_markup.row('Israel holidays')
-        user_markup.row('Main holidays', 'Main menu')
+    user_markup.row(holiday['Tu BShevat'][lang],
+                    holiday['Lag BaOmer'][lang])
+    user_markup.row(holiday['Israel holidays'][lang])
+    user_markup.row(holiday['Main holidays'][lang],
+                    holiday['Main menu'][lang])
     return user_markup
 
 
 def get_fast_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
-    if lang == 'Russian':
-        user_markup.row('Пост Гедалии', '10 Тевета')
-        user_markup.row('Пост Эстер', '17 Таммуза')
-        user_markup.row('9 Ава')
-        user_markup.row('Назад')
-    elif lang == 'English':
-        user_markup.row('Tzom Gedaliah', 'Asarah BTevet')
-        user_markup.row('Taanit Esther', 'Shiva Asar BTammuz')
-        user_markup.row('Tisha BAv')
-        user_markup.row('Back')
+    user_markup.row(fast['Tzom Gedaliah'][lang],
+                    fast['Asarah BTevet'][lang])
+    user_markup.row(fast['Taanit Esther'][lang],
+                    fast['Shiva Asar BTammuz'][lang])
+    user_markup.row(fast['Tisha BAv'][lang])
+    user_markup.row(fast['Back'][lang])
     return user_markup
 
 
 def get_lang_menu():
     lang_markup = ReplyKeyboardMarkup(True, False)
-    lang_markup.row('Русский', 'English')
+    lang_markup.row('Русский', 'English', 'Hebrew')
     return lang_markup
 
 
@@ -86,7 +84,8 @@ def get_geobutton(lang, is_update=False):
     geobutton = ReplyKeyboardMarkup(True)
     title = {
         'Russian': 'Отправить координаты',
-        'English': 'Send location'
+        'English': 'Send location',
+        'Hebrew': 'Send location'
     }
     geobutton.row(KeyboardButton(
         request_location=True,
@@ -95,7 +94,8 @@ def get_geobutton(lang, is_update=False):
     if is_update:
         cancel = {
             'Russian': 'Отмена',
-            'English': 'Cancel'
+            'English': 'Cancel',
+            'Hebrew': 'cancel'
         }
         geobutton.row(cancel.get(lang, ''))
     return geobutton
@@ -105,7 +105,8 @@ def get_cancel_keyboard(lang):
     keyboard = ReplyKeyboardMarkup(True)
     cancel = {
         'Russian': 'Отмена',
-        'English': 'Cancel'
+        'English': 'Cancel',
+        'Hebrew': 'cancel'
     }
     keyboard.row(cancel.get(lang, ''))
     return keyboard
