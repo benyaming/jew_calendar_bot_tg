@@ -391,31 +391,79 @@ class Zmanim(object):
 # ЛОКАЛИЗАЦИЯ ДЛЯ ВСПОМОГАТЕЛЬНЫХ ФУНКЦИЙ
 class Utils(object):
 
+    # перешли в меню постов
+    @staticmethod
+    def get_fast_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите:',
+            'English': 'Choose:',
+            'Hebrew': 'בחר:'
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # перешли в основное меню
+    @staticmethod
+    def get_main_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите:',
+            'English': 'Choose:',
+            'Hebrew': 'בחר:'
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # перешли в меню праздников
+    @staticmethod
+    def get_holiday_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите: (клавиатуру можно скроллить)',
+            'English': 'Choose: (scroll keyboard)',
+            'Hebrew': 'празднички'
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # перешли дальше по меню праздников
+    @staticmethod
+    def get_more_holiday_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите:',
+            'English': 'Choose:',
+            'Hebrew': 'בחר:'
+        }
+        response = responses.get(lang, '')
+        return response
+
     # координаты получены
     @staticmethod
     def location_received(lang: str) -> str:
-        response = ''
-        if lang == 'Russian':
-            response = 'Координаты получены, теперь вы можете ' \
-                       'начать работать с ботом.'
-        elif lang == 'English':
-            response = 'Location has been received, now you can start ' \
-                       'working with the bot'
+        responses = {
+            'Russian': 'Координаты получены, теперь вы можете '
+                       'начать работать с ботом.',
+            'English': 'Location has been received, now you can start '
+                       'working with the bot',
+            'Hebrew': 'המיקום התקבל, כעת אתם יכולים להתחיל לעבוד עם ה bot.'
+        }
+        response = responses.get(lang, '')
         return response
 
     # ошибка определения тз
     @staticmethod
     def failed_check_tz(lang: str) -> str:
-        response = ''
-        if lang == 'Russian':
-            response = 'Не получилось определить часовой пояс. Возможно ' \
-                       'вы находитесь далеко от берега или указали ' \
-                       'неверные координаты. Попробуйте отправить свое' \
-                       ' местоположение еще раз'
-        elif lang == 'English':
-            response = 'Time zone could not be determined. Рrobably, you' \
-                       ' аre far from сoast or indicate incorrect ' \
-                       'coordinates. Try to send your location again.'
+        responses = {
+            'Russian': 'Не получилось определить часовой пояс. Возможно '
+                       'вы находитесь далеко от берега или указали '
+                       'неверные координаты. Попробуйте отправить свое'
+                       ' местоположение еще раз',
+            'English': 'Time zone could not be determined. Рrobably, you'
+                       ' аre far from сoast or indicate incorrect '
+                       'coordinates. Try to send your location again.',
+            'Hebrew': 'אזור הזמן לא ניתן לקביעה. כנראה שהינך רחוק מחוף או '
+                      'שמצוינות נקודות ציון שגויות. נסו לשלוח את המיקום מחדש.'
+
+        }
+        response = responses.get(lang, '')
         return response
 
     # некорректный текст
@@ -425,7 +473,8 @@ class Utils(object):
             'Russian': 'Некорректная команда. Пожалуйста, выберите один из '
                        'вариантов на кнопках.',
             'English': 'Incorrect command. Please, choose one of the options '
-                       'on the buttons'
+                       'on the buttons',
+            'Hebrew': 'פקודה שגויה. נא לבחור אחת מהאפשרויות שבלחצנים.'
         }
         response = responses.get(lang, '')
         return response
@@ -444,7 +493,13 @@ class Utils(object):
                        '*Notice* that Telegram on PC is not supported yet '
                        'sending locations in this way. In order to send '
                        'location on PC, send it like text, for example, '
-                       '"_55.5, 37.7_", or forward message with location here.'
+                       '"_55.5, 37.7_", or forward message '
+                       'with location here.',
+            'Hebrew': 'נא לשלוח מיקום חדש ע״י הקשה על הכפתור . שימו לב שגרסת'
+                      ' המחשב של טלגרם לא נתמכת בשליחת מיקומים בדרך זו. על '
+                      'מנת לשלוח מיקום על מחשב, יש לשלוח אותו בצורה של טקסט, '
+                      'לדוגמא: ״_55.5, 37.7_״ , או להעביר הודעה עם המיקום כאן.'
+
         }
         response = responses.get(lang, '')
         return response
@@ -461,19 +516,27 @@ class Utils(object):
             'English': 'For bug report please write to one of developers: \n'
                        't.me/benyomin \nt.me/Meir_Yartzev \nt.me/APJIAC\n'
                        'Please, make sure that you '
-                       'had been read F.A.Q. available by "F.A.Q." button'
+                       'had been read F.A.Q. available by "F.A.Q." button',
+            'Hebrew': 'לדיווח על באגים נא לכתוב לאחד המפתחים:'
+                      '\nt.me/benyomin\n'
+                      't.me/Meir_Y\n'
+                      't.me/APJIAC\n'
+                      'נא לוודא שקראת את ה FAQ (שאלות ותשובות)'
+                      ' שנמצא בכפתור ה FAQ.'
         }
         response = responses.get(lang, '')
         return response
 
     # запрос даты для зманим
     @staticmethod
-    def request_date_for_zmanim(lang: str) -> str:
+    def request_date(lang: str) -> str:
         responses = {
             'Russian': 'Пожалуйста, введите дату, на которую вы '
                        'хотите получить _зманим_ *в формате ДД.ММ.ГГГГ*',
             'English': 'Please enter the date to calculate the _Zmanim_  '
-                       'for your selection *in the format DD.MM.YYYY*'
+                       'for your selection *in the format DD.MM.YYYY*',
+            'Hebres': 'נא להזין תאריך על מנת לחשב את ה_Zmanim_'
+                      ' עבור הבחירה שלך ב*פורמט DD.MM.YYY'
         }
         response = responses.get(lang, '')
         return response
@@ -485,7 +548,8 @@ class Utils(object):
             'Russian': 'Вы ввели некорректную дату. \nПожалуйста, введите '
                        'дату в *формате ДД.ММ.ГГГГ*',
             'English': 'Incorrect date. \nPlease input date *in '
-                       'the format DD.MM.YYYY*'
+                       'the format DD.MM.YYYY*',
+            'Hebrew': 'התאריך שגוי. נא להזין תאריך ב*פורמט של DD.MM.YYYY'
         }
         response = responses.get(lang, '')
         return response

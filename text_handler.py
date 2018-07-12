@@ -33,7 +33,7 @@ def request_date():
         request_location()
     else:
         states.set_state(user, 'waiting_for_date')
-        response = l.Utils.request_date_for_zmanim(lang)
+        response = l.Utils.request_date(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
         bot.send_message(
             user,
@@ -114,21 +114,14 @@ def rosh_chodesh() -> None:
 
 
 def holidays():
-    responses = {
-        'Russian': 'Выберите интересующий вас праздник:',
-        'English': 'Choose:'
-    }
-    response = responses.get(lang, '')
+    response = l.Utils.get_holiday_menu(lang)
     holiday_menu = keyboards.get_holiday_menu(lang)
     bot.send_message(user, response, reply_markup=holiday_menu)
 
 
+
 def fasts():
-    responses = {
-        'Russian': 'Выберите:',
-        'English': 'Choose:'
-    }
-    response = responses.get(lang, '')
+    response = l.Utils.get_fast_menu(lang)
     fast_menu = keyboards.get_fast_menu(lang)
     bot.send_message(user, response, reply_markup=fast_menu)
 
@@ -176,11 +169,7 @@ def main_menu():
         request_location()
     else:
         user_markup = keyboards.get_main_menu(lang)
-        responses = {
-            'Russian': 'Выберите:',
-            'English': 'Choose:'
-        }
-        response = responses.get(lang, '')
+        response = l.Utils.get_main_menu(lang)
         bot.send_message(user, response, reply_markup=user_markup)
 
 
@@ -204,11 +193,7 @@ def more_holiday_menu():
         return request_location()
     else:
         user_markup = keyboards.get_more_holiday_menu(lang)
-        responses = {
-            'Russian': 'Выберите:',
-            'English': 'Choose:'
-        }
-        response = responses.get(lang, '')
+        response = l.Utils.get_more_holiday_menu(lang)
         bot.send_message(user, response, reply_markup=user_markup)
 
 
@@ -217,7 +202,7 @@ def rosh_hashana():
     if not loc:
         return request_location()
     else:
-        response = h.rosh_hashanah(user, lang)
+        response = h.get_holiday_string('Rosh Hashana', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -226,7 +211,7 @@ def yom_kippur():
     if not loc:
         return request_location()
     else:
-        response = h.yom_kipur(user, lang)
+        response = h.get_holiday_string('Yom Kippur', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -235,16 +220,27 @@ def succot():
     if not loc:
         return request_location()
     else:
-        response = h.succos(user, lang)
+        get_succot = h.get_holiday_string('SuccosI', user, lang)
+        get_hoshana_rabba = h.get_holiday_string('HoshanaRabba', user, lang)
+        response = get_succot + '\n\n' + get_hoshana_rabba
         bot.send_message(user, response, parse_mode='Markdown')
 
 
 def shmini_atzeret():
     loc = db_operations.get_location_by_id(user)
+    diaspora = True  # db_operations.get_diaspora_status(user)
     if not loc:
         return request_location()
     else:
-        response = h.shmini_atzeres_simhat(user, lang)
+        if not diaspora:
+            get_shmini_atzeret = h.get_holiday_string(
+                'ShminiAtzeresI', user, lang
+            )
+        else:
+            get_shmini_atzeret = h.get_holiday_string(
+                'ShminiAtzeresII', user, lang
+            )
+        response = get_shmini_atzeret
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -253,7 +249,7 @@ def chanukah():
     if not loc:
         return request_location()
     else:
-        response = h.chanukah(user, lang)
+        response = h.get_holiday_string('Chanuka', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -262,7 +258,7 @@ def tu_beshvat():
     if not loc:
         return request_location()
     else:
-        response = h.tu_bshevat(user, lang)
+        response = h.get_holiday_string('Tu B\'shvat', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -271,7 +267,9 @@ def purim():
     if not loc:
         return request_location()
     else:
-        response = h.purim(user, lang)
+        get_purim = h.get_holiday_string('Purim', user, lang)
+        get_shushan_purim = h.get_holiday_string('Shushan Purim', user, lang)
+        response = get_purim + '\n\n' + get_shushan_purim
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -280,7 +278,7 @@ def pesach():
     if not loc:
         return request_location()
     else:
-        response = h.pesach(user, lang)
+        response = h.get_holiday_string('Pesach', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -289,7 +287,7 @@ def lag_baomer():
     if not loc:
         return request_location()
     else:
-        response = h.lag_baomer(user, lang)
+        response = h.get_holiday_string('Lag Ba\'omer', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -298,7 +296,16 @@ def shavuot():
     if not loc:
         return request_location()
     else:
-        response = h.shavuot(user, lang)
+        response = h.get_holiday_string('Shavuos', user, lang)
+        bot.send_message(user, response, parse_mode='Markdown')
+
+
+def tu_beav():
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        return request_location()
+    else:
+        response = h.get_holiday_string('Tu B\'av', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -307,7 +314,13 @@ def israel():
     if not loc:
         return request_location()
     else:
-        response = h.get_israel(user, lang)
+        get_yom_hashoa = h.get_holiday_string('YomHaShoah', user, lang)
+        get_yom_hazikaron = h.get_holiday_string('YomHaZikaron', user, lang)
+        get_yom_hatzmaut = h.get_holiday_string('YomHaAtzmaut', user, lang)
+        get_yom_yerushalaim = h.get_holiday_string(
+            'YomYerushalayim', user, lang)
+        response = get_yom_hashoa + '\n\n' + get_yom_hazikaron + \
+            '\n\n' + get_yom_hatzmaut + '\n\n' + get_yom_yerushalaim
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -316,7 +329,7 @@ def fast_gedaliah():
     if not loc:
         return request_location()
     else:
-        response = h.tzom_gedaliah(user, lang)
+        response = h.get_holiday_string('Tzom Gedalia', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -325,7 +338,7 @@ def asarah_betevet():
     if not loc:
         return request_location()
     else:
-        response = h.asarah_btevet(user, lang)
+        response = h.get_holiday_string('10 of Teves', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -334,7 +347,7 @@ def fast_esther():
     if not loc:
         return request_location()
     else:
-        response = h.taanit_esther(user, lang)
+        response = h.get_holiday_string('Taanis Esther', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -343,7 +356,7 @@ def sheva_asar_betammuz():
     if not loc:
         return request_location()
     else:
-        response = h.shiva_asar_tammuz(user, lang)
+        response = h.get_holiday_string('17 of Tamuz', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -352,9 +365,8 @@ def tisha_beav():
     if not loc:
         return request_location()
     else:
-        response = h.tisha_bav(user, lang)
+        response = h.get_holiday_string('9 of Av', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
-
 
 def change_lang():
     response = 'Выберите язык/Choose the language'
@@ -559,7 +571,8 @@ def handle_text(user_id: int, message: str) -> None:
     if message in ['Русский', 'English']:
         langs = {
             'Русский': 'Russian',
-            'English': 'English'
+            'English': 'English',
+            'Hebrew': 'Hebrew'
         }
         lang = langs.get(message, '')
     else:
@@ -579,10 +592,11 @@ def handle_text(user_id: int, message: str) -> None:
             func = user_states.get(user_has_state['state'], '')
             func()
     else:
-        if message in ['Русский', 'English']:
+        if message in ['Русский', 'English', 'Hebrew']:
             langs = {
                 'Русский': 'Russian',
-                'English': 'English'
+                'English': 'English',
+                'Hebrew': 'Hebrew'
             }
             lang = langs.get(message, '')
         else:
@@ -594,6 +608,7 @@ def handle_text(user_id: int, message: str) -> None:
             'Cancel': main_menu,
             'Русский': set_lang,
             'English': set_lang,
+            'Hebrew': set_lang,
             'Назад/Back': change_lang,
             'Зманим': get_zmanim,
             'Zmanim': get_zmanim,
@@ -601,14 +616,19 @@ def handle_text(user_id: int, message: str) -> None:
             'Zmanim by the date': request_date,
             'Шаббат': shabbat,
             'Shabbos': shabbat,
+            'שבת': shabbat,
             'Рош Ходеш': rosh_chodesh,
             'Rosh Chodesh': rosh_chodesh,
+            'ראש חודש': rosh_chodesh,
             'Праздники': holidays,
             'Holidays': holidays,
+            'חגים': holidays,
             'Посты': fasts,
             'Fast days': fasts,
+            'כהנה': fasts,
             'Даф Йоми': daf_yomi,
             'Daf Yomi': daf_yomi,
+            'דף יומי': daf_yomi,
             'Местоположение': update_location,
             'Location': update_location,
             'Назад': main_menu,
@@ -625,36 +645,53 @@ def handle_text(user_id: int, message: str) -> None:
             'Главное меню': main_menu,
             'Рош Ашана': rosh_hashana,
             'Rosh HaShanah': rosh_hashana,
+            'ראש השנה': rosh_hashana,
             'Йом Кипур': yom_kippur,
             'Yom Kippur': yom_kippur,
+            'יום כיפור': yom_kippur,
             'Суккот': succot,
             'Succos': succot,
+            'סוכות': succot,
             'Шмини Ацерет': shmini_atzeret,
             'Shmini Atzeres': shmini_atzeret,
+            'שמיני עצרת': shmini_atzeret,
             'Ханука': chanukah,
             'Chanukah': chanukah,
+            'חנוכה': chanukah,
             'Ту биШват': tu_beshvat,
             'Tu BShevat': tu_beshvat,
+            'ט"ו בשבט': tu_beshvat,
             'Пурим': purim,
             'Purim': purim,
+            'פורים': purim,
             'Пейсах': pesach,
             'Pesach': pesach,
+            'פסח': pesach,
             'Лаг баОмер': lag_baomer,
             'Lag BaOmer': lag_baomer,
+            'ל"ג בעומר': lag_baomer,
             'Шавуот': shavuot,
             'Shavuot': shavuot,
+            'שבועות': shavuot,
+            '15 Ава': tu_beav,
+            'Tu BAv': tu_beav,
             'Израильские праздники': israel,
             'Israel holidays': israel,
             'Пост Гедалии': fast_gedaliah,
             'Tzom Gedaliah': fast_gedaliah,
+            'צום גדליה': fast_gedaliah,
             '10 Тевета': asarah_betevet,
             'Asarah BTevet': asarah_betevet,
+            'עשרה בטבת': asarah_betevet,
             'Пост Эстер': fast_esther,
             'Taanit Esther': fast_esther,
+            'תענית אסתר': fast_esther,
             '17 Таммуза': sheva_asar_betammuz,
             'Shiva Asar BTammuz': sheva_asar_betammuz,
+            'שבעה עשר בתמוז': sheva_asar_betammuz,
             '9 Ава': tisha_beav,
             'Tisha BAv': tisha_beav,
+            'תשעה באב': tisha_beav,
             'Настройки': settings_menu,
             'Settings': settings_menu,
             'Выбрать зманим': select_zmanim,
