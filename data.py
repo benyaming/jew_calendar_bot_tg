@@ -932,167 +932,170 @@ heb_months_codes_he = {  # TODO перевод
     14: 'Adar II'
 }
 
+main_menu_buttons = {
+    'Zmanim': {'Russian': 'Зманим',
+               'English': 'Zmanim',
+               'Hebrew': 'זמנים'
+               },
+    'Shabbos': {'Russian': 'Шаббат',
+                'English': 'Shabbos',
+                'Hebrew': 'שבת'
+                },
+    'Holidays': {'Russian': 'Праздники',
+                 'English': 'Holidays',
+                 'Hebrew': 'חגים'
+                 },
+    'Date converter': {'Russian': 'Конвертер дат',
+                       'English': 'Date converter',
+                       'Hebrew': 'Date converter'
+                       },
+    'Rosh Chodesh': {'Russian': 'Рош Ходеш',
+                     'English': 'Rosh Chodesh',
+                     'Hebrew': 'ראש חודש'
+                     },
+    'Fast days': {'Russian': 'Посты',
+                  'English': 'Fast days',
+                  'Hebrew': 'כהנה'
+                  },
+    'Zmanim by the date': {'Russian': 'Зманим по дате',
+                           'English': 'Zmanim by the date',
+                           'Hebrew': 'Zmanim by the date'
+                           },
+    'Daf Yomi': {'Russian': 'Даф Йоми',
+                 'English': 'Daf Yomi',
+                 'Hebrew': 'דף יומי'
+                 },
+    'Help': {'Russian': 'Помощь',
+             'English': 'Help',
+             'Hebrew': 'Help'
+             },
+    'Language': {'Russian': 'Язык',
+                 'English': 'Language',
+                 'Hebrew': 'Language'
+                 },
+    'Settings': {'Russian': 'Настройки',
+                 'English': 'Settings',
+                 'Hebrew': 'Settings'
+                 },
+    'Contact': {'Russian': 'Сообщить об ошибке',
+                'English': 'Contact',
+                'Hebrew': 'Contact'
+                }
+}
 
-main_menu_buttons = {'Zmanim': {'Russian': 'Зманим',
-                                'English': 'Zmanim',
-                                'Hebrew': 'זמנים'
-                                },
-                     'Shabbos': {'Russian': 'Шаббат',
-                                 'English': 'Shabbos',
-                                 'Hebrew': 'שבת'
-                                 },
-                     'Holidays': {'Russian': 'Праздники',
-                                  'English': 'Holidays',
-                                  'Hebrew': 'חגים'
-                                  },
-                     'Date converter': {'Russian': 'Конвертер дат',
-                                       'English': 'Date converter',
-                                       'Hebrew': 'Date converter'
-                                       },
-                     'Rosh Chodesh': {'Russian': 'Рош Ходеш',
-                                      'English': 'Rosh Chodesh',
-                                      'Hebrew': 'ראש חודש'
-                                      },
-                     'Fast days': {'Russian': 'Посты',
-                                   'English': 'Fast days',
-                                   'Hebrew': 'כהנה'
-                                   },
-                     'Zmanim by the date': {'Russian': 'Зманим по дате',
-                                            'English': 'Zmanim by the date',
-                                            'Hebrew': 'Zmanim by the date'
-                                            },
-                     'Daf Yomi': {'Russian': 'Даф Йоми',
-                                  'English': 'Daf Yomi',
-                                  'Hebrew': 'דף יומי'
-                                  },
-                     'Help': {'Russian': 'Помощь',
-                                  'English': 'Help',
-                                  'Hebrew': 'Help'
-                                  },
-                     'Language': {'Russian': 'Язык',
-                                  'English': 'Language',
-                                  'Hebrew': 'Language'
-                                  },
-                     'Settings': {'Russian': 'Настройки',
-                                'English': 'Settings',
-                                'Hebrew': 'Settings'
-                                },
-                     'Contact': {'Russian': 'Сообщить об ошибке',
-                                 'English': 'Contact',
-                                 'Hebrew': 'Contact'
-                                 }
-                     }
+holiday_menu_buttons = {
+    'Rosh HaShanah': {'Russian': 'Рош Ашана',
+                      'English': 'Rosh HaShanah',
+                      'Hebrew': 'ראש השנה'
+                      },
+    'Yom Kippur': {'Russian': 'Йом Кипур',
+                   'English': 'Yom Kippur',
+                   'Hebrew': 'יום כיפור'
+                   },
+    'Succos': {'Russian': 'Суккот',
+               'English': 'Succos',
+               'Hebrew': 'סוכות'
+               },
+    'Shmini Atzeres': {'Russian': 'Шмини Ацерет',
+                       'English': 'Shmini Atzeres',
+                       'Hebrew': 'שמיני עצרת'
+                       },
+    'Chanukah': {'Russian': 'Ханука',
+                 'English': 'Chanukah',
+                 'Hebrew': 'חנוכה'
+                 },
+    'Purim': {'Russian': 'Пурим',
+              'English': 'Purim',
+              'Hebrew': 'פורים'
+              },
+    'Pesach': {'Russian': 'Пейсах',
+               'English': 'Pesach',
+               'Hebrew': 'פסח'
+               },
+    'Shavuot': {'Russian': 'Шавуот',
+                'English': 'Shavuot',
+                'Hebrew': 'שבועות'
+                },
+    'Tu BShevat': {'Russian': 'Ту биШват',
+                   'English': 'Tu BShevat',
+                   'Hebrew': 'ט"ו בשבט'
+                   },
+    'Lag BaOmer': {'Russian': 'Лаг баОмер',
+                   'English': 'Lag BaOmer',
+                   'Hebrew': 'ל"ג בעומר'
+                   },
+    'Israel holidays': {'Russian': 'Израильские праздники',
+                        'English': 'Israel holidays',
+                        'Hebrew': 'Israel holidays'
+                        },
+    'Main holidays': {'Russian': 'Основные праздники',
+                      'English': 'Main holidays',
+                      'Hebrew': 'Main holidays'
+                      },
+    'Main menu': {'Russian': 'Основное меню',
+                  'English': 'Main menu',
+                  'Hebrew': 'Main menu'
+                  },
+    'More': {'Russian': 'Ещё',
+             'English': 'More...',
+             'Hebrew': 'More...'
+             },
+    'Back': {'Russian': 'Назад',
+             'English': 'Back',
+             'Hebrew': 'Back'
+             }
+}
 
-holiday_menu_buttons = {'Rosh HaShanah': {'Russian': 'Рош Ашана',
-                                          'English': 'Rosh HaShanah',
-                                          'Hebrew': 'ראש השנה'
-                                          },
-                        'Yom Kippur': {'Russian': 'Йом Кипур',
-                                       'English': 'Yom Kippur',
-                                       'Hebrew': 'יום כיפור'
-                                       },
-                        'Succos': {'Russian': 'Суккот',
-                                   'English': 'Succos',
-                                   'Hebrew': 'סוכות'
-                                   },
-                        'Shmini Atzeres': {'Russian': 'Шмини Ацерет',
-                                           'English': 'Shmini Atzeres',
-                                           'Hebrew': 'שמיני עצרת'
-                                           },
-                        'Chanukah': {'Russian': 'Ханука',
-                                     'English': 'Chanukah',
-                                     'Hebrew': 'חנוכה'
-                                     },
-                        'Purim': {'Russian': 'Пурим',
-                                  'English': 'Purim',
-                                  'Hebrew': 'פורים'
-                                  },
-                        'Pesach': {'Russian': 'Пейсах',
-                                   'English': 'Pesach',
-                                   'Hebrew': 'פסח'
-                                   },
-                        'Shavuot': {'Russian': 'Шавуот',
-                                    'English': 'Shavuot',
-                                    'Hebrew': 'שבועות'
-                                    },
-                        'Tu BShevat': {'Russian': 'Ту биШват',
-                                       'English': 'Tu BShevat',
-                                       'Hebrew': 'ט"ו בשבט'
-                                       },
-                        'Lag BaOmer': {'Russian': 'Лаг баОмер',
-                                       'English': 'Lag BaOmer',
-                                       'Hebrew': 'ל"ג בעומר'
-                                       },
-                        'Israel holidays': {'Russian': 'Израильские праздники',
-                                            'English': 'Israel holidays',
-                                            'Hebrew': 'Israel holidays'
-                                            },
-                        'Main holidays': {'Russian': 'Основные праздники',
-                                          'English': 'Main holidays',
-                                          'Hebrew': 'Main holidays'
-                                          },
-                        'Main menu': {'Russian': 'Основное меню',
-                                      'English': 'Main menu',
-                                      'Hebrew': 'Main menu'
-                                      },
-                        'More': {'Russian': 'Ещё',
-                                 'English': 'More...',
-                                 'Hebrew': 'More...'
-                                 },
-                        'Back': {'Russian': 'Назад',
-                                 'English': 'Back',
-                                 'Hebrew': 'Back'
-                                 }
-                        }
+settings_menu_buttons = {
+    'Select zmanim': {'Russian': 'Назад',
+                      'English': 'Select zmanim',
+                      'Hebrew': 'Select zmanim'
+                      },
+    'Candle lighting': {'Russian': 'Назад',
+                        'English': 'Candle lighting',
+                        'Hebrew': 'Candle lighting'
+                        },
+    'Language': {'Russian': 'Назад',
+                 'English': 'Language',
+                 'Hebrew': 'Language'
+                 },
+    'Diaspora': {'Russian': 'Назад',
+                 'English': 'Diaspora',
+                 'Hebrew': 'Diaspora'
+                 },
+    'Location': {'Russian': 'Назад',
+                 'English': 'Location',
+                 'Hebrew': 'Location'
+                 },
+    'Back': {'Russian': 'Назад',
+             'English': 'Back',
+             'Hebrew': 'Back'
+             }
+}
 
-settings_menu_buttons = {'Select zmanim': {'Russian': 'Назад',
-                                 'English': 'Select zmanim',
-                                 'Hebrew': 'Select zmanim'
-                                 },
-                         'Candle lighting': {'Russian': 'Назад',
-                                 'English': 'Candle lighting',
-                                 'Hebrew': 'Candle lighting'
-                                 },
-'Language': {'Russian': 'Назад',
-                                 'English': 'Language',
-                                 'Hebrew': 'Language'
-                                 },
-'Diaspora': {'Russian': 'Назад',
-                                 'English': 'Diaspora',
-                                 'Hebrew': 'Diaspora'
-                                 },
-'Location': {'Russian': 'Назад',
-                                 'English': 'Location',
-                                 'Hebrew': 'Location'
-                                 },
-                         'Back': {'Russian': 'Назад',
-                                 'English': 'Back',
-                                 'Hebrew': 'Back'
-                                 }
-                         }
-
-fast_menu_buttons = {'Tzom Gedaliah': {'Russian': 'Пост Гедалии',
-                                       'English': 'Tzom Gedaliah',
-                                       'Hebrew': 'Tzom Gedaliah'
-                                       },
-                     'Asarah BTevet': {'Russian': '10 Тевета',
-                                       'English': 'Asarah BTevet',
-                                       'Hebrew': 'עשרה בטבת'
-                                       },
-                     'Taanit Esther': {'Russian': 'Пост Эстер',
-                                       'English': 'Taanit Esther',
-                                       'Hebrew': 'תענית אסתר'
-                                       },
-                     'Shiva Asar BTammuz': {'Russian': '17 Таммуза',
-                                            'English': 'Shiva Asar BTammuz',
-                                            'Hebrew': 'שבעה עשר בתמוז'
-                                            },
-                     'Tisha BAv': {'Russian': '9 Ава',
-                                   'English': 'Tisha BAv',
-                                   'Hebrew': 'תשעה באב'
-                                   },
-                     'Back': {'Russian': 'Назад',
-                              'English': 'Back',
-                              'Hebrew': 'Back'
-                              },
-                     }
+fast_menu_buttons = {
+    'Tzom Gedaliah': {'Russian': 'Пост Гедалии',
+                      'English': 'Tzom Gedaliah',
+                      'Hebrew': 'Tzom Gedaliah'
+                      },
+    'Asarah BTevet': {'Russian': '10 Тевета',
+                      'English': 'Asarah BTevet',
+                      'Hebrew': 'עשרה בטבת'
+                      },
+    'Taanit Esther': {'Russian': 'Пост Эстер',
+                      'English': 'Taanit Esther',
+                      'Hebrew': 'תענית אסתר'
+                      },
+    'Shiva Asar BTammuz': {'Russian': '17 Таммуза',
+                           'English': 'Shiva Asar BTammuz',
+                           'Hebrew': 'שבעה עשר בתמוז'
+                           },
+    'Tisha BAv': {'Russian': '9 Ава',
+                  'English': 'Tisha BAv',
+                  'Hebrew': 'תשעה באב'
+                  },
+    'Back': {'Russian': 'Назад',
+             'English': 'Back',
+             'Hebrew': 'Back'
+             },
+}

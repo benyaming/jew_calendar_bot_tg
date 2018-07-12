@@ -536,20 +536,22 @@ class Utils(object):
         return response
 
 
+
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
 
     # Когда невозможно определить времена
     @staticmethod
     def polar_area(lang: str) -> str:
-        ra_time = ''
-        if lang == 'Russian':
-            ra_time = '\nВ данных широтах невозможно определить' \
-                         ' зманим из-за полярного дня/полярной ночи'
-        elif lang == 'English':
-            ra_time = '\nFor this location zmanim is impossible' \
-                        ' to determine because of polar night/day'
-
+        responses = {
+            'Russian': '\nВ данных широтах невозможно определить'
+                       ' зманим из-за полярного дня/полярной ночи',
+            'English': '\nIn these latitudes zmanim is impossible'
+                       ' to determine because of polar night/day',
+            'Hebrew': 'לא ניתן לקבוע את הזמן בגלל ליל'
+                      ' קוטב/שמש חצות בקווי הרוחב האלו'
+        }
+        ra_time = responses.get(lang, '')
         return ra_time
 
     # Когда один день праздника
@@ -563,37 +565,32 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        lighting_time = ''
-        if lang == 'Russian':
-            lighting_time = '🕯 Зажигание свечей {}' \
-                             ' {}:' \
-                             ' *{:.5s}*\n' \
-                             '✨ Авдала {}' \
-                             ' {}:' \
-                             ' *{:.5s}*'\
-                             .format(light_day,
-                                     data.gr_months_index[light_month],
-                                     light_time, avdala_day,
-                                     data.gr_months_index[avdala_month],
-                                     avdala_time)
-        elif lang == 'English':
-            lighting_time = '🕯 Candle lighting {}' \
-                             ' {}:' \
-                             ' *{:.5s}*\n' \
-                             '✨ Avdala {}' \
-                             ' {}:' \
-                             ' *{:.5s}*' \
-                             .format(light_day,
-                                     data.gr_months_index_en[light_month],
-                                     light_time, avdala_day,
-                                     data.gr_months_index_en[avdala_month],
-                                     avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей {light_day}'
+                       f' {data.gr_months_index[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting {light_day}'
+                       f' {data.gr_months_index_en[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות {light_day}'
+                      f' {data.gr_months_index_he[light_month]}:'
+                      f' *{light_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_en[avdala_month]}:'
+                      f' *{avdala_time}*'
+            }
+        lighting_time = responses.get(lang, '')
         return lighting_time
-    
+
     # Когда один день праздника и перед ним шаббат
     @staticmethod
-    def shabbat_before_holiday_israel(
+    def one_day_shabbat_before(
             lang: str,
             light_shab_day: str,
             light_shab_month: str,
@@ -605,49 +602,41 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        lighting_time = ''
-        if lang == 'Russian':
-            lighting_time = '🕯 Зажигание свечей (Шаббат) {}' \
-                            ' {}:' \
-                            ' *{:.5s}*\n' \
-                            '✨🕯 Авдала и зажигание свечей {}' \
-                            ' {}:' \
-                            ' *{:.5s}*\n' \
-                            '✨ Авдала {}' \
-                            ' {}:' \
-                            ' *{:.5s}*' \
-                .format(light_shab_day,
-                        data.gr_months_index[light_shab_month],
-                        light_shab_time,
-                        light_day,
-                        data.gr_months_index[light_month],
-                        light_time, avdala_day,
-                        data.gr_months_index[avdala_month],
-                        avdala_time)
-        elif lang == 'English':
-            lighting_time = '🕯 Candle lighting (Shabbat) {}' \
-                            ' {}:' \
-                            ' *{:.5s}*\n' \
-                            '✨🕯 Avdala and candle lighting {}' \
-                            ' {}:' \
-                            ' *{:.5s}*\n' \
-                            '✨ Avdala {}' \
-                            ' {}:' \
-                            ' *{:.5s}*' \
-                .format(light_shab_day,
-                        data.gr_months_index_en[light_shab_month],
-                        light_shab_time,
-                        light_day,
-                        data.gr_months_index_en[light_month],
-                        light_time, avdala_day,
-                        data.gr_months_index_en[avdala_month],
-                        avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей (Шаббат) {light_shab_day}'
+                       f' {data.gr_months_index[light_shab_month]}:'
+                       f' *{light_shab_time}*\n'
+                       f'✨🕯 Авдала и зажигание свечей {light_day}'
+                       f' {data.gr_months_index[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting (Shabbat) {light_shab_day}'
+                       f' {data.gr_months_index_en[light_shab_month]}:'
+                       f' *{light_shab_time}*\n'
+                       f'✨🕯 Avdala and candle lighting {light_day}'
+                       f' {data.gr_months_index_en[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות שבת {light_shab_day}'
+                      f' {data.gr_months_index_he[light_shab_month]}:'
+                      f' *{light_shab_time}*\n'
+                      f'✨🕯 הבדלה והדלקת נרות {light_day}'
+                      f' {data.gr_months_index_he[light_month]}:'
+                      f' *{light_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        lighting_time = responses.get(lang, '')
         return lighting_time
-    
+
     # Для Йом-Кипура
     @staticmethod
-    def lighting_fast(
+    def fast_yom_kippur(
             lang: str,
             light_day: str,
             light_month: str,
@@ -656,29 +645,73 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        fast_time = ''
-        if lang == 'Russian':
-            fast_time = '🕯 Зажигание свечей и начало поста {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\n' \
-                        '✨ Авдала и конец поста {}' \
-                        ' {}:' \
-                        ' *{:.5s}*' \
-                .format(light_day, data.gr_months_index[light_month],
-                        light_time, avdala_day,
-                        data.gr_months_index[avdala_month], avdala_time)
-        elif lang == 'English':
-            fast_time = '🕯 Candle lighting and the fast begins {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\n' \
-                        '✨ Avdala and the fast ends {}' \
-                        ' {}:' \
-                        ' *{:.5s}*' \
-                .format(light_day, data.gr_months_index_en[light_month],
-                        light_time, avdala_day,
-                        data.gr_months_index_en[avdala_month], avdala_time)
+        responses = {
+            'Russian': f'🕯 Зажигание свечей и начало поста {light_day}'
+                       f' {data.gr_months_index[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Авдала и конец поста {avdala_day}'
+                       f' {data.holi_month[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting and the fast begins {light_day}'
+                       f' {data.gr_months_index[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'✨ Avdala and the fast ends {avdala_day}'
+                       f' {data.holi_month_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hevrew': f'🕯 הדלקת הנרות ותחילת הצום {light_day}'
+                      f' {data.gr_months_index[light_month]}:'
+                      f' *{light_time}*\n'
+                      f'✨ הבדלה ויציאת הצום {avdala_day}'
+                      f' {data.holi_month_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
+        return ra_time
 
-        return fast_time
+    # Для обычных постов
+    @staticmethod
+    def single_fast(
+            lang: str,
+            day: str,
+            month: str,
+            time_begin: str,
+            time_end: str,
+            ben_ashmashot: str,
+            nevareshet: str,
+            shmirat_shabat: str
+    ) -> str:
+        responses = {
+            'Russian': f'Начало поста {day} {data.holi_month[month]}:'
+                       f' *{time_begin[:-3:]}*\n'
+                       f'Конец поста {day} {data.holi_month[month]}'
+                       f'\n✨ Выход звезд: *{time_end[:-3:]}*\n'
+                       f'🕖 Сефер бен Ашмашот: *{ben_ashmashot[:-3:]}'
+                       f'*\n🕘 Неварешет: *{nevareshet[:-3:]}*\n'
+                       f'🕑 Шмират шаббат килхата:'
+                       f' *{shmirat_shabat[:-3:]}*',
+            'English':  f'The fast begins {day} '
+                        f'{data.holi_month_en[month]}:'
+                        f' *{time_begin[:-3:]}*\n'
+                        f'Fast ends {day} {data.holi_month_en[month]}'
+                        f'\n✨ Tzeit akohavim: *{time_end[:-3:]}*\n'
+                        f'🕖 Sefer ben Ashmashot:'
+                        f' *{ben_ashmashot[:-3:]}*\n'
+                        f'🕘 Nevareshet: *{nevareshet[:-3:]}*\n'
+                        f'🕑 Shmirat shabbat kelhata:'
+                        f' *{shmirat_shabat[:-3:]}*',
+            'Hebrew': f'תחילת הצום {day} '
+                      f'{data.holi_month_he[month]}:'
+                      f' *{time_begin[:-3:]}*\n'
+                      f'הצום יוצא ב-{day} {data.holi_month_he[month]}'
+                      f'\n✨ צאת הכוכבים *{time_end[:-3:]}*\n'
+                      f'🕖 ספר בין השמשות:'
+                      f' *{ben_ashmashot[:-3:]}*\n'
+                      f'🕘 נברשת: *{nevareshet[:-3:]}*\n'
+                      f'🕑 שמירת שבת כהלכתה:'
+                      f' *{shmirat_shabat[:-3:]}*'
+        }
+        holiday_number = responses.get(lang, '')
+        return holiday_number
 
     # Когда 2 дня праздника и один из них шаббат
     @staticmethod
@@ -694,38 +727,38 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        ra_time = ''
-        if lang == 'Russian':
-            ra_time = '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Зажигание свечей (Шаббат) {} {}: *{:.5s}*\n' \
-                      '✨ Авдала {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_day, data.gr_months_index[light_month],
-                        light_time, light_shab_day,
-                        data.gr_months_index[light_shab_month],
-                        light_shab_time, avdala_day,
-                        data.gr_months_index[avdala_month],
-                        avdala_time)
-        elif lang == 'English':
-            ra_time = '🕯 Candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Candle lighting (Shabbat) {} {}: *{:.5s}*\n' \
-                      '✨ Avdala {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_day, data.gr_months_index_en[light_month],
-                        light_time, light_shab_day,
-                        data.gr_months_index_en[light_shab_month],
-                        light_shab_time, avdala_day,
-                        data.gr_months_index_en[avdala_month],
-                        avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей {light_day}'
+                       f' {data.gr_months_index[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'🕯 Зажигание свечей (Шаббат) {light_shab_day} '
+                       f'{data.gr_months_index[light_shab_month]}: '
+                       f'*{light_shab_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting {light_day}'
+                       f' {data.gr_months_index_en[light_month]}:'
+                       f' *{light_time}*\n'
+                       f'🕯 Candle lighting (Shabbat) {light_shab_day} '
+                       f'{data.gr_months_index_en[light_shab_month]}: '
+                       f'*{light_shab_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hevrew': f'🕯 הדלקת נרות {light_day}'
+                      f' {data.gr_months_index_he[light_month]}:'
+                      f' *{light_time}*\n'
+                      f'{light_shab_day} הדלקת נרות שבת 🕯'
+                      f'{data.gr_months_index_he[light_shab_month]}:'
+                      f'*{light_shab_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
         return ra_time
-    
+
     # Когда 2 дня праздника и перед ними шаббат
     @staticmethod
     def shabbat_before_holiday_diaspora(
@@ -743,52 +776,48 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        ra_time = ''
-        if lang == 'Russian':
-            ra_time = '🕯 Зажигание свечей (Шаббат) {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨🕯 Авдала и зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨ Авдала {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_shab_day, data.gr_months_index[light_shab_month],
-                        light_shab_time, light_1_day,
-                        data.gr_months_index[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index[light_2_month],
-                        light_2_time, avdala_day,
-                        data.gr_months_index[avdala_month], avdala_time)
-        elif lang == 'English':
-            ra_time = '🕯 Candle lighting (Shabbat) {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨🕯 Avdala and candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Candle lighting {}' \
-                      ' {}: ' \
-                      '*{:.5s}*\n' \
-                      '✨ Avdala {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_shab_day,
-                        data.gr_months_index_en[light_shab_month],
-                        light_shab_time,
-                        light_1_day, data.gr_months_index_en[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index_en[light_2_month], light_2_time,
-                        avdala_day,
-                        data.gr_months_index_en[avdala_month], avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей (Шаббат) {light_shab_day}'
+                       f' {data.gr_months_index[light_shab_month]}:'
+                       f' *{light_shab_time}*\n'
+                       f'✨🕯 Авдала и зажигание свечей {light_1_day}'
+                       f' {data.gr_months_index[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Зажигание свечей {light_2_day}'
+                       f' {data.gr_months_index[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting (Shabbat) {light_shab_day}'
+                       f' {data.gr_months_index_en[light_shab_month]}:'
+                       f' *{light_shab_time}*\n'
+                       f'✨🕯 Avdala and candle lighting {light_1_day}'
+                       f' {data.gr_months_index_en[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Candle lighting {light_2_day}'
+                       f' {data.gr_months_index_en[light_2_month]}: '
+                       f'*{light_2_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות שבת {light_shab_day}'
+                      f' {data.gr_months_index_he[light_shab_month]}:'
+                      f' *{light_shab_time}*\n'
+                      f'✨🕯 הבדלה והדלקת נרות {light_1_day}'
+                      f' {data.gr_months_index_he[light_1_month]}:'
+                      f' *{light_1_time}*\n'
+                      f'🕯 הדלקת נרות {light_2_day}'
+                      f' {data.gr_months_index_he[light_2_month]}: '
+                      f'*{light_2_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
         return ra_time
-    
-    # 2 дня праздника (без шаббата)   
+
+    # 2 дня праздника (без шаббата)
     @staticmethod
     def lighting_double(
             lang: str,
@@ -802,40 +831,84 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        ra_time = ''
-        if lang == 'Russian':
-            ra_time = '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨ Авдала {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_1_day, data.gr_months_index[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index[light_2_month],
-                        light_2_time, avdala_day,
-                        data.gr_months_index[avdala_month], avdala_time)
-        elif lang == 'English':
-            ra_time = '🕯 Candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨ Avdala {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_1_day, data.gr_months_index_en[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index_en[light_2_month],
-                        light_2_time, avdala_day,
-                        data.gr_months_index_en[avdala_month], avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей {light_1_day}'
+                       f' {data.gr_months_index[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Зажигание свечей {light_2_day}'
+                       f' {data.gr_months_index[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting {light_1_day}'
+                       f' {data.gr_months_index_en[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Candle lighting {light_2_day}'
+                       f' {data.gr_months_index_en[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות {light_1_day}'
+                      f' {data.gr_months_index_he[light_1_month]}:'
+                      f' *{light_1_time}*\n'
+                      f'🕯 הדלקת נרות {light_2_day}'
+                      f' {data.gr_months_index_he[light_2_month]}:'
+                      f' *{light_2_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
         return ra_time
-    
+
+    # 2 дня праздника (с шаббатом)
+    @staticmethod
+    def shabbat_include(
+            lang: str,
+            light_1_day: str,
+            light_1_month: str,
+            light_1_time: str,
+            light_2_day: str,
+            light_2_month: str,
+            light_2_time: str,
+            avdala_day: str,
+            avdala_month: str,
+            avdala_time: str
+    ) -> str:
+        responses = {
+            'Russian': f'🕯 Зажигание свечей {light_1_day}'
+                       f' {data.gr_months_index[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Зажигание свечей {light_2_day}'
+                       f' {data.gr_months_index[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting {light_1_day}'
+                       f' {data.gr_months_index_en[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Candle lighting {light_2_day}'
+                       f' {data.gr_months_index_en[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות {light_1_day} '
+                      f' {data.gr_months_index_he[light_1_month]}:'
+                      f' *{light_1_time}*\n'
+                      f'🕯 הדלקת נרות {light_2_day}'
+                      f' {data.gr_months_index_he[light_2_month]}:'
+                      f' *{light_2_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
+        return ra_time
+
     # 2 дня прадника и после них идет шаббат
     @staticmethod
     def lighting_double_shabbat(
@@ -853,53 +926,51 @@ class Holidays(object):
             avdala_month: str,
             avdala_time: str
     ) -> str:
-        ra_time = ''
-        if lang == 'Russian':
-            ra_time = '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Зажигание свечей {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Зажигание свечей (Шаббат) {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '✨ Авдала {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_1_day, data.gr_months_index[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index[light_2_month], light_2_time,
-                        light_shab_day, data.gr_months_index[light_shab_month],
-                        light_shab_time, avdala_day,
-                        data.gr_months_index[avdala_month], avdala_time)
-        elif lang == 'English':
-            ra_time = '🕯 Candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Candle lighting {}' \
-                      ' {}:' \
-                      ' *{:.5s}*\n' \
-                      '🕯 Candle lighting (Shabbat) {}' \
-                      ' {}: ' \
-                      '*{:.5s}*\n' \
-                      '✨ Avdala {}' \
-                      ' {}:' \
-                      ' *{:.5s}*' \
-                .format(light_1_day, data.gr_months_index_en[light_1_month],
-                        light_1_time, light_2_day,
-                        data.gr_months_index_en[light_2_month], light_2_time,
-                        light_shab_day,
-                        data.gr_months_index_en[light_shab_month],
-                        light_shab_time, avdala_day,
-                        data.gr_months_index_en[avdala_month], avdala_time)
-
+        responses = {
+            'Russian': f'🕯 Зажигание свечей {light_1_day}'
+                       f' {data.gr_months_index[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Зажигание свечей {light_2_day}'
+                       f' {data.gr_months_index[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'🕯 Зажигание свечей (Шаббат) {light_shab_day}'
+                       f' {data.gr_months_index[light_shab_month]}:'
+                       f' *{light_shab_time}*\n'
+                       f'✨ Авдала {avdala_day}'
+                       f' {data.gr_months_index[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'English': f'🕯 Candle lighting {light_1_day}'
+                       f' {data.gr_months_index_en[light_1_month]}:'
+                       f' *{light_1_time}*\n'
+                       f'🕯 Candle lighting {light_2_day}'
+                       f' {data.gr_months_index_en[light_2_month]}:'
+                       f' *{light_2_time}*\n'
+                       f'🕯 Candle lighting (Shabbat) {light_shab_day}'
+                       f' {data.gr_months_index_en[light_shab_month]}: '
+                       f'*{light_shab_time}*\n'
+                       f'✨ Avdala {avdala_day}'
+                       f' {data.gr_months_index_en[avdala_month]}:'
+                       f' *{avdala_time}*',
+            'Hebrew': f'🕯 הדלקת נרות {light_1_day} '
+                      f' {data.gr_months_index_he[light_1_month]}:'
+                      f' *{light_1_time}*\n'
+                      f'🕯 הדלקת נרות {light_2_day}'
+                      f' {data.gr_months_index_he[light_2_month]}:'
+                      f' *{light_2_time}*\n'
+                      f'🕯 הדלקת נרות שבת {light_shab_day}'
+                      f' {data.gr_months_index_he[light_shab_month]}: '
+                      f'*{light_shab_time}*\n'
+                      f'✨ הבדלה {avdala_day}'
+                      f' {data.gr_months_index_he[avdala_month]}:'
+                      f' *{avdala_time}*'
+        }
+        ra_time = responses.get(lang, '')
         return ra_time
 
     # Длинные праздники (Пейсах, Ханука; Суккот не входит),
     # даты которых приходят на 1 григорианский месяц
     @staticmethod
-    def long_holiday(
+    def long_holiday_one_month(
             lang: str,
             day_start: str,
             day_end: str,
@@ -908,27 +979,32 @@ class Holidays(object):
             weekday_start: str,
             weekday_end: str
     ) -> str:
-        holiday_number = ''
-        if lang == 'Russian':
-            holiday_number = f'📅 Дата: {day_start}-' \
-                             f'{day_end}' \
-                             f' {data.holi_month[month]}' \
-                             f' {year} годa,' \
-                             f' {data.hdays_of_7[weekday_start]}-' \
-                             f'{data.hdays_of_7[weekday_end]}'
-        elif lang == 'English':
-            holiday_number = f'📅 Date: {day_start}-' \
-                             f'{day_end}' \
-                             f' {data.holi_month_en[month]}' \
-                             f' {year}, ' \
-                             f'{data.hdays_of_7_en[weekday_start]}-' \
-                             f'{data.hdays_of_7_en[weekday_end]}'
-
+        responses = {
+            'Russian': f'📅 Дата: {day_start}-'
+                       f'{day_end}'
+                       f' {data.holi_month[month]}'
+                       f' {year} годa,'
+                       f' {data.hdays_of_7[weekday_start]}-'
+                       f'{data.hdays_of_7[weekday_end]}',
+            'English': f'📅 Date: {day_start}-'
+                       f'{day_end}'
+                       f' {data.holi_month_en[month]}'
+                       f' {year}, '
+                       f'{data.hdays_of_7_en[weekday_start]}-'
+                       f'{data.hdays_of_7_en[weekday_end]}',
+            'Hebrew': f'📅 תאריך:'
+                      f' {day_start}-{day_end}'
+                      f' {data.holi_month_he[month]}'
+                      f' {year}, '
+                      f'{data.hdays_of_7_he[weekday_start]} - '
+                      f'{data.hdays_of_7_he[weekday_end]}'
+        }
+        holiday_number = responses.get(lang, '')
         return holiday_number
 
     # Двухдневные праздники, даты которых приходят на 1 григорианский месяц
     @staticmethod
-    def long_holiday_and(
+    def two_days_holiday_one_month(
             lang: str,
             day_start: str,
             day_end: str,
@@ -937,27 +1013,33 @@ class Holidays(object):
             weekday_start: str,
             weekday_end: str
     ) -> str:
-        holiday_number = ''
-        if lang == 'Russian':
-            holiday_number = f'📅 Дата: {day_start} и ' \
-                             f'{day_end}' \
-                             f' {data.holi_month[month]}' \
-                             f' {year} годa,' \
-                             f' {data.hdays_of_7[weekday_start]}-' \
-                             f'{data.hdays_of_7[weekday_end]}'
-        elif lang == 'English':
-            holiday_number = f'📅 Date: {day_start} and ' \
-                             f'{day_end}' \
-                             f' {data.holi_month_en[month]}' \
-                             f' {year}, ' \
-                             f'{data.hdays_of_7_en[weekday_start]}-' \
-                             f'{data.hdays_of_7_en[weekday_end]}'
-
+        responses = {
+            'Russian': f'📅 Дата: {day_start} и '
+                       f'{day_end}'
+                       f' {data.holi_month[month]}'
+                       f' {year} годa,'
+                       f' {data.hdays_of_7[weekday_start]}-'
+                       f'{data.hdays_of_7[weekday_end]}',
+            'English': f'📅 Date: {day_start} and '
+                       f'{day_end}'
+                       f' {data.holi_month_en[month]}'
+                       f' {year}, '
+                       f'{data.hdays_of_7_en[weekday_start]}-'
+                       f'{data.hdays_of_7_en[weekday_end]}',
+            'Hebrew': f'📅 תאריך: '
+                      f'{day_start} ו-' 
+                      f'{day_end}'
+                      f' {data.holi_month_he[month]}'
+                      f' {year}, '
+                      f'{data.hdays_of_7_he[weekday_start]} - '
+                      f'{data.hdays_of_7_he[weekday_end]}'
+        }
+        holiday_number = responses.get(lang, '')
         return holiday_number
 
     # Длинные праздники, даты которых приходят на 2 григорианских месяца
     @staticmethod
-    def long_holiday_jump(
+    def long_holiday_two_months(
             lang: str,
             day_start: str,
             month_start: str,
@@ -967,29 +1049,77 @@ class Holidays(object):
             weekday_start: str,
             weekday_end: str
     ) -> str:
-        holiday_number = ''
-        if lang == 'Russian':
-            holiday_number = f'📅 Дата: {day_start}' \
-                             f' {data.holi_month[month_start]} - ' \
-                             f'{day_end}' \
-                             f' {data.holi_month[month_end]}' \
-                             f' {year} годa,' \
-                             f' {data.hdays_of_7[weekday_start]}-' \
-                             f'{data.hdays_of_7[weekday_end]}'
-        elif lang == 'English':
-            holiday_number = f'📅 Date: {day_start}' \
-                             f' {data.holi_month_en[month_start]} - ' \
-                             f'{day_end}' \
-                             f' {data.holi_month_en[month_end]}' \
-                             f' {year}, ' \
-                             f'{data.hdays_of_7_en[weekday_start]}-' \
-                             f'{data.hdays_of_7_en[weekday_end]}'
+        responses = {
+            'Russian': f'📅 Дата: {day_start}'
+                       f' {data.holi_month[month_start]} - '
+                       f'{day_end}'
+                       f' {data.holi_month[month_end]}'
+                       f' {year} годa,'
+                       f' {data.hdays_of_7[weekday_start]}-'
+                       f'{data.hdays_of_7[weekday_end]}',
+            'English': f'📅 Date: {day_start}'
+                       f' {data.holi_month_en[month_start]} - '
+                       f'{day_end}'
+                       f' {data.holi_month_en[month_end]}'
+                       f' {year}, '
+                       f'{data.hdays_of_7_en[weekday_start]}-'
+                       f'{data.hdays_of_7_en[weekday_end]}',
+            'Hebrew': f'📅 תאריך: '
+                      f'{day_start} {data.holi_month_he[month_start]} - '
+                      f'{day_end}'
+                      f' {data.holi_month_he[month_end]}'
+                      f' {year}, '
+                      f'{data.hdays_of_7_he[weekday_start]} - '
+                      f'{data.hdays_of_7_he[weekday_end]}'
+        }
+        holiday_number = responses.get(lang, '')
+        return holiday_number
 
+    @staticmethod
+    def long_holiday_two_months_two_years(
+            lang: str,
+            day_start: str,
+            month_start: str,
+            year_start: int,
+            day_end: str,
+            month_end: str,
+            year_end: int,
+            weekday_start: str,
+            weekday_end: str
+    ) -> str:
+
+        responses = {
+            'Russian': f'📅 Дата: {day_start}'
+                       f' {data.holi_month[month_start]} '
+                       f'{year_start} года - '
+                       f'{day_end}'
+                       f' {data.holi_month[month_end]}'
+                       f' {year_end} годa,'
+                       f' {data.hdays_of_7[weekday_start]}-'
+                       f'{data.hdays_of_7[weekday_end]}',
+            'English': f'📅 Date: {day_start}'
+                       f' {data.holi_month_en[month_start]}'
+                       f' {year_start} - '
+                       f'{day_end}'
+                       f' {data.holi_month_en[month_end]}'
+                       f' {year_end}, '
+                       f'{data.hdays_of_7_en[weekday_start]}-'
+                       f'{data.hdays_of_7_en[weekday_end]}',
+            'Hebrew': f'📅 תאריך: '
+                      f'{day_start} {data.holi_month_he[month_start]} '
+                      f'{year_start} - '
+                      f'{day_end}'
+                      f' {data.holi_month_he[month_end]}'
+                      f' {year_end}, '
+                      f'{data.hdays_of_7_he[weekday_start]} - '
+                      f'{data.hdays_of_7_he[weekday_end]}'
+        }
+        holiday_number = responses.get(lang, '')
         return holiday_number
 
     # Двухдневные праздники, даты которых приходят на 2 григорианских месяца
     @staticmethod
-    def long_holiday_jump_and(
+    def two_days_holiday_two_months(
             lang: str,
             day_start: str,
             month_start: str,
@@ -999,47 +1129,106 @@ class Holidays(object):
             weekday_start: str,
             weekday_end: str
     ) -> str:
-        holiday_number = ''
-        if lang == 'Russian':
-            holiday_number = f'📅 Дата: {day_start}' \
-                             f' {data.holi_month[month_start]} и ' \
-                             f'{day_end}' \
-                             f' {data.holi_month[month_end]}' \
-                             f' {year} годa,' \
-                             f' {data.hdays_of_7[weekday_start]}-' \
-                             f'{data.hdays_of_7[weekday_end]}'
-        elif lang == 'English':
-            holiday_number = f'📅 Date: {day_start}' \
-                             f' {data.holi_month_en[month_start]} and ' \
-                             f'{day_end}' \
-                             f' {data.holi_month_en[month_end]}' \
-                             f' {year}, ' \
-                             f'{data.hdays_of_7_en[weekday_start]}-' \
-                             f'{data.hdays_of_7_en[weekday_end]}'
-
+        responses = {
+            'Russian': f'📅 Дата: {day_start}'
+                       f' {data.holi_month[month_start]} и '
+                       f'{day_end}'
+                       f' {data.holi_month[month_end]}'
+                       f' {year} годa,'
+                       f' {data.hdays_of_7[weekday_start]}-'
+                       f'{data.hdays_of_7[weekday_end]}',
+            'English': f'📅 Date: {day_start}'
+                       f' {data.holi_month_en[month_start]} and '
+                       f'{day_end}'
+                       f' {data.holi_month_en[month_end]}'
+                       f' {year}, '
+                       f'{data.hdays_of_7_en[weekday_start]}-'
+                       f'{data.hdays_of_7_en[weekday_end]}',
+            'Hebrew': f'📅 תאריך:'
+                      f' {day_start} {data.holi_month_he[month_start]} ו-'
+                      f'{day_end}'
+                      f' {data.holi_month_he[month_end]}'
+                      f' {year}, '
+                      f'{data.hdays_of_7_he[weekday_start]}-'
+                      f'{data.hdays_of_7_he[weekday_end]}'
+        }
+        holiday_number = responses.get(lang, '')
         return holiday_number
 
     # Однодневные праздники
     @staticmethod
-    def short_holiday(
+    def one_day_holiday(
             lang: str,
             day: str,
             month: str,
             year: int,
             weekday: str
     ) -> str:
-        holiday_number = ''
-        if lang == 'Russian':
-            holiday_number = f'📅 Дата: {day}' \
-                             f' {data.holi_month[month]}' \
-                             f' {year} годa,' \
-                             f' {data.hdays_of_7[weekday]}'
-        elif lang == 'English':
-            holiday_number = f'📅 Date: {day}' \
-                             f' {data.holi_month_en[month]}' \
-                             f' {year},' \
-                             f' {data.hdays_of_7_en[weekday]}'
+        responses = {
+            'Russian': f'📅 Дата: {day}'
+                       f' {data.holi_month[month]}'
+                       f' {year} годa,'
+                       f' {data.hdays_of_7[weekday]}',
+            'English': f'📅 Date: {day}'
+                       f' {data.holi_month_en[month]}'
+                       f' {year},'
+                       f' {data.hdays_of_7_en[weekday]}',
+            'Hebrew': f'📅 תאריך: '
+                      f'{day} {data.holi_month_he[month]}'
+                      f' {year},'
+                      f' {data.hdays_of_7_he[weekday]}'
+        }
+        holiday_number = responses.get(lang, '')
+        return holiday_number
 
+    # Для поста 9 ава
+    @staticmethod
+    def tisha_av_fast(
+            lang: str,
+            day_begin: str,
+            month_begin: str,
+            time_begin: str,
+            chatzot: str,
+            day_end: str,
+            month_end: str,
+            time_end: str,
+            ben_ashmashot: str,
+            nevareshet: str,
+            shmirat_shabat: str
+    ) -> str:
+        responses = {
+            'Russian': f'Начало поста {day_begin}'
+                       f' {data.gr_months_index[month_begin]}:'
+                       f' *{time_begin[:-3:]}*\nХацот: *{chatzot[:-3:]}*\n'
+                       f'Конец поста {day_end}'
+                       f' {data.holi_month[month_end]}\n'
+                       f'✨ Выход звезд:'
+                       f' *{time_end[:-3:]}*\n'
+                       f'🕖 Сефер бен Ашмашот: *{ben_ashmashot[:-3:]}*\n'
+                       f'🕘 Неварешет: *{nevareshet[:-3:]}*\n'
+                       f'🕑 Шмират шаббат килхата: *{shmirat_shabat[:-3:]}*',
+            'English': f'Fast begins {day_begin}'
+                       f' {data.gr_months_index_en[month_begin]}:'
+                       f' *{time_begin[:-3:]}*\nChatzot: *{chatzot[:-3:]}*\n'
+                       f'The fast ends {day_end}'
+                       f' {data.holi_month_en[month_end]}\n'
+                       f'✨ Tzeit akohavim:'
+                       f' *{time_end[:-3:]}*\n'
+                       f'🕖 Sefer ben Ashmashot: *{ben_ashmashot[:-3:]}*\n'
+                       f'🕘 Nevareshet: *{nevareshet[:-3:]}*\n'
+                       f'🕑 Shmirat shabbat kelhata: *{shmirat_shabat[:-3:]}*',
+        'Hebrew': f'{day_begin} תחילת הצום'
+                  f' {data.gr_months_index_en[month_begin]}:'
+                       f' *{time_begin[:-3:]}*:חצות\n*{chatzot[:-3:]}*\n'
+                       f'יציאת הצום {day_end}'
+                       f' {data.holi_month_en[month_end]}\n'
+                       f' :צאת הכוכבים ✨'
+                       f' *{time_end[:-3:]}*\n'
+                       f'\n*{ben_ashmashot[:-3:]}* :ספר בין השמשות 🕖'
+                       f'\n*{nevareshet[:-3:]}* :נברשת 🕘'
+                       f'*{shmirat_shabat[:-3:]}* :שמירת שבת כהלכתה 🕑'
+        }
+        holiday_number = responses.get(lang, '')
         return holiday_number
 
 
