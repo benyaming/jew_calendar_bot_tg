@@ -712,22 +712,22 @@ class Holidays(object):
         responses = {
             'Russian': f'🕯 Зажигание свечей и начало поста {light_day}'
                        f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time}*\n'
+                       f' *{light_time:.5s}*\n'
                        f'✨ Авдала и конец поста {avdala_day}'
                        f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time}*',
+                       f' *{avdala_time:.5s}*',
             'English': f'🕯 Candle lighting and the fast begins {light_day}'
                        f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time}*\n'
+                       f' *{light_time:.5s}*\n'
                        f'✨ Avdala and the fast ends {avdala_day}'
                        f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time}*',
-            'Hevrew': f'🕯 הדלקת הנרות ותחילת הצום {light_day}'
-                      f' {data.gr_months_index[light_month]}:'
-                      f' *{light_time}*\n'
+                       f' *{avdala_time:.5s}*',
+            'Hebrew': f'🕯 הדלקת הנרות ותחילת הצום {light_day}'
+                      f' {data.gr_months_index_he[light_month]}:'
+                      f' *{light_time:.5s}*\n'
                       f'✨ הבדלה ויציאת הצום {avdala_day}'
                       f' {data.gr_months_index_he[avdala_month]}:'
-                      f' *{avdala_time}*'
+                      f' *{avdala_time:.5s}*'
         }
         ra_time = responses.get(lang, '')
         return ra_time
