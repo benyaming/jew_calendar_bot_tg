@@ -221,10 +221,12 @@ def get_holiday_name(holiday_info: dict, lang: str) -> str:
     # Берем из data.py иконки для праздников
     holiday_icon = data.holiday_icon[holiday_info['name']]
 
-    if lang == 'Russian':
-        holiday_name = data.holidays_name[holiday_info['name']]
-    elif lang == 'English':
-        holiday_name = data.holidays_name_en[holiday_info['name']]
+    holiday_names = {
+        'Russian': data.holidays_name[holiday_info['name']],
+        'English': data.holidays_name_en[holiday_info['name']],
+        'Hebrew': data.holidays_name_he[holiday_info['name']]
+    }
+    holiday_name = holiday_names.get(lang, '')
 
     # Для израильских праздников иконка сверху
     if holiday_info['name'] == 'YomHaShoah':
@@ -341,7 +343,7 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
         fast_time['alos_ma'] = renew_alos_ma
 
     # Обработчик для 9 Ава
-    if holiday_info['name'] in ['Tu B\'av', 'Yom Kippur']:
+    if holiday_info['name'] in ['9 of Av', 'Yom Kippur']:
         current_date = datetime.strptime(params['dateBegin'], '%m/%d/%Y')
 
         one_day_before = str(
@@ -365,7 +367,7 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
         fast_time = requests.get(URL_ZMANIM, params=params).json()["zmanim"]
 
         # Время начала и окончания поста 9 Ава
-        if holiday_info['name'] == 'Tu B\'av':
+        if holiday_info['name'] == '9 of Av':
             fast_time = Holidays.tisha_av_fast(
                 lang, date_day_before['day'], date_day_before['month'],
                 fast_time["sunset"], fast_time["chatzos"], date['day'],
@@ -613,6 +615,9 @@ def get_holiday_string(holiday_name: str, user_id: int, lang: str):
                              + f'{holiday_date}\n' + holiday_time
         elif lang == 'English':
             holiday_string = f'*{holiday_name} and Simhat Torah*\n\n' \
+                             + f'{holiday_date}\n' + holiday_time
+        elif lang == 'Hebrew':
+            holiday_string = f'*{holiday_name}ו שמחת תורה*\n\n' \
                              + f'{holiday_date}\n' + holiday_time
 
     elif holiday_dict['name'] == 'Simchas Torah':
