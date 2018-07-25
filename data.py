@@ -768,6 +768,28 @@ zmanim_en = {
     'astronomical_hour_gra': 'Astronomical Hour [GR"A]'
 }
 
+zmanim_he = {
+    'sunrise': 'Hanetz Hachama',
+    'sof_zman_tefila_gra': 'Sof Zman Tefilah [GR"A]',
+    'sof_zman_tefila_ma': 'Sof Zman Tefilah [M"A]',
+    'talis_ma': 'Misheyakir',
+    'sof_zman_shema_gra': 'Sof Zman Shema [GR"A]',
+    'sof_zman_shema_ma': 'Sof Zman Shema [M"A]',
+    'chatzos': 'Chatzot Hayom',
+    'mincha_ketana_gra': 'Mincha Ketanah',
+    'mincha_gedola_ma': 'Mincha Gedolah',
+    'alot_ma': 'Alot Hashachar',
+    'plag_mincha': 'Plag Mincha',
+    'sunset': 'Shkiat Hachama',
+    'tzeis_850d': 'Tzeit Hakochavim [850 degrees]',
+    'tzeis_rt': 'Tzeit Hakochavim [Rabeinu Tam]',
+    'tzeis_42m': 'Tzeit Hakochavim [42 minutes]',
+    'tzeis_595d': 'Tzeit Hakochavim [595 degrees]',
+    'chatzos_laila': 'Chatzot Halaylah',
+    'astronomical_hour_ma': 'Astronomical Hour [M"A]',
+    'astronomical_hour_gra': 'Astronomical Hour [GR"A]'
+}
+
 zmanim_names_to_codes = {
     'alot_ma': 0,
     'talis_ma': 1,
@@ -1047,23 +1069,23 @@ holiday_menu_buttons = {
 }
 
 settings_menu_buttons = {
-    'Select zmanim': {'Russian': 'Назад',
+    'Select zmanim': {'Russian': 'Выбрать зманим',
                       'English': 'Select zmanim',
                       'Hebrew': 'Select zmanim'
                       },
-    'Candle lighting': {'Russian': 'Назад',
+    'Candle lighting': {'Russian': 'Зажигание свечей',
                         'English': 'Candle lighting',
                         'Hebrew': 'Candle lighting'
                         },
-    'Language': {'Russian': 'Назад',
+    'Language': {'Russian': 'Язык',
                  'English': 'Language',
                  'Hebrew': 'Language'
                  },
-    'Diaspora': {'Russian': 'Назад',
+    'Diaspora': {'Russian': 'Диаспора',
                  'English': 'Diaspora',
                  'Hebrew': 'Diaspora'
                  },
-    'Location': {'Russian': 'Назад',
+    'Location': {'Russian': 'Локация',
                  'English': 'Location',
                  'Hebrew': 'Location'
                  },

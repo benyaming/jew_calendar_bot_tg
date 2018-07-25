@@ -612,6 +612,7 @@ def handle_text(user_id: int, message: str) -> None:
             'Назад/Back': change_lang,
             'Зманим': get_zmanim,
             'Zmanim': get_zmanim,
+            'זמנים': get_zmanim,
             'Зманим по дате': request_date,
             'Zmanim by the date': request_date,
             'Шаббат': shabbat,

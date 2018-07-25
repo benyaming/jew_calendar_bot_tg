@@ -185,12 +185,12 @@ def collect_custom_zmanim(
         if zman:
             zman_code = ZmanimList(i).name
             func = zmanim_funcs.get(zman_code, '')
-            if lang == 'Russian':
-                zman_name = data.zmanim_ru[zman_code]
-            elif lang == 'English':
-                zman_name = data.zmanim_en[zman_code]
-            else:
-                zman_name = ''
+            zman_names = {
+                'Russian': data.zmanim_ru[zman_code],
+                'English': data.zmanim_en[zman_code],
+                'Hebrew': data.zmanim_he[zman_code]
+            }
+            zman_name = zman_names.get(lang,'')
             # [:-3]
             zman_string = f'{zman_name} — {func(zmanim_dict, lang)}\n'
             user_zmanim_str += zman_string

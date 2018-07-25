@@ -380,11 +380,12 @@ class Zmanim(object):
     # названия зманим для настроек
     @staticmethod
     def get_zman_name(zman: str, lang: str) -> str:
-        zman_name = ''
-        if lang == 'Russian':
-            zman_name = data.zmanim_ru[zman]
-        elif lang == 'English':
-            zman_name = ''
+        zman_names = {
+            'Russian': data.zmanim_ru[zman],
+            'English': data.zmanim_en[zman],
+            'Hebrew': data.zmanim_he[zman]
+        }
+        zman_name = zman_names.get(lang, '')
         return zman_name
 
 
