@@ -341,7 +341,7 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
         fast_time['alos_ma'] = renew_alos_ma
 
     # Обработчик для 9 Ава
-    if holiday_info['name'] in ['TishaBAv', 'YomKippur']:
+    if holiday_info['name'] in ['Tu B\'av', 'Yom Kippur']:
         current_date = datetime.strptime(params['dateBegin'], '%m/%d/%Y')
 
         one_day_before = str(
@@ -365,7 +365,7 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
         fast_time = requests.get(URL_ZMANIM, params=params).json()["zmanim"]
 
         # Время начала и окончания поста 9 Ава
-        if holiday_info['name'] == 'TishaBAv':
+        if holiday_info['name'] == 'Tu B\'av':
             fast_time = Holidays.tisha_av_fast(
                 lang, date_day_before['day'], date_day_before['month'],
                 fast_time["sunset"], fast_time["chatzos"], date['day'],
@@ -373,7 +373,7 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
                 ben_ashmashot, nevareshet, shmirat_shabat
             )
         # Время зажигания и Авдолы Йом-Кипура
-        elif holiday_info['name'] == 'YomKippur':
+        elif holiday_info['name'] == 'Yom Kippur':
             sunset = datetime.strptime(fast_time['sunset'], "%H:%M:%S")
             delta_18_minutes = timedelta(minutes=18)
             fast_time = Holidays.fast_yom_kippur(

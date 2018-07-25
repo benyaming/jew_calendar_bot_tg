@@ -218,10 +218,10 @@ class RoshHodesh(object):
                        f'Number of days: |{length} '
                        f'{data.length_en[f"{length}"]}\n'
                        f'Date: |{rosh_hodesh}\nMolad: |{molad}',
-            'Hebrew': f'\n*חודש:* {data.jewish_months_he[month]}\n'
-                      f' *משך ראש חודש:*'
+            'Hebrew': f'*חודש:* |{data.jewish_months_he[month]}\n'
+                      f' *משך ראש חודש:* |{length}'
                       f' {data.length_he[f"{length}"]}\n '
-                      f'ראש חודש: {rosh_hodesh}\nמולד: {molad}'
+                      f'ראש חודש: |{rosh_hodesh}\nמולד: |{molad}'
         }
         rh = responses.get(lang, '')
         return rh
