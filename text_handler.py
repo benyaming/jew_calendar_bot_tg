@@ -220,10 +220,11 @@ def succot():
     if not loc:
         return request_location()
     else:
-        get_succot = h.get_holiday_string('SuccosI', user, lang)
+        get_succot = h.get_holiday_string('Succos', user, lang)
         get_hoshana_rabba = h.get_holiday_string('HoshanaRabba', user, lang)
         response = get_succot + '\n\n' + get_hoshana_rabba
         bot.send_message(user, response, parse_mode='Markdown')
+
 
 
 def shmini_atzeret():
@@ -234,11 +235,11 @@ def shmini_atzeret():
     else:
         if not diaspora:
             get_shmini_atzeret = h.get_holiday_string(
-                'ShminiAtzeresI', user, lang
+                'Shmini Atzeres', user, lang
             )
         else:
             get_shmini_atzeret = h.get_holiday_string(
-                'ShminiAtzeresII', user, lang
+                'Simchas Torah', user, lang
             )
         response = get_shmini_atzeret
         bot.send_message(user, response, parse_mode='Markdown')
@@ -568,7 +569,7 @@ def handle_text(user_id: int, message: str) -> None:
     bot = TeleBot(settings.TOKEN)
     user = user_id
     text = message
-    if message in ['Русский', 'English']:
+    if message in ['Русский', 'English', 'Hebrew']:
         langs = {
             'Русский': 'Russian',
             'English': 'English',
