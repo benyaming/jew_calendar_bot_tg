@@ -11,7 +11,7 @@ from io import BytesIO
 URL = 'http://db.ou.org/zmanim/getCalendarData.php'
 
 
-def get_daf(loc: tuple, lang: str) -> BytesIO:
+def get_daf(loc: tuple, lang: str) -> str:
     tz = f.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
@@ -29,5 +29,6 @@ def get_daf(loc: tuple, lang: str) -> BytesIO:
         daf_dict["dafYomi"]["masechta"],
         daf_dict["dafYomi"]["daf"]
     )
-    daf_pic = DafYomiSender(lang).get_daf_picture(daf_str)
-    return daf_pic
+    return  daf_str
+    # daf_pic = DafYomiSender(lang).get_daf_picture(daf_str)
+    # return daf_pic

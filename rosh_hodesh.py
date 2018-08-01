@@ -2,7 +2,7 @@ import requests, pytz
 import calendar, re
 
 import localization as l
-
+from utils import get_tz_by_location
 from io import BytesIO
 from picture_maker import RoshHodeshSender
 from datetime import datetime
@@ -205,9 +205,9 @@ def get_molad(chodesh_dict, lang):
     return molad
 
 
-def get_rh(loc, lang, date=None) -> BytesIO:
-    # tz = f.get_tz_by_location(loc)
-    tz = 'Europe/Moscow'
+def get_rh(loc, lang, date=None) -> str:
+    tz = get_tz_by_location(loc)
+
     if not date:
         tz_time = pytz.timezone(tz)
         now = datetime.now(tz_time)
@@ -252,5 +252,6 @@ def get_rh(loc, lang, date=None) -> BytesIO:
         get_rh_date_and_day(hebrew_date, length_of_rh, lang),
         get_molad(chodesh_dict, lang)
     )
-    rh_pic = RoshHodeshSender(lang).get_rh_picture(rh_string)
-    return rh_pic
+    # rh_pic = RoshHodeshSender(lang).get_rh_picture(rh_string)
+    # return rh_pic
+    return rh_string

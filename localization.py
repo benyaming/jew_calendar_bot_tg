@@ -210,19 +210,35 @@ class RoshHodesh(object):
             molad: str
     ) -> str:
         responses = {
-            'Russian': f'Месяц: |{data.jewish_months[month]}\n'
-                       f'Число дней: |{length} '
-                       f'{data.length_ru[f"{length}"]}\n'
-                       f'Дата: |{rosh_hodesh}\nМолад: |{molad}',
-            'English': f'Month: |{month}\n'
-                       f'Number of days: |{length} '
-                       f'{data.length_en[f"{length}"]}\n'
-                       f'Date: |{rosh_hodesh}\nMolad: |{molad}',
-            'Hebrew': f'*חודש:* |{data.jewish_months_he[month]}\n'
-                      f' *משך ראש חודש:* |{length}'
+            'Russian': f'*Рош ходеш* 🌒\n\n'
+                       f'*Месяц:* {data.jewish_months[month]}\n'
+                       f'*Продолжительность Рош Ходеша:* {length}'
+                       f' {data.length_ru[f"{length}"]}\n'
+                       f'*Рош Ходеш:* {rosh_hodesh}\n*Молад:* {molad}',
+            'English': f'*Rosh Chodesh* 🌒\n\n*Month:* {month}\n'
+                       f'*Rosh Chodesh duration:* {length}'
+                       f' {data.length_en[f"{length}"]}\n'
+                       f'*Rosh Chodesh:* {rosh_hodesh}\n*Molad:* {molad}',
+            'Hebrew': f'🌒 *ראש חודש*\n'
+                      f'\n*חודש:* {data.jewish_months_he[month]}\n'
+                      f' *משך ראש חודש:*'
                       f' {data.length_he[f"{length}"]}\n '
-                      f'ראש חודש: |{rosh_hodesh}\nמולד: |{molad}'
+                      f'*ראש חודש:* {rosh_hodesh}\n*מולד*: {molad}'
         }
+        # responses = {
+        #     'Russian': f'Месяц: |{data.jewish_months[month]}\n'
+        #                f'Число дней: |{length} '
+        #                f'{data.length_ru[f"{length}"]}\n'
+        #                f'Дата: |{rosh_hodesh}\nМолад: |{molad}',
+        #     'English': f'Month: |{month}\n'
+        #                f'Number of days: |{length} '
+        #                f'{data.length_en[f"{length}"]}\n'
+        #                f'Date: |{rosh_hodesh}\nMolad: |{molad}',
+        #     'Hebrew': f'*חודש:* |{data.jewish_months_he[month]}\n'
+        #               f' *משך ראש חודש:* |{length}'
+        #               f' {data.length_he[f"{length}"]}\n '
+        #               f'ראש חודש: |{rosh_hodesh}\nמולד: |{molad}'
+        # }
         rh = responses.get(lang, '')
         return rh
 
@@ -239,16 +255,29 @@ class Shabos(object):
     @staticmethod
     def shabos_with_latitude_error(lang: str, parasha: str) -> str:
         responses = {
-            'Russian': f'Недельная глава: |{data.parashat[parasha]}?'
-                       f'В данных широтах невозможно\nопределить '
-                       f'зманим из-за\nполярного дня/полярной ночи.',
-            'English': f'Parshat hashavua: |{parasha}?'
-                       f'For this location zmanim is impossible\n'
-                       f'to determine because of polar night/day.',
-            'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}?'
+            'Russian': f'*Шаббат*\n\n📜 *Недельная глава:* '
+                       f'{data.parashat[parasha]}\n\n'
+                       f'В данных широтах невозможно определить '
+                       f'зманим из-за полярного дня/полярной ночи.',
+            'English': f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n\n'
+                       f'In these latitudes zmanim is impossible'
+                       f' to determine because of polar night/day.',
+            'Hebrew': f'*:פרשת השבוע*📜\n\n*שבת*'
+                      f'{data.parashat_he[parasha]}\n\n'
                       f'לא ניתן לקבוע את הזמן בגלל ליל קוטב/שמש'
                       f'חצות בקווי הרוחב האלו '
         }
+        # responses = {
+        #     'Russian': f'Недельная глава: |{data.parashat[parasha]}?'
+        #                f'В данных широтах невозможно\nопределить '
+        #                f'зманим из-за\nполярного дня/полярной ночи.',
+        #     'English': f'Parshat hashavua: |{parasha}?'
+        #                f'For this location zmanim is impossible\n'
+        #                f'to determine because of polar night/day.',
+        #     'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}?'
+        #               f'לא ניתן לקבוע את הזמן בגלל ליל קוטב/שמש'
+        #               f'חצות בקווי הרוחב האלו '
+        # }
         shabos_str = responses.get(lang, '')
         return shabos_str
 
@@ -261,22 +290,42 @@ class Shabos(object):
             th: str
     ) -> str:
         responses = {
-            'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
-                       f'Зажигание свечей: |{cl}\n'
-                       f'Выход звёзд:  |{th}%'
-                       f'Внимание! Необходимо уточнить '
-                       f'время \nзажигания свечей у раввина общины!',
-            'English': f'Parshat hashavua: |{parasha}\n'
-                       f'Candle lighting: |{cl}\n'
-                       f'Tzeit hakochavim: |{th}%'
-                       f'Notice! You should specify time of candle\n'
-                       f'lighting with the rabbi of your community.',
-            'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
-                      f'הדלקת נרות: |{cl}\n'
-                      f'צאת הכוכבים: |{th}%'
-                      f'!לתשומת לבך '
+            'Russian': f'*Шаббат*\n\n📜 *Недельная глава:* '
+                       f'{data.parashat[parasha]}\n'
+                       f'🕯 *Зажигание свечей:* {cl}\n'
+                       f'✨ *Выход звёзд:* {th}\n\n'
+                       f'*Внимание!* Необходимо уточнить'
+                       f' время зажигания свечей у раввина общины!',
+            'English': f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n'
+                       f'🕯 *Candle lighting:* {cl}\n'
+                       f'✨ *Tzeit hakochavim:* {th}\n\n'
+                       f'*Notice!* You should specify time of candle'
+                       f' lighting with the rabbi of your community.',
+            'Hebrew': f'*:פרשת השבוע*📜\n\n*שבת*'
+                      f'{data.parashat_he[parasha]}\n\n'
+                      f'{cl} :*הדלקת נרות* 🕯'
+                      f'\n\n{th} *:צאת הכוכבים*'
+                      f'*!לתשומת לבך* '
                       f'!יש לעדכן את זמן הדלקת הנרות אצל רב הקהילה'
         }
+
+        # responses = {
+        #     'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
+        #                f'Зажигание свечей: |{cl}\n'
+        #                f'Выход звёзд:  |{th}%'
+        #                f'Внимание! Необходимо уточнить '
+        #                f'время \nзажигания свечей у раввина общины!',
+        #     'English': f'Parshat hashavua: |{parasha}\n'
+        #                f'Candle lighting: |{cl}\n'
+        #                f'Tzeit hakochavim: |{th}%'
+        #                f'Notice! You should specify time of candle\n'
+        #                f'lighting with the rabbi of your community.',
+        #     'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
+        #               f'הדלקת נרות: |{cl}\n'
+        #               f'צאת הכוכבים: |{th}%'
+        #               f'!לתשומת לבך '
+        #               f'!יש לעדכן את זמן הדלקת הנרות אצל רב הקהילה'
+        # }
         shabos_str = responses.get(lang, '')
         return shabos_str
 
@@ -289,16 +338,29 @@ class Shabos(object):
             th: str
     ) -> str:
         responses = {
-            'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
-                       f'Зажигание свечей: |{cl}\n'
-                       f'Выход звёзд:  |{th}',
-            'English': f'Parshat hashavua: |{parasha}\n'
-                       f'Candle lighting: |{cl}\n'
-                       f'Tzeit hakochavim: |{th}',
-            'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
-                      f'הדלקת נרות: |{cl}\n'
-                      f'צאת הכוכבים: |{th}'
+            'Russian': f'*Шаббат*\n\n📜 *Недельная глава:* '
+                       f'{data.parashat[parasha]}\n'
+                       f'🕯 *Зажигание свечей:* {cl}\n'
+                       f'✨ *Выход звёзд:* {th}',
+            'English': f'*Shabbos*\n\n📜 *Parshat hashavua:* {parasha}\n'
+                       f'🕯 *Candle lighting:* {cl}\n'
+                       f'✨ *Tzeit hakochavim:* {th}',
+            'Hebrew': f'*שבת*\n\n📜 '
+                      f'*פרשת השבוע*: {data.parashat_he[parasha]}\n'
+                      f'🕯 *הדלקת נרות:* {cl}\n'
+                      f'✨ *צאת הכוכבים*: {th}',
         }
+        # responses = {
+        #     'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
+        #                f'Зажигание свечей: |{cl}\n'
+        #                f'Выход звёзд:  |{th}',
+        #     'English': f'Parshat hashavua: |{parasha}\n'
+        #                f'Candle lighting: |{cl}\n'
+        #                f'Tzeit hakochavim: |{th}',
+        #     'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
+        #               f'הדלקת נרות: |{cl}\n'
+        #               f'צאת הכוכבים: |{th}'
+        # }
         shabos_str = responses.get(lang, '')
         return shabos_str
 
@@ -368,13 +430,15 @@ class Zmanim(object):
     # ошибка полярных широт
     @staticmethod
     def get_polar_error(lang: str) -> str:
-        error_message = ''
-        if lang == 'Russian':
-            error_message = 'В данных широтах невозможно определить ' \
-                            'зманим из-за полярного дня/полярной ночи.'
-        elif lang == 'English':
-            error_message = 'For this location it is impossible to determine'\
-                            ' because of polar night/day.'
+        responses = {
+            'Russian': 'В данных широтах невозможно определить '
+                       'зманим из-за полярного дня/полярной ночи.',
+            'English': 'In these latitudes it is impossible to determine'
+                       ' because of polar night/day.',
+            'Hebrew': 'לא ניתן לקבוע את הזמן בגלל ליל'
+                      ' קוטב/שמש חצות בקווי הרוחב האלו'
+        }
+        error_message = responses.get(lang, '')
         return error_message
 
     # названия зманим для настроек

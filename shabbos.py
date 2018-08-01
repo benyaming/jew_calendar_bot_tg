@@ -17,7 +17,7 @@ def get_next_weekday(startdate, weekday):
     return (d + t).strftime('%Y-%m-%d')
 
 
-def get_shabbos(loc, lang, user) -> BytesIO:
+def get_shabbos(loc, lang, user) -> str:
     tz = utils.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
@@ -71,5 +71,7 @@ def get_shabbos(loc, lang, user) -> BytesIO:
                 shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
             )
     # TODO предупреждения о настройках
-    response_pic = ShabbosSender(lang).get_shabbos_picture(shabbat_str)
-    return response_pic
+    response = shabbat_str
+    return response
+    # response_pic = ShabbosSender(lang).get_shabbos_picture(shabbat_str)
+    # return response_pic
