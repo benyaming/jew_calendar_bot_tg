@@ -768,7 +768,7 @@ zmanim_en = {
     'astronomical_hour_gra': 'Astronomical Hour [GR"A]'
 }
 
-zmanim_he = {
+zmanim_he = { #TODO перевод
     'sunrise': 'Hanetz Hachama',
     'sof_zman_tefila_gra': 'Sof Zman Tefilah [GR"A]',
     'sof_zman_tefila_ma': 'Sof Zman Tefilah [M"A]',
