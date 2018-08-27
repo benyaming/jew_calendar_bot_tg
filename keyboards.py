@@ -22,8 +22,7 @@ def get_main_menu(lang):
                     main['Fast days'][lang])
     user_markup.row(main['Zmanim by the date'][lang],
                     main['Date converter'][lang])
-    user_markup.row(main['Language'][lang],
-                    main['Help'][lang],
+    user_markup.row(main['Help'][lang],
                     main['Settings'][lang])
     return user_markup
 
