@@ -8,8 +8,8 @@ import localization
 
 class PictureSender(object):
 
-    _regular_font_path = 'res/fonts/gothic.ttf'
-    _bold_font_path = 'res/fonts/gothic-bold.ttf'
+    _regular_font_path = open('res/fonts/gothic.ttf')
+    _bold_font_path = open('res/fonts/gothic-bold.ttf')
     _title_font = ImageFont.truetype(
         _bold_font_path,
         60
