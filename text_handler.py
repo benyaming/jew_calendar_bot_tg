@@ -110,8 +110,6 @@ def rosh_chodesh() -> None:
     if not loc:
         return request_location()
     else:
-        response = rosh_hodesh.get_rh(loc, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
         response_pic = rosh_hodesh.get_rh(loc, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
