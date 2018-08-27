@@ -210,35 +210,19 @@ class RoshHodesh(object):
             molad: str
     ) -> str:
         responses = {
-            'Russian': f'*Рош ходеш* 🌒\n\n'
-                       f'*Месяц:* {data.jewish_months[month]}\n'
-                       f'*Продолжительность Рош Ходеша:* {length}'
-                       f' {data.length_ru[f"{length}"]}\n'
-                       f'*Рош Ходеш:* {rosh_hodesh}\n*Молад:* {molad}',
-            'English': f'*Rosh Chodesh* 🌒\n\n*Month:* {month}\n'
-                       f'*Rosh Chodesh duration:* {length}'
-                       f' {data.length_en[f"{length}"]}\n'
-                       f'*Rosh Chodesh:* {rosh_hodesh}\n*Molad:* {molad}',
-            'Hebrew': f'🌒 *ראש חודש*\n'
-                      f'\n*חודש:* {data.jewish_months_he[month]}\n'
-                      f' *משך ראש חודש:*'
+            'Russian': f'Месяц: |{data.jewish_months[month]}\n'
+                       f'Число дней: |{length} '
+                       f'{data.length_ru[f"{length}"]}\n'
+                       f'Дата: |{rosh_hodesh}\nМолад: |{molad}',
+            'English': f'Month: |{month}\n'
+                       f'Number of days: |{length} '
+                       f'{data.length_en[f"{length}"]}\n'
+                       f'Date: |{rosh_hodesh}\nMolad: |{molad}',
+            'Hebrew': f'*חודש:* |{data.jewish_months_he[month]}\n'
+                      f' *משך ראש חודש:* |{length}'
                       f' {data.length_he[f"{length}"]}\n '
-                      f'*ראש חודש:* {rosh_hodesh}\n*מולד*: {molad}'
+                      f'ראש חודש: |{rosh_hodesh}\nמולד: |{molad}'
         }
-        # responses = {
-        #     'Russian': f'Месяц: |{data.jewish_months[month]}\n'
-        #                f'Число дней: |{length} '
-        #                f'{data.length_ru[f"{length}"]}\n'
-        #                f'Дата: |{rosh_hodesh}\nМолад: |{molad}',
-        #     'English': f'Month: |{month}\n'
-        #                f'Number of days: |{length} '
-        #                f'{data.length_en[f"{length}"]}\n'
-        #                f'Date: |{rosh_hodesh}\nMolad: |{molad}',
-        #     'Hebrew': f'*חודש:* |{data.jewish_months_he[month]}\n'
-        #               f' *משך ראש חודש:* |{length}'
-        #               f' {data.length_he[f"{length}"]}\n '
-        #               f'ראש חודש: |{rosh_hodesh}\nמולד: |{molad}'
-        # }
         rh = responses.get(lang, '')
         return rh
 
