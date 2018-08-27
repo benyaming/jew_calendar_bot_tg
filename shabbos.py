@@ -71,5 +71,6 @@ def get_shabbos(loc, lang, user) -> BytesIO:
                 shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
             )
     # TODO предупреждения о настройках
+    print(shabbat_str)
     response_pic = ShabbosSender(lang).get_shabbos_picture(shabbat_str)
     return response_pic
