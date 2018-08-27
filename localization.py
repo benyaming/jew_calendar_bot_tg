@@ -302,9 +302,6 @@ class Shabos(object):
         shabos_str = responses.get(lang, '')
         return shabos_str
 
-        shabos_str = responses.get(lang, '')
-        return shabos_str
-
     # настройки сдвига зажиганий
     @staticmethod
     def shabos_candle_offset(lang: str) -> str:
