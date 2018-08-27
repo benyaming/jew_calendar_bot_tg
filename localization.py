@@ -14,7 +14,7 @@ class DafYomi(object):
     @staticmethod
     def get_str(lang: str, masechta: str, daf: str) -> str:
         responses = {
-            'Russian': f'Трактат: |{data.talmud[masechta]}\n'
+            'Russian': f'Трактат: | {data.talmud[masechta]}\n'
                        f'Лист: |{daf}',
             'English': f'Masechta: |{masechta}\n'
                        f'Daf: |{daf}',
