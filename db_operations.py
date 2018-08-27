@@ -127,9 +127,13 @@ def set_lang(user, lang):
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
-            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-            r.set(f'{user}', lang)
-            r.expire(f'{user}', 31536000)
+            if settings.IS_SERVER:
+                r = redis.StrictRedis(
+                    host=settings.r_host,
+                    port=settings.r_port
+                )
+                r.set(f'{user}', lang)
+                r.expire(f'{user}', 31536000)
 
 
 def get_lang_by_id(user):
@@ -137,32 +141,28 @@ def get_lang_by_id(user):
         cur = conn.cursor()
         query = f'SELECT lang FROM lang WHERE id = {user}'
         cur.execute(query)
-        lang_in_bd = cur.fetchone()[0]
-        if not lang_in_bd:
-            response = False
+        lang_in_bd = cur.fetchone()
+        if lang_in_bd:
+            response = lang_in_bd[0]
         else:
-            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-            r.set(f'{user}', lang_in_bd[0])
-            r.expire(f'{user}', 31536000)
-            response = lang_in_bd
+            response = text_handler.change_lang()
         return response
 
 
 def get_lang_from_redis(user):
-    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-    lang_in_redis = r.get(user)
-    if not lang_in_redis:
-        lang_in_db = get_lang_by_id(user)
-        if not lang_in_db:
-            response = text_handler.change_lang()
-        else:
+    if settings.IS_SERVER:
+        r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+        lang_in_redis = r.get(user)
+        if not lang_in_redis:
+            lang_in_db = get_lang_by_id(user)
             r.set(user, lang_in_db)
             r.expire(user, 31536000)
+            response = lang_in_db
+        else:
             lang = r.get(user).decode('unicode_escape')
             response = lang
     else:
-        lang = r.get(user).decode('unicode_escape')
-        response = lang
+        response = get_lang_by_id(user)
     return response
 
 

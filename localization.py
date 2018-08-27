@@ -315,7 +315,7 @@ class Shabos(object):
         responses = {
             'Russian': 'Выберите, за сколько минут до Шкии '
                        'будет зажигание свечей:',
-            'English': '',  # TODO перевод
+            'English': 'Choose candle lighting offset before the shekiah',
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')

@@ -26,6 +26,7 @@ def get_main_menu(lang):
                     main['Settings'][lang])
     return user_markup
 
+
 def get_settings_menu(lang):
     user_markup = ReplyKeyboardMarkup(True, False)
     user_markup.row(setting['Select zmanim'][lang],

@@ -367,6 +367,7 @@ def tisha_beav():
         response = h.get_holiday_string('9 of Av', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
+
 def change_lang():
     response = 'Выберите язык/Choose the language'
     lang_markup = keyboards.get_lang_menu()
@@ -386,7 +387,8 @@ def settings_menu():
         user_markup = keyboards.get_settings_menu(lang)
         responses = {
             'Russian': 'Добро пожаловать в настройки!',
-            'English': 'Welcome to settings!'
+            'English': 'Welcome to settings!',
+            #TODO
         }
         response = responses.get(lang, '')
         bot.send_message(user, response, reply_markup=user_markup)
@@ -589,17 +591,8 @@ def handle_text(user_id: int, message: str) -> None:
 
             }
             func = user_states.get(user_has_state['state'], '')
-            func()
+            return func()
     else:
-        if message in ['Русский', 'English', 'Hebrew']:
-            langs = {
-                'Русский': 'Russian',
-                'English': 'English',
-                'Hebrew': 'Hebrew'
-            }
-            lang = langs.get(message, '')
-        else:
-            lang = db_operations.get_lang_from_redis(user)
         messages = {
             'Язык': change_lang,
             'Language': change_lang,
@@ -709,4 +702,4 @@ def handle_text(user_id: int, message: str) -> None:
 
         }
         func = messages.get(message, incorrect_text)
-        func()
+        return func()
