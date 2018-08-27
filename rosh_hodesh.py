@@ -205,7 +205,7 @@ def get_molad(chodesh_dict, lang):
     return molad
 
 
-def get_rh(loc, lang, date=None) -> str:
+def get_rh(loc, lang, date=None) -> BytesIO:
     tz = get_tz_by_location(loc)
 
     if not date:
@@ -252,6 +252,5 @@ def get_rh(loc, lang, date=None) -> str:
         get_rh_date_and_day(hebrew_date, length_of_rh, lang),
         get_molad(chodesh_dict, lang)
     )
-    # rh_pic = RoshHodeshSender(lang).get_rh_picture(rh_string)
-    # return rh_pic
-    return rh_string
+    rh_pic = RoshHodeshSender(lang).get_rh_picture(rh_string)
+    return rh_pic
