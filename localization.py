@@ -14,10 +14,10 @@ class DafYomi(object):
     @staticmethod
     def get_str(lang: str, masechta: str, daf: str) -> str:
         responses = {
-            'Russian': f'*Даф Йоми*\n\n📗 *Трактат:* {data.talmud[masechta]}'
-                       f' \n📄 *Лист:* {daf}',
-            'English': f'*Daf Yomi*\n\n📗 *Masechta:* {masechta}\n '
-                       f'📄 *Daf:* {daf}',
+            'Russian': f'Трактат: |{data.talmud[masechta]}\n'
+                       f'Лист: |{daf}',
+            'English': f'Masechta: |{masechta}\n'
+                       f'Daf: |{daf}',
             'Hebrew': f'*דף יומי*\n\n📗 *מסכתא:* {data.talmud_he[masechta]}\n '
                       f'📄 *דף*: {daf}'
         }

@@ -121,7 +121,6 @@ def holidays():
     bot.send_message(user, response, reply_markup=holiday_menu)
 
 
-
 def fasts():
     response = l.Utils.get_fast_menu(lang)
     fast_menu = keyboards.get_fast_menu(lang)
@@ -133,11 +132,9 @@ def daf_yomi() -> None:
     if not loc:
         return request_location()
     else:
-        response = daf.get_daf(loc, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
-        # response_pic = daf.get_daf(loc, lang)
-        # bot.send_photo(user, response_pic)
-        # response_pic.close()
+        response_pic = daf.get_daf(loc, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def update_location():
