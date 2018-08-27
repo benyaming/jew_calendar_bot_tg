@@ -284,7 +284,7 @@ class ShabbosSender(PictureSender):
 
     def get_shabbos_picture(self, text: str) -> BytesIO:
         shabbos_warning = False
-        if '%' or '?' in text:
+        if '%' in text or '?' in text:
             shabbos_warning = True
             self._background_path = 'res/backgrounds/shabbos_attention.png'
             self._draw = self._get_draw(self._background_path)

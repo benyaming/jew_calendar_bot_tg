@@ -289,7 +289,7 @@ class Shabos(object):
             th: str
     ) -> str:
         responses = {
-            'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
+            'Russian': f'Недельная глава:  | {data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
                        f'Выход звёзд:  |{th}',
             'English': f'Parshat hashavua: |{parasha}\n'
