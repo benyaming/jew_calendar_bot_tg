@@ -1,6 +1,6 @@
 import requests, pytz
 
-import localization as l
+import localization
 import db_operations, utils
 
 from datetime import datetime, timedelta
@@ -41,7 +41,7 @@ def get_shabbos(loc, lang, user) -> BytesIO:
     shabbat = requests.get(URL, params=params)
     shabbat_dict = shabbat.json()
     if shabbat_dict['zmanim']['sunset'] == 'X:XX:XX':
-        shabbat_str = l.Shabos.shabos_with_latitude_error(
+        shabbat_str = localization.Shabos.shabos_with_latitude_error(
             lang,
             shabbat_dict['parsha_shabbos']
         )
@@ -57,18 +57,20 @@ def get_shabbos(loc, lang, user) -> BytesIO:
             shabbat_dict['zmanim']['tzeis_850_degrees'] = chazot_laila
 
         if shabbat_dict['zmanim']['alos_ma'] == 'X:XX:XX':
-            shabbat_str = l.Shabos.shabos_with_warning(
+            shabbat_str = localization.Shabos.shabos_with_warning(
                 lang,
                 shabbat_dict['parsha_shabbos'],
                 shabbat_dict['candle_lighting_shabbos'][:-3:],
-                shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
+                shabbat_dict['zmanim']['tzeis_850_degrees'][:-3],
+                candle_offset
             )
         else:
-            shabbat_str = l.Shabos.shabos(
+            shabbat_str = localization.Shabos.shabos(
                 lang,
                 shabbat_dict['parsha_shabbos'],
                 shabbat_dict['candle_lighting_shabbos'][:-3:],
-                shabbat_dict['zmanim']['tzeis_850_degrees'][:-3]
+                shabbat_dict['zmanim']['tzeis_850_degrees'][:-3],
+                candle_offset
             )
     # TODO предупреждения о настройках
     response_pic = ShabbosSender(lang).get_shabbos_picture(shabbat_str)

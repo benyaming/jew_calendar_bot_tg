@@ -21,6 +21,7 @@ class PictureSender(object):
         60
     )
 
+
     @staticmethod
     def _convert_img_to_bytes_io(
             img: PngImagePlugin.PngImageFile
@@ -244,23 +245,47 @@ class ShabbosSender(PictureSender):
         else:
             text_lines = data.split('\n')
         for line in text_lines:
-            # definition part separetes from value part by '|' symbol
-            line_parts = line.split('|')
-            draw.text(
-                (start_position_x, start_position_y),  # coordinates
-                line_parts[0] + ' ',
-                font=self._bold_font
-            )
-            draw.text(
-                (
-                    start_position_x +
-                    self._regular_font_offset(line_parts[0]),
-                    start_position_y
-                ),
-                line_parts[1],
-                font=self._regular_font
-            )
-            start_position_y += y_offset
+            if '+' in line:
+                # draw candle offset line
+                line = line.split('+')[1]
+                offset = line.split('/')
+                # draw candle value
+                draw.text(
+                    (start_position_x, start_position_y),
+                    offset[0],
+                    font=self._regular_font
+                )
+
+                # draw string "minutes befor shkia"
+                draw.text(
+                    (
+                        start_position_x +
+                        self._regular_font_offset(offset[0]),
+                        start_position_y
+                    ),
+                    offset[1],
+                    font=self._regular_font,
+                )
+
+                start_position_y += y_offset
+            else:
+                # definition part separetes from value part by '|' symbol
+                line_parts = line.split('|')
+                draw.text(
+                    (start_position_x, start_position_y),  # coordinates
+                    line_parts[0] + ' ',
+                    font=self._bold_font
+                )
+                draw.text(
+                    (
+                        start_position_x +
+                        self._regular_font_offset(line_parts[0]),
+                        start_position_y
+                    ),
+                    line_parts[1],
+                    font=self._regular_font
+                )
+                start_position_y += y_offset
 
         if shabbos_warning:
             if '?' in data:

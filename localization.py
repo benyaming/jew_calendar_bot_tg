@@ -229,7 +229,7 @@ class RoshHodesh(object):
 # ЛОКАЛИЗАЦИЯ ДЛЯ ШАББАТА
 class Shabos(object):
     titles = {
-        'Russian': 'Шаббат',
+        'Russian': 'ШАББАТ',
         'English': 'SHABBOS',
         'Hebrew': 'שבת'
     }
@@ -258,16 +258,19 @@ class Shabos(object):
             lang: str,
             parasha: str,
             cl: str,
-            th: str
+            th: str,
+            offset: int
     ) -> str:
         responses = {
             'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
+                       f'+({offset}/ минут до шкии\n'
                        f'Выход звёзд:  |{th}%'
                        f'Внимание! Необходимо уточнить '
                        f'время \nзажигания свечей у раввина общины!',
             'English': f'Parshat hashavua: |{parasha}\n'
                        f'Candle lighting: |{cl}\n'
+                       f'+({offset}/ минут до шкии)\n'
                        f'Tzeit hakochavim: |{th}%'
                        f'Notice! You should specify time of candle\n'
                        f'lighting with the rabbi of your community.',
@@ -286,17 +289,21 @@ class Shabos(object):
             lang: str,
             parasha: str,
             cl: str,
-            th: str
+            th: str,
+            offset: int
     ) -> str:
         responses = {
             'Russian': f'Недельная глава:  | {data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
+                       f'+({offset}/ минут до шкии)\n'
                        f'Выход звёзд:  |{th}',
             'English': f'Parshat hashavua: |{parasha}\n'
                        f'Candle lighting: |{cl}\n'
+                       f'+({offset}/ минут до шкии)\n'
                        f'Tzeit hakochavim: |{th}',
             'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
                       f'הדלקת נרות: |{cl}\n'
+                      #TODO
                       f'צאת הכוכבים: |{th}'
         }
         shabos_str = responses.get(lang, '')
