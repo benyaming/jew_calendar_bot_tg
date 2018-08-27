@@ -42,10 +42,10 @@ class RoshHodesh(object):
             second_year: int
     ) -> str:
         responses = {
-            'Russian': f'31 декабря {first_year} года и 1 '
-                       f'января {second_year} года',
-            'English': f'31 December {first_year} and 1 '
-                       f'January {second_year}',
+            'Russian': f'31 декабря {first_year} года и *1 '
+                       f'января {second_year} года*',
+            'English': f'31 December {first_year} and *1 '
+                       f'January {second_year}*',
             'Hebrew': f' ו {first_year} בדצמבר 31'
                       f'{second_year} בינואר'
         }
@@ -63,10 +63,10 @@ class RoshHodesh(object):
     ) -> str:
         responses = {
             'Russian': f'{first_day} и 1 {data.gr_months_index[first_month]} '
-                       f'и {data.gr_months_index[second_month]} {year} года',
+                       f'и {data.gr_months_index[second_month]} {year} года*',
             'English': f'{first_day} and 1 '
                        f'{data.gr_months_index_en[first_month]}'
-                       f' and {data.gr_months_index_en[second_month]} {year}',
+                       f' and {data.gr_months_index_en[second_month]} {year}*',
             'Hebrew':  f'{first_day} ו 1 '
                        f'{data.gr_months_index_he[first_month]}'
                        f' ו {data.gr_months_index_he[second_month]} {year}'
@@ -85,9 +85,9 @@ class RoshHodesh(object):
     ) -> str:
         responses = {
             'Russian': f'{first_day} и {second_day} '
-                       f'{data.gr_months_index[month]} {year} года',
+                       f'{data.gr_months_index[month]} {year} года*',
             'English': f'{first_day} and {second_day} '
-                       f'{data.gr_months_index_en[month]} {year}',
+                       f'{data.gr_months_index_en[month]} {year}*',
             'Hebrew': f'{first_day} ו {second_day} '
                       f'{data.gr_months_index_he[month]} {year}'
         }
@@ -172,18 +172,17 @@ class RoshHodesh(object):
             nhours: int,
             hours: str,
             nminutes: int,
-            # minutes: str,
             nchalakim: int,
             chalakim: str
     ) -> str:
         responses = {
             'Russian': f'{day} {data.gr_months[month]}, '
-                       f'{data.gr_dayofweek[day_of_week]}, '
+                       f'{data.gr_dayofweek[day_of_week]},^'
                        f'{nhours} {data.hours.get(hours[-1:], "часов")} '
                        f'{nminutes} '
                        f'{data.minutes.get(nminutes, "минут")} и '
                        f'{nchalakim} {data.chalakim.get(chalakim, "частей")}',
-            'English': f'{day} {month}, {day_of_week}, '
+            'English': f'{day} {month}, {day_of_week},^'
                        f'{nhours} {data.hours_en.get(hours, "hours")} '
                        f'{nminutes} '
                        f'{data.minutes_en.get(nminutes, "minutes")} and '
