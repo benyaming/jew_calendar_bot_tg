@@ -5,10 +5,11 @@ from io import BytesIO
 
 import localization
 
+
 class PictureSender(object):
-    print(os.getcwd())
-    _regular_font_path = open('res/fonts/gothic.ttf')
-    _bold_font_path = open('res/fonts/gothic-bold.ttf')
+    
+    _regular_font_path = open('res/fonts/gothic.TTF')
+    _bold_font_path = open('res/fonts/gothic-bold.TTF')
     _title_font = ImageFont.truetype(
         _bold_font_path,
         60
