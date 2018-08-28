@@ -375,7 +375,7 @@ class ZmanimSender(PictureSender):
 
     def _draw_zmanim(self, text: str):
         start_position_y = 210
-        start_position_x = 100
+        start_position_x = 70
         draw = self._draw
 
         lines = text.split('\n')
