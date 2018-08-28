@@ -193,7 +193,7 @@ def collect_custom_zmanim(
                 'Hebrew': data.zmanim_he[zman_code]
             }
             zman_name = zman_names.get(lang,'')
-            zman_string = f'{zman_name} — {func(zmanim_dict, lang)[:-3]}'
+            zman_string = f'{zman_name}  —  {func(zmanim_dict, lang)[:-3]}'
             if first_zman_flag:
                 user_zmanim_str += f'{zman_string}'
                 first_zman_flag = False
