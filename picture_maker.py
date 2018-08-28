@@ -385,7 +385,7 @@ class ZmanimSender(PictureSender):
         font_params = self._get_font_properties(number_of_lines)
         y_offset = font_params['y_offset']
         start_position_y += font_params['start_y_offset']
-        start_position_x += font_params['start_y_offset']
+        start_position_x += font_params['start_x_offset']
 
         for line in lines:
             line_parts = line.split('—')
