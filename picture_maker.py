@@ -336,25 +336,25 @@ class ZmanimSender(PictureSender):
     def _get_font_properties(self, number_of_lines: int) -> dict:
         p = {
             # [font_size, y_offset, start_y_offset, start_x_offset
-            1: [58, 68,300, -30],
-            2: [58, 68, 270, -30],
-            3: [58, 68, 220, -30],
-            4: [58, 68, 180, -30],
-            5: [58, 68, 160, -30],
-            6: [58, 68, 140, -30],
-            7: [58, 68, 100, -30],
-            8: [58, 68, 85, -30],
-            9: [58, 68, 85, -30],
-            10: [59, 68, 40, 0],
-            11: [57, 66, 20, 0],
-            12: [55, 64, 20, 0],
-            13: [52, 58, 20, 0],
-            14: [45, 52, 20, 0],
-            15: [43, 50, 10, 0],
-            16: [41, 48, 10, 0],
-            17: [39, 46, 0, 0],
-            18: [37, 44, 0, 0],
-            19: [35, 42, 0, 0]
+            1: [58, 68,300],
+            2: [58, 68, 270],
+            3: [58, 68, 220],
+            4: [58, 68, 180],
+            5: [58, 68, 160],
+            6: [58, 68, 140],
+            7: [58, 68, 100],
+            8: [58, 68, 85],
+            9: [58, 68, 85],
+            10: [59, 68, 40],
+            11: [57, 66, 20],
+            12: [55, 64, 20],
+            13: [52, 58, 20],
+            14: [45, 52, 20],
+            15: [43, 50, 10],
+            16: [41, 48, 10],
+            17: [39, 46, 0],
+            18: [37, 44, 0],
+            19: [35, 42, 0]
         }
 
         self._data_font_size = p.get(number_of_lines)[0]
@@ -369,8 +369,7 @@ class ZmanimSender(PictureSender):
         self._bold_font_offset = self._bold_font.getsize
         font_params = {
             'y_offset': p.get(number_of_lines)[1],
-            'start_y_offset': p.get(number_of_lines)[2],
-            'start_x_offset': p.get(number_of_lines)[3]
+            'start_y_offset': p.get(number_of_lines)[2]
         }
         return font_params
 
@@ -385,7 +384,6 @@ class ZmanimSender(PictureSender):
         font_params = self._get_font_properties(number_of_lines)
         y_offset = font_params['y_offset']
         start_position_y += font_params['start_y_offset']
-        start_position_x += font_params['start_x_offset']
 
         for line in lines:
             line_parts = line.split('—')
