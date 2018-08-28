@@ -264,7 +264,7 @@ class Shabos(object):
         responses = {
             'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
-                       f'+({offset}/ минут до шкии\n'
+                       f'+({offset}/ минут до шкии)\n'
                        f'Выход звёзд:  |{th}%'
                        f'Внимание! Необходимо уточнить '
                        f'время \nзажигания свечей у раввина общины!',
@@ -335,6 +335,11 @@ class Shabos(object):
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ЗМАНИМ
 class Zmanim(object):
+    titles = {
+        'Russian': 'ЗМАНИМ',
+        'English': 'ZMANIM',
+        'Hebrew': 'זמנים'
+    }
 
     # ошибка полярных широт
     @staticmethod

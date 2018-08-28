@@ -18,13 +18,19 @@ import holidays as h
 
 
 def get_zmanim():
-    # loc = db_operations.get_location_by_id(user)
-    # if not loc:
-    #     return request_location()
-    # else:
-    response = zmanim.get_zmanim(user, lang)
-    # , parse_mode='Markdown'
-    bot.send_message(user, response)
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        return request_location()
+    else:
+        response = zmanim.get_zmanim(user, lang)
+        if response['status']:
+            response_pic = response['zmanim_pic']
+            bot.send_photo(user, response_pic)
+            response_pic.close()
+        else:
+            response_message = response['zmanim_str']
+            bot.send_message(user, response_message)
+        # bot.send_message(user, response)
 
 
 def request_date():

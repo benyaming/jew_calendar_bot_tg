@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import re
 import pytz, requests
 import db_operations, data
+from picture_maker import ZmanimSender
 
 import localization
 
@@ -180,6 +181,7 @@ def collect_custom_zmanim(
     }
     user_zmanim_str = ''
     user_zmanim = user_zmanim_set
+    first_zman_flag = True
     for i in range(len(user_zmanim)):
         zman = int(user_zmanim[i])
         if zman:
@@ -191,9 +193,12 @@ def collect_custom_zmanim(
                 'Hebrew': data.zmanim_he[zman_code]
             }
             zman_name = zman_names.get(lang,'')
-            # [:-3]
-            zman_string = f'{zman_name} — {func(zmanim_dict, lang)}\n'
-            user_zmanim_str += zman_string
+            zman_string = f'{zman_name} — {func(zmanim_dict, lang)[:-3]}'
+            if first_zman_flag:
+                user_zmanim_str += f'{zman_string}'
+                first_zman_flag = False
+            else:
+                user_zmanim_str += f'\n{zman_string}'
     return user_zmanim_str
 
 
@@ -225,15 +230,29 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
     month = re.search(r'[a-zA-z]+', zmanim_dict['hebDateString']).group(0)
     year_day = re.findall(r'\d+', zmanim_dict['hebDateString'])
     zmanim_dict = zmanim_dict['zmanim']
+
     zmanim_dict['day'] = year_day[0]
     zmanim_dict['month'] = month
     zmanim_dict['year'] = year_day[1]
     return zmanim_dict
 
 
-def get_zmanim(user: int, lang: str, custom_date=None) -> str:
+def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
     # TODO разобраться с полярными ошибками
+    response = {'status': False}
     zmanim_dict = get_zmanim_dict(user, custom_date)
-    user_zmanim_set = db_operations.get_zmanim_set(user)
-    user_zmanim_str = collect_custom_zmanim(zmanim_dict, user_zmanim_set, lang)
-    return user_zmanim_str
+    if zmanim_dict['chatzos'] == 'X:XX:XX':
+        user_zmanim_str = localization.Zmanim.get_polar_error(lang)
+        response['zmanim_str'] = user_zmanim_str
+    else:
+        user_zmanim_set = db_operations.get_zmanim_set(user)
+        user_zmanim_str = collect_custom_zmanim(
+            zmanim_dict,
+            user_zmanim_set,
+            lang
+        )
+        response['status'] = True
+        response['zmanim_pic'] = ZmanimSender(lang).get_zmanim_picture(
+            user_zmanim_str
+        )
+    return response

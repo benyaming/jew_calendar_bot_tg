@@ -21,7 +21,6 @@ class PictureSender(object):
         60
     )
 
-
     @staticmethod
     def _convert_img_to_bytes_io(
             img: PngImagePlugin.PngImageFile
@@ -320,5 +319,106 @@ class ShabbosSender(PictureSender):
         )
         self._draw_shabbos_data(text, shabbos_warning)
         pic = self._convert_img_to_bytes_io(self._image)
-        self._image.save('test.png')
         return pic
+
+
+class ZmanimSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/zmanim.png'
+        self._draw = self._get_draw(self._background_path)
+
+    def _regular_font_offset(self, text):
+        offset = self._regular_font.getsize(text)[0]
+        return offset
+
+    def _get_font_properties(self, number_of_lines: int) -> dict:
+        p = {
+            # [font_size, y_offset, start_y_offset
+            1: [70, 0, 300],
+            2: [70, 80, 240],
+            3: [67, 76, 180],
+            4: [67, 76, 160],
+            5: [67, 76, 140],
+            6: [67, 76, 100],
+            7: [67, 76, 80],
+            8: [65, 74, 60],
+            9: [61, 70, 50],
+            10: [59, 68, 40],
+            11: [57, 66, 20],
+            12: [55, 64, 20],
+            13: [52, 58, 20],
+            14: [45, 52, 20],
+            15: [43, 50, 10],
+            16: [41, 48, 10],
+            17: [39, 46, 0],
+            18: [37, 44, 0],
+            19: [35, 42, 0]
+        }
+
+        self._data_font_size = p.get(number_of_lines)[0]
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+        font_params = {
+            'y_offset': p.get(number_of_lines)[1],
+            'start_y_offset': p.get(number_of_lines)[2]
+        }
+        return font_params
+
+    def _draw_zmanim(self, text: str):
+        start_position_y = 210
+        start_position_x = 100
+        draw = self._draw
+
+        lines = text.split('\n')
+
+        number_of_lines = len(lines)
+        font_params = self._get_font_properties(number_of_lines)
+        y_offset = font_params['y_offset']
+        start_position_y += font_params['start_y_offset']
+
+        for line in lines:
+            line_parts = line.split('—')
+            # draw zman name
+            draw.text(
+                (start_position_x, start_position_y),  # coordinates
+                line_parts[0],
+                font=self._bold_font
+            )
+
+            # draw zman value
+            draw.text(
+                (
+                    start_position_x +
+                    self._regular_font_offset(line_parts[0]),
+                    start_position_y
+                ),  # coordinates
+                line_parts[1],
+                font=self._regular_font
+            )
+            start_position_y += y_offset
+
+    def get_zmanim_picture(self, text: str):
+        print(text)
+        self._draw_title(
+            self._draw,
+            localization.Zmanim.titles[self._lang],
+            self._lang
+        )
+        self._draw_zmanim(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+# text = '''Алот Ашахар — 04:58       1    '''
+# # rerfgerg — vdfrgrtgt  16
+# lang = 'Russian'
+# ZmanimSender(lang).get_zmanim_picture(text)
