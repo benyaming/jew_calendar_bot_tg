@@ -725,25 +725,25 @@ holidays_name_en = {
 }
 
 zmanim_ru = {
-    'sunrise': 'Нец Ахама',
-    'sof_zman_tefila_gra': 'Зман Тфила [АГРО]',
-    'sof_zman_tefila_ma': 'Зман Тфила [М"А]',
-    'talis_ma': 'Мишеякир',
-    'sof_zman_shema_gra': 'Зман Шма [АГРО]',
-    'sof_zman_shema_ma': 'Зман Шма [М"А]',
-    'chatzos': 'Хацот',
-    'mincha_ketana_gra': 'Минха Ктана',
-    'mincha_gedola_ma': 'Минха Гдола',
-    'alot_ma': 'Алот Ашахар',
-    'plag_mincha': 'Плаг Минха',
-    'sunset': 'Шкия',
+    'sunrise': 'Нец Ахама ',
+    'sof_zman_tefila_gra': 'Зман Тфила [АГРО] ',
+    'sof_zman_tefila_ma': 'Зман Тфила [М"А] ',
+    'talis_ma': 'Мишеякир ',
+    'sof_zman_shema_gra': 'Зман Шма [АГРО] ',
+    'sof_zman_shema_ma': 'Зман Шма [М"А] ',
+    'chatzos': 'Хацот ',
+    'mincha_ketana_gra': 'Минха Ктана ',
+    'mincha_gedola_ma': 'Минха Гдола ',
+    'alot_ma': 'Алот Ашахар ',
+    'plag_mincha': 'Плаг Минха ',
+    'sunset': 'Шкия ',
     'tzeis_850d': 'Выход звезд [850°] ',
     'tzeis_rt': 'Выход звезд [Р"Т] ',
     'tzeis_42m': 'Выход звезд [42 минуты] ',
     'tzeis_595d': 'Выход звезд [595°] ',
-    'chatzos_laila': 'Хацот Алайла',
-    'astronomical_hour_ma': 'Астрономический час [М"А]',
-    'astronomical_hour_gra': 'Астрономический час [АГРО]'
+    'chatzos_laila': 'Хацот Алайла ',
+    'astronomical_hour_ma': 'Астрономический час [М"А] ',
+    'astronomical_hour_gra': 'Астрономический час [АГРО] '
 }
 
 zmanim_en = {
