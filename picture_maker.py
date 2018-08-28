@@ -398,7 +398,7 @@ class ZmanimSender(PictureSender):
             draw.text(
                 (
                     start_position_x +
-                    self._regular_font_offset(line_parts[0]),
+                    self._bold_font_offset(line_parts[0])[0],
                     start_position_y
                 ),  # coordinates
                 line_parts[1],
@@ -417,7 +417,24 @@ class ZmanimSender(PictureSender):
         return pic
 
 
-# text = '''Алот Ашахар — 04:58       1    '''
-# # rerfgerg — vdfrgrtgt  16
+# text = '''Алот Ашахар—03:19
+# Мишеякир—04:14
+# Нец Ахама—05:28
+# Зман Шма[М"А]—07:54
+# Зман Шма[АГРО]—08:58
+# Зман Тфила [М"А]—09:25
+# Зман Тфила [АГРО]—10:09
+# Хацот—12:29
+# Минха Гдола—13:04
+# Минха Ктана—16:35
+# Плаг Минха—18:03
+# Шкия—19:30
+# Выход звезд [595°]—20:09
+# Выход звезд [850°]—20:30
+# Выход звезд [42 минуты]—20:12
+# Выход звезд [Р"Т]—20:42
+# Астрономический час [М"А]—1:31
+# Астрономический час [АГРО]—1:10
+# Хацот Алайла—00:29'''
 # lang = 'Russian'
 # ZmanimSender(lang).get_zmanim_picture(text)
