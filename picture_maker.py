@@ -393,22 +393,12 @@ class ZmanimSender(PictureSender):
                 line_parts[0],
                 font=self._bold_font
             )
-            # draw the whitespace
-            draw.text(
-                (
-                    start_position_x +
-                    self._regular_font_offset(line_parts[0]),
-                    start_position_y
-                ),  # coordinates
-                ' ',
-                font=self._bold_font
-            )
 
             # draw zman value
             draw.text(
                 (
                     start_position_x +
-                    self._regular_font_offset(line_parts[0] + ' '),
+                    self._regular_font_offset(line_parts[0]),
                     start_position_y
                 ),  # coordinates
                 line_parts[1],
