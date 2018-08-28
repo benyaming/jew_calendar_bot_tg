@@ -355,6 +355,19 @@ class Zmanim(object):
         error_message = responses.get(lang, '')
         return error_message
 
+    # ошибка полярных широт
+    @staticmethod
+    def get_zmanim_set_error(lang: str) -> str:
+        responses = {
+            'Russian': 'Нечего отображать. Выберите, какие зманим вы хотите '
+                       'получать:',
+            'English': 'Nothing to show. Select zmanim that you want to '
+                       'receive:',
+            'Hebrew': '' #TODO перевод
+        }
+        error_message = responses.get(lang, '')
+        return error_message
+
     # названия зманим для настроек
     @staticmethod
     def get_zman_name(zman: str, lang: str) -> str:

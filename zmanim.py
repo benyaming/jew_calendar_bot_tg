@@ -238,12 +238,10 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
 
 
 def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
-    # TODO разобраться с полярными ошибками
-    response = {'status': False}
+    response = {'polar_error': False, 'zmanim_set_error': False}
     zmanim_dict = get_zmanim_dict(user, custom_date)
     if zmanim_dict['chatzos'] == 'X:XX:XX':
-        user_zmanim_str = localization.Zmanim.get_polar_error(lang)
-        response['zmanim_str'] = user_zmanim_str
+        response['polar_error'] = localization.Zmanim.get_polar_error(lang)
     else:
         user_zmanim_set = db_operations.get_zmanim_set(user)
         user_zmanim_str = collect_custom_zmanim(
@@ -251,8 +249,12 @@ def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
             user_zmanim_set,
             lang
         )
-        response['status'] = True
-        response['zmanim_pic'] = ZmanimSender(lang).get_zmanim_picture(
-            user_zmanim_str
-        )
+        # check if user have enabled zmanim
+        if user_zmanim_str:
+            response['zmanim_pic'] = ZmanimSender(lang).get_zmanim_picture(
+                user_zmanim_str
+            )
+        else:
+            response['zmanim_set_error'] = \
+                localization.Zmanim.get_zmanim_set_error(lang)
     return response

@@ -417,8 +417,6 @@ class ZmanimSender(PictureSender):
         self._draw_zmanim(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
-        # self._image.save('test.png')
-        # print('done')
 
 
 # text = '''Алот Ашахар — 04:58       1    '''

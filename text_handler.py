@@ -23,14 +23,17 @@ def get_zmanim():
         return request_location()
     else:
         response = zmanim.get_zmanim(user, lang)
-        if response['status']:
+        if response['polar_error']:
+            response_message = response['polar_error']
+            bot.send_message(user, response_message)
+        elif response['zmanim_set_error']:
+            response_message = response['zmanim_set_error']
+            user_markup = keyboards.get_zmanim_callback_menu(lang, user)
+            bot.send_message(user, response_message, reply_markup=user_markup)
+        else:
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
-        else:
-            response_message = response['zmanim_str']
-            bot.send_message(user, response_message)
-        # bot.send_message(user, response)
 
 
 def request_date():
@@ -408,11 +411,11 @@ def select_zmanim():
         user_markup = keyboards.get_zmanim_callback_menu(lang, user)
         responses = {
             'Russian': 'Выберите зманим для отображения',
-            'English': 'Choose zmanim that will shown'
+            'English': 'Choose zmanim that will shown',
+            'Hebrew': ''  # TODO hebrew
         }
         response = responses.get(lang, '')
         bot.send_message(user, response, reply_markup=user_markup)
-        # TODO init
 
 
 def select_candle_offset():
