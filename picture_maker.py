@@ -336,14 +336,14 @@ class ZmanimSender(PictureSender):
     def _get_font_properties(self, number_of_lines: int) -> dict:
         p = {
             # [font_size, y_offset, start_y_offset
-            1: [70, 0, 300],
-            2: [70, 80, 240],
-            3: [67, 76, 180],
-            4: [67, 76, 160],
-            5: [67, 76, 140],
-            6: [67, 76, 100],
-            7: [67, 76, 80],
-            8: [63, 72, 60],
+            1: [62, 72,300],
+            2: [62, 72, 240],
+            3: [62, 72, 180],
+            4: [62, 72, 160],
+            5: [62, 72, 140],
+            6: [62, 72, 100],
+            7: [62, 72, 60],
+            8: [62, 72, 60],
             9: [61, 70, 50],
             10: [59, 68, 40],
             11: [57, 66, 20],
@@ -407,7 +407,6 @@ class ZmanimSender(PictureSender):
             start_position_y += y_offset
 
     def get_zmanim_picture(self, text: str):
-        print(text)
         self._draw_title(
             self._draw,
             localization.Zmanim.titles[self._lang],
@@ -416,6 +415,8 @@ class ZmanimSender(PictureSender):
         self._draw_zmanim(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
+        # self._image.save('test.png')
+        # print('done')
 
 
 # text = '''Алот Ашахар — 04:58       1    '''
