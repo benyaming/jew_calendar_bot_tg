@@ -210,7 +210,7 @@ def rosh_hashana():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Rosh Hashana', user, lang)
+        response = h.get_holiday_pic('Rosh Hashana', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -219,7 +219,7 @@ def yom_kippur():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Yom Kippur', user, lang)
+        response = h.get_holiday_pic('Yom Kippur', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -228,8 +228,8 @@ def succot():
     if not loc:
         return request_location()
     else:
-        get_succot = h.get_holiday_string('Succos', user, lang)
-        get_hoshana_rabba = h.get_holiday_string('HoshanaRabba', user, lang)
+        get_succot = h.get_holiday_pic('Succos', user, lang)
+        get_hoshana_rabba = h.get_holiday_pic('HoshanaRabba', user, lang)
         response = get_succot + '\n\n' + get_hoshana_rabba
         bot.send_message(user, response, parse_mode='Markdown')
 
@@ -241,11 +241,11 @@ def shmini_atzeret():
         return request_location()
     else:
         if not diaspora:
-            get_shmini_atzeret = h.get_holiday_string(
+            get_shmini_atzeret = h.get_holiday_pic(
                 'Shmini Atzeres', user, lang
             )
         else:
-            get_shmini_atzeret = h.get_holiday_string(
+            get_shmini_atzeret = h.get_holiday_pic(
                 'Simchas Torah', user, lang
             )
         response = get_shmini_atzeret
@@ -257,7 +257,7 @@ def chanukah():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Chanuka', user, lang)
+        response = h.get_holiday_pic('Chanuka', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -266,7 +266,7 @@ def tu_beshvat():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Tu B\'shvat', user, lang)
+        response = h.get_holiday_pic('Tu B\'shvat', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -275,8 +275,8 @@ def purim():
     if not loc:
         return request_location()
     else:
-        get_purim = h.get_holiday_string('Purim', user, lang)
-        get_shushan_purim = h.get_holiday_string('Shushan Purim', user, lang)
+        get_purim = h.get_holiday_pic('Purim', user, lang)
+        get_shushan_purim = h.get_holiday_pic('Shushan Purim', user, lang)
         response = get_purim + '\n\n' + get_shushan_purim
         bot.send_message(user, response, parse_mode='Markdown')
 
@@ -286,7 +286,7 @@ def pesach():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Pesach', user, lang)
+        response = h.get_holiday_pic('Pesach', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -295,7 +295,7 @@ def lag_baomer():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Lag Ba\'omer', user, lang)
+        response = h.get_holiday_pic('Lag Ba\'omer', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -304,7 +304,7 @@ def shavuot():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Shavuos', user, lang)
+        response = h.get_holiday_pic('Shavuos', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -313,7 +313,7 @@ def tu_beav():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Tu B\'av', user, lang)
+        response = h.get_holiday_pic('Tu B\'av', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 
@@ -322,10 +322,10 @@ def israel():
     if not loc:
         return request_location()
     else:
-        get_yom_hashoa = h.get_holiday_string('YomHaShoah', user, lang)
-        get_yom_hazikaron = h.get_holiday_string('YomHaZikaron', user, lang)
-        get_yom_hatzmaut = h.get_holiday_string('YomHaAtzmaut', user, lang)
-        get_yom_yerushalaim = h.get_holiday_string(
+        get_yom_hashoa = h.get_holiday_pic('YomHaShoah', user, lang)
+        get_yom_hazikaron = h.get_holiday_pic('YomHaZikaron', user, lang)
+        get_yom_hatzmaut = h.get_holiday_pic('YomHaAtzmaut', user, lang)
+        get_yom_yerushalaim = h.get_holiday_pic(
             'YomYerushalayim', user, lang)
         response = get_yom_hashoa + '\n\n' + get_yom_hazikaron + \
             '\n\n' + get_yom_hatzmaut + '\n\n' + get_yom_yerushalaim
@@ -337,8 +337,9 @@ def fast_gedaliah():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Tzom Gedalia', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('Tzom Gedalia', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def asarah_betevet():
@@ -346,8 +347,9 @@ def asarah_betevet():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('10 of Teves', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('10 of Teves', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def fast_esther():
@@ -355,8 +357,9 @@ def fast_esther():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('Taanis Esther', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('Taanis Esther', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def sheva_asar_betammuz():
@@ -364,8 +367,9 @@ def sheva_asar_betammuz():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('17 of Tamuz', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('17 of Tamuz', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def tisha_beav():
@@ -373,7 +377,7 @@ def tisha_beav():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_string('9 of Av', user, lang)
+        response = h.get_holiday_pic('9 of Av', user, lang)
         bot.send_message(user, response, parse_mode='Markdown')
 
 

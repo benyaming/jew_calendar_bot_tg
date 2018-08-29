@@ -339,7 +339,7 @@ holidays_name = {
     '9 of Av': 'Пост 9 Ава',
     'Tu B\'av': '15 Ава',
     'Rosh Hashana': 'Рош-аШана',
-    'Tzom Gedalia': 'Пост Гедалии',
+    'Tzom Gedalia': 'ПОСТ ГЕДАЛИИ',
     'Yom Kippur': 'Йом-Кипур',
     'Succos': 'Суккот',
     'HoshanaRabba': 'Ошана Раба',

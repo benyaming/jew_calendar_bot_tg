@@ -264,13 +264,13 @@ class Shabos(object):
         responses = {
             'Russian': f'Недельная глава: |{data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
-                       f'+({offset}/ минут до шкии)\n'
+                       f'+({offset} минут до шкии)\n'
                        f'Выход звёзд:  |{th}%'
                        f'Внимание! Необходимо уточнить '
                        f'время \nзажигания свечей у раввина общины!',
             'English': f'Parshat hashavua: |{parasha}\n'
                        f'Candle lighting: |{cl}\n'
-                       f'+({offset}/ minutes before shekiah)\n'
+                       f'+({offset} minutes before shekiah)\n'
                        f'Tzeit hakochavim: |{th}%'
                        f'Notice! You should specify time of candle\n'
                        f'lighting with the rabbi of your community.',
@@ -295,11 +295,11 @@ class Shabos(object):
         responses = {
             'Russian': f'Недельная глава:  | {data.parashat[parasha]}\n'
                        f'Зажигание свечей: |{cl}\n'
-                       f'+({offset}/ минут до шкии)\n'
+                       f'+({offset} минут до шкии)\n'
                        f'Выход звёзд:  |{th}',
             'English': f'Parshat hashavua: |{parasha}\n'
                        f'Candle lighting: |{cl}\n'
-                       f'+({offset}/ minutes before shekiah)\n'
+                       f'+({offset} minutes before shekiah)\n'
                        f'Tzeit hakochavim: |{th}',
             'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
                       f'הדלקת נרות: |{cl}\n'
@@ -738,14 +738,11 @@ class Holidays(object):
             shmirat_shabat: str
     ) -> str:
         responses = {
-            'Russian': f'Начало поста {day} {data.gr_months_index[month]}:'
-                       f' *{time_begin[:-3:]}*\n'
-                       f'Конец поста {day} {data.gr_months_index[month]}'
-                       f'\n✨ Выход звезд: *{time_end[:-3:]}*\n'
-                       f'🕖 Сефер бен Ашмашот: *{ben_ashmashot[:-3:]}'
-                       f'*\n🕘 Неварешет: *{nevareshet[:-3:]}*\n'
-                       f'🕑 Шмират шаббат килхата:'
-                       f' *{shmirat_shabat[:-3:]}*',
+            'Russian': f'Начало поста:| {time_begin[:-3:]}\n'
+                       f'%Выход звезд:| {time_end[:-3:]}\n'
+                       f'Сефер бен Ашмашот:| {ben_ashmashot[:-3:]}\n'
+                       f'Неварешет:| {nevareshet[:-3:]}\n'
+                       f'Шмират шаббат килхата:| {shmirat_shabat[:-3:]}',
             'English':  f'The fast begins {day} '
                         f'{data.gr_months_index_en[month]}:'
                         f' *{time_begin[:-3:]}*\n'
@@ -1216,22 +1213,21 @@ class Holidays(object):
     @staticmethod
     def one_day_holiday(
             lang: str,
-            day: str,
+            first_day: str,
             month: str,
             year: int,
             weekday: str
     ) -> str:
         responses = {
-            'Russian': f'📅 Дата: {day}'
+            'Russian': f'Дата: |{first_day}'
                        f' {data.gr_months_index[month]}'
-                       f' {year} годa,'
-                       f' {data.hdays_of_7[weekday]}',
-            'English': f'📅 Date: {day}'
+                       f' {year} годa^{data.hdays_of_7[weekday]}',
+            'English': f'Date:| {first_day}'
                        f' {data.gr_months_index_en[month]}'
                        f' {year},'
                        f' {data.hdays_of_7_en[weekday]}',
             'Hebrew': f'📅 תאריך: '
-                      f'{day} {data.gr_months_index_he[month]}'
+                      f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'
                       f' {data.hdays_of_7_he[weekday]}'
         }
