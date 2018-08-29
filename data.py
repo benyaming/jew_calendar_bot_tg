@@ -324,7 +324,7 @@ length_he = {
 
 holidays_name = {
     'Tu B\'shvat': 'Ту би-Шват',
-    'Taanis Esther': 'ПОСТ Эстер',
+    'Taanis Esther': 'ПОСТ ЭСТЕР',
     'Purim': 'Пурим',
     'Purim Katan': 'Пурим Катан',
     'Shushan Purim': 'Шушан Пурим',
