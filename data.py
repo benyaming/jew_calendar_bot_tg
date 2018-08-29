@@ -710,7 +710,7 @@ holidays_name_en = {
     'Lag Ba\'omer': 'Lag BaOmer',
     'YomYerushalayim': 'Yom Yerushalayim',
     'Shavuos': 'Shavuot',
-    '17 of Tamuz': 'SHIVAASAR BTAMMUZ',
+    '17 of Tamuz': 'SHIVA ASAR BTAMMUZ',
     '9 of Av': 'TishaBAv',
     'Tu B\'av': 'TuBAv',
     'Rosh Hashana': 'Rosh HaShanah',
