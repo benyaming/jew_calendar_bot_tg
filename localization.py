@@ -1220,8 +1220,7 @@ class Holidays(object):
                        f' {year} годa^{data.hdays_of_7[weekday]}',
             'English': f'Date: |{first_day}'
                        f' {data.gr_months_index_en[month]}'
-                       f' {year},'
-                       f' {data.hdays_of_7_en[weekday]}',
+                       f' {year}^{data.hdays_of_7_en[weekday]}',
             'Hebrew': f'📅 תאריך: '
                       f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'
