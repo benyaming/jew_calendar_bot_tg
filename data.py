@@ -335,7 +335,7 @@ holidays_name = {
     'Lag Ba\'omer': 'Лаг ба-Омер',
     'YomYerushalayim': 'День Иерусалима',
     'Shavuos': 'Шавуот',
-    '17 of Tamuz': 'ПОСТ 17 Таммуза',
+    '17 of Tamuz': 'ПОСТ 17 ТАММУЗА',
     '9 of Av': 'Пост 9 Ава',
     'Tu B\'av': '15 Ава',
     'Rosh Hashana': 'Рош-аШана',
