@@ -324,7 +324,7 @@ length_he = {
 
 holidays_name = {
     'Tu B\'shvat': 'Ту би-Шват',
-    'Taanis Esther': 'Пост Эстер',
+    'Taanis Esther': 'ПОСТ Эстер',
     'Purim': 'Пурим',
     'Purim Katan': 'Пурим Катан',
     'Shushan Purim': 'Шушан Пурим',
@@ -335,7 +335,7 @@ holidays_name = {
     'Lag Ba\'omer': 'Лаг ба-Омер',
     'YomYerushalayim': 'День Иерусалима',
     'Shavuos': 'Шавуот',
-    '17 of Tamuz': 'Пост 17 Таммуза',
+    '17 of Tamuz': 'ПОСТ 17 Таммуза',
     '9 of Av': 'Пост 9 Ава',
     'Tu B\'av': '15 Ава',
     'Rosh Hashana': 'Рош-аШана',
@@ -346,7 +346,7 @@ holidays_name = {
     'Shmini Atzeres': 'Шмини Ацерет',
     'Simchas Torah': 'Cимхат Тора',
     'Chanuka': 'Ханука',
-    '10 of Teves': 'Пост 10 Тевета'
+    '10 of Teves': 'ПОСТ 10 ТЕВЕТА'
 }
 
 holiday_icon = {
@@ -699,7 +699,7 @@ holidays_name_he = {
 
 holidays_name_en = {
     'Tu B\'shvat': 'Tu BShevat',
-    'Taanis Esther': 'Taanit Esther',
+    'Taanis Esther': 'TAANIT ESTHER',
     'Purim': 'Purim',
     'Purim Katan': 'Purim Katan',
     'Shushan Purim': 'Shushan Purim',
@@ -710,18 +710,18 @@ holidays_name_en = {
     'Lag Ba\'omer': 'Lag BaOmer',
     'YomYerushalayim': 'Yom Yerushalayim',
     'Shavuos': 'Shavuot',
-    '17 of Tamuz': 'ShivaAsar BTammuz',
+    '17 of Tamuz': 'SHIVAASAR BTAMMUZ',
     '9 of Av': 'TishaBAv',
     'Tu B\'av': 'TuBAv',
     'Rosh Hashana': 'Rosh HaShanah',
-    'Tzom Gedalia': 'Tzom Gedaliah',
+    'Tzom Gedalia': 'TZOM GEDALIAH  ',
     'Yom Kippur': 'Yom Kippur',
     'Succos': 'Succos',
     'HoshanaRabba': 'HoshanaRabba',
     'Shmini Atzeres': 'Shmini Atzeres',
     'Simchas Torah': 'Simhat Torah',
     'Chanuka': 'Chanukah',
-    '10 of Teves': 'Asarah BTevet'
+    '10 of Teves': 'ASARAH BTEVET'
 }
 
 zmanim_ru = {
