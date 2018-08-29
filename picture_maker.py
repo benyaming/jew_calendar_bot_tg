@@ -431,6 +431,10 @@ class FastSender(PictureSender):
             if line.startswith('%'):
                 line = line.split('%')[1]
                 start_position_y += y_offset
+            # separate the chatzot
+            if line.startswith('$'):
+                line = line.split('$')[1]
+                start_position_y += 40
             line_parts = line.split('|')
             # draw parameter name
             draw.text(

@@ -1245,26 +1245,18 @@ class Holidays(object):
             shmirat_shabat: str
     ) -> str:
         responses = {
-            'Russian': f'Начало поста {day_begin}'
-                       f' {data.gr_months_index[month_begin]}:'
-                       f' *{time_begin[:-3:]}*\nХацот: *{chatzot[:-3:]}*\n'
-                       f'Конец поста {day_end}'
-                       f' {data.gr_months_index[month_end]}\n'
-                       f'✨ Выход звезд:'
-                       f' *{time_end[:-3:]}*\n'
-                       f'🕖 Сефер бен Ашмашот: *{ben_ashmashot[:-3:]}*\n'
-                       f'🕘 Неварешет: *{nevareshet[:-3:]}*\n'
-                       f'🕑 Шмират шаббат килхата: *{shmirat_shabat[:-3:]}*',
-            'English': f'Fast begins {day_begin}'
-                       f' {data.gr_months_index_en[month_begin]}:'
-                       f' *{time_begin[:-3:]}*\nChatzot: *{chatzot[:-3:]}*\n'
-                       f'The fast ends {day_end}'
-                       f' {data.gr_months_index_en[month_end]}\n'
-                       f'✨ Tzeit akohavim:'
-                       f' *{time_end[:-3:]}*\n'
-                       f'🕖 Sefer ben Ashmashot: *{ben_ashmashot[:-3:]}*\n'
-                       f'🕘 Nevareshet: *{nevareshet[:-3:]}*\n'
-                       f'🕑 Shmirat shabbat kelhata: *{shmirat_shabat[:-3:]}*',
+            'Russian': f'Начало поста:| {time_begin[:-3:]}\n'
+                       f'$Хацот:| {chatzot[:-3:]}\n'
+                       f'$Выход звезд:| {time_end[:-3:]}\n'
+                       f'Сефер бен Ашмашот:| {ben_ashmashot[:-3:]}\n'
+                       f'Неварешет:| {nevareshet[:-3:]}\n'
+                       f'Шмират шаббат килхата:| {shmirat_shabat[:-3:]}',
+            'English': f'Fast begins:| {time_begin[:-3:]}\n'
+                       f'$Chatzot:| {chatzot[:-3:]}\n'
+                       f'$Tzeit akohavim:| {time_end[:-3:]}\n'
+                       f'Sefer ben Ashmashot:| {ben_ashmashot[:-3:]}\n'
+                       f'Nevareshet:| {nevareshet[:-3:]}\n'
+                       f'Shmirat shabbat kelhata:| {shmirat_shabat[:-3:]}',
         'Hebrew': f'{day_begin} תחילת הצום'
                   f' {data.gr_months_index_en[month_begin]}:'
                        f' *{time_begin[:-3:]}*:חצות\n*{chatzot[:-3:]}*\n'

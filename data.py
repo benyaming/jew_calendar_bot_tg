@@ -710,8 +710,8 @@ holidays_name_en = {
     'Lag Ba\'omer': 'Lag BaOmer',
     'YomYerushalayim': 'Yom Yerushalayim',
     'Shavuos': 'Shavuot',
-    '17 of Tamuz': 'SHIVA ASAR BTAMMUZ',
-    '9 of Av': 'TishaBAv',
+    '17 of Tamuz': 'SHIVA ASAR BETAMMUZ',
+    '9 of Av': 'TISHA BEAV',
     'Tu B\'av': 'TuBAv',
     'Rosh Hashana': 'Rosh HaShanah',
     'Tzom Gedalia': 'TZOM GEDALIAH  ',
@@ -721,7 +721,7 @@ holidays_name_en = {
     'Shmini Atzeres': 'Shmini Atzeres',
     'Simchas Torah': 'Simhat Torah',
     'Chanuka': 'Chanukah',
-    '10 of Teves': 'ASARAH BTEVET'
+    '10 of Teves': 'ASARAH BETEVET'
 }
 
 zmanim_ru = {
