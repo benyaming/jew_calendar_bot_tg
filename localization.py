@@ -743,16 +743,12 @@ class Holidays(object):
                        f'Сефер бен Ашмашот:| {ben_ashmashot[:-3:]}\n'
                        f'Неварешет:| {nevareshet[:-3:]}\n'
                        f'Шмират шаббат килхата:| {shmirat_shabat[:-3:]}',
-            'English':  f'The fast begins {day} '
-                        f'{data.gr_months_index_en[month]}:'
-                        f' *{time_begin[:-3:]}*\n'
-                        f'Fast ends {day} {data.gr_months_index_en[month]}'
-                        f'\n✨ Tzeit akohavim: *{time_end[:-3:]}*\n'
-                        f'🕖 Sefer ben Ashmashot:'
-                        f' *{ben_ashmashot[:-3:]}*\n'
-                        f'🕘 Nevareshet: *{nevareshet[:-3:]}*\n'
-                        f'🕑 Shmirat shabbat kelhata:'
-                        f' *{shmirat_shabat[:-3:]}*',
+
+            'English':  f'The fast begins:| {time_begin[:-3:]}\n'
+                        f'%Tzeit akohavim:| {time_end[:-3:]}\n'
+                        f'Sefer ben Ashmashot:| {ben_ashmashot[:-3:]}\n'
+                        f'Nevareshet:| {nevareshet[:-3:]}\n'
+                        f'Shmirat shabbat kelhata:| {shmirat_shabat[:-3:]}',
             'Hebrew': f'תחילת הצום {day} '
                       f'{data.gr_months_index_he[month]}:'
                       f' *{time_begin[:-3:]}*\n'
@@ -1222,7 +1218,7 @@ class Holidays(object):
             'Russian': f'Дата: |{first_day}'
                        f' {data.gr_months_index[month]}'
                        f' {year} годa^{data.hdays_of_7[weekday]}',
-            'English': f'Date:| {first_day}'
+            'English': f'Date: |{first_day}'
                        f' {data.gr_months_index_en[month]}'
                        f' {year},'
                        f' {data.hdays_of_7_en[weekday]}',

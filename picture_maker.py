@@ -408,7 +408,7 @@ class FastSender(PictureSender):
         self._lang = lang
         self._background_path = 'res/backgrounds/fast.png'
         self._draw = self._get_draw(self._background_path)
-        self._data_font_size = 50
+        self._data_font_size = 60
         self._regular_font = ImageFont.truetype(
             self._regular_font_path,
             size=self._data_font_size
@@ -420,9 +420,9 @@ class FastSender(PictureSender):
         self._bold_font_offset = self._bold_font.getsize
 
     def _draw_fast_data(self, text: str):
-        start_position_y = 310
+        start_position_y = 290
         start_position_x = 100
-        y_offset = 70
+        y_offset = 80
         draw = self._draw
         lines = text.split('\n')
 
@@ -448,7 +448,10 @@ class FastSender(PictureSender):
                     sub_part,
                     font=self._regular_font
                 )
-                start_position_y += y_offset
+                if '^' in line:
+                    start_position_y += y_offset - 15
+                else:
+                    start_position_y += y_offset
 
     def get_fast_image(self, text: str) -> BytesIO:
         title = text.split('\n\n')[0]
