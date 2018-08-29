@@ -222,12 +222,11 @@ class ShabbosSender(PictureSender):
             self._bold_font_path,
             size=self._warning_font_size_s
         )
-        self._bold_font_offset = self._bold_font.getsize
         self._background_path = 'res/backgrounds/shabbos.png'
         self._draw = self._get_draw(self._background_path)
 
-    def _regular_font_offset(self, text):
-        offset = self._regular_font.getsize(text)[0]
+    def _bold_font_offset(self, text):
+        offset = self._bold_font_offset().getsize(text)[0]
         return offset
 
     def _draw_shabbos_data(self, data: str, shabbos_warning: bool):
@@ -247,25 +246,11 @@ class ShabbosSender(PictureSender):
             if '+' in line:
                 # draw candle offset line
                 line = line.split('+')[1]
-                offset = line.split('/')
-                # draw candle value
                 draw.text(
                     (start_position_x, start_position_y),
-                    offset[0],
-                    font=self._regular_font
-                )
-
-                # draw string "minutes befor shkia"
-                draw.text(
-                    (
-                        start_position_x +
-                        self._regular_font_offset(offset[0]),
-                        start_position_y
-                    ),
-                    offset[1],
+                    line,
                     font=self._regular_font,
                 )
-
                 start_position_y += y_offset
             else:
                 # definition part separetes from value part by '|' symbol
@@ -278,7 +263,7 @@ class ShabbosSender(PictureSender):
                 draw.text(
                     (
                         start_position_x +
-                        self._regular_font_offset(line_parts[0]),
+                        self._bold_font_offset(line_parts[0]),
                         start_position_y
                     ),
                     line_parts[1],
@@ -406,7 +391,7 @@ class ZmanimSender(PictureSender):
             )
             start_position_y += y_offset
 
-    def get_zmanim_picture(self, text: str):
+    def get_zmanim_picture(self, text: str) -> BytesIO:
         self._draw_title(
             self._draw,
             localization.Zmanim.titles[self._lang],
@@ -417,24 +402,76 @@ class ZmanimSender(PictureSender):
         return pic
 
 
-# text = '''Алот Ашахар—03:19
-# Мишеякир—04:14
-# Нец Ахама—05:28
-# Зман Шма[М"А]—07:54
-# Зман Шма[АГРО]—08:58
-# Зман Тфила [М"А]—09:25
-# Зман Тфила [АГРО]—10:09
-# Хацот—12:29
-# Минха Гдола—13:04
-# Минха Ктана—16:35
-# Плаг Минха—18:03
-# Шкия—19:30
-# Выход звезд [595°]—20:09
-# Выход звезд [850°]—20:30
-# Выход звезд [42 минуты]—20:12
-# Выход звезд [Р"Т]—20:42
-# Астрономический час [М"А]—1:31
-# Астрономический час [АГРО]—1:10
-# Хацот Алайла—00:29'''
+class FastSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/fast.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 60
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_fast_data(self, text: str):
+        start_position_y = 290
+        start_position_x = 100
+        y_offset = 80
+        draw = self._draw
+        lines = text.split('\n')
+
+        for line in lines:
+            # separate the fast's end block
+            if line.startswith('%'):
+                line = line.split('%')[1]
+                start_position_y += y_offset
+            # separate the chatzot
+            if line.startswith('$'):
+                line = line.split('$')[1]
+                start_position_y += 40
+            line_parts = line.split('|')
+            # draw parameter name
+            draw.text(
+                (start_position_x, start_position_y),  # coordinates
+                line_parts[0],
+                font=self._bold_font
+            )
+            for sub_part in line_parts[1].split('^'):
+                draw.text(
+                    (
+                        start_position_x +
+                        self._bold_font_offset(line_parts[0])[0],
+                        start_position_y
+                    ),
+                    sub_part,
+                    font=self._regular_font
+                )
+                if '^' in line:
+                    start_position_y += y_offset - 15
+                else:
+                    start_position_y += y_offset
+
+    def get_fast_image(self, text: str) -> BytesIO:
+        title = text.split('\n\n')[0]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_fast_data(text.split('\n\n')[1])
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+# text = '''ПОСТ ГЕДАЛИИ
+#
+# Дата: |12 Сентября 2018 годa^Воскресенье
+# Начало поста:| 03:58
+# %Выход звезд:| 19:31
+# Сефер бен Ашмашот:| 19:25
+# Неварешет:| 19:22
+# Шмират шаббат килхата:| 19:19'''
 # lang = 'Russian'
-# ZmanimSender(lang).get_zmanim_picture(text)
+# FastSender(lang).get_fast_image(text)

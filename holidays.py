@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from io import BytesIO
 import requests
 import pytz
 
@@ -7,8 +8,9 @@ from pyluach import dates, hebrewcal
 
 import data
 import db_operations
-
 from localization import Holidays
+from picture_maker import FastSender
+
 
 URL_HOLIDAYS = 'http://db.ou.org/zmanim/getHolidayCalData.php'
 URL_ZMANIM = 'http://db.ou.org/zmanim/getCalendarData.php'
@@ -590,7 +592,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
 
 # Собираем строку для праздника
-def get_holiday_string(holiday_name: str, user_id: int, lang: str):
+def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
     holiday_dict = transform_holiday_dict(holiday_name, user_id)
     holiday_name = get_holiday_name(holiday_dict, lang)
     holiday_date = get_holiday_date(holiday_dict, lang)
@@ -630,7 +632,8 @@ def get_holiday_string(holiday_name: str, user_id: int, lang: str):
 
     elif holiday_dict['name'] in ['Taanis Esther', '17 of Tamuz', 'Yom Kippur',
                                   '9 of Av', 'Tzom Gedalia', '10 of Teves']:
-        holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n'\
+        holiday_string = f'{holiday_name}\n\n' + f'{holiday_date}\n'\
                          + fast_time
-
+        holiday_pic = FastSender(lang).get_fast_image(holiday_string)
+        return holiday_pic
     return holiday_string
