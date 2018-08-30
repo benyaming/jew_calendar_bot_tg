@@ -1058,7 +1058,7 @@ holiday_menu_buttons = {
                   'English': 'Main menu',
                   'Hebrew': 'Main menu'
                   },
-    'More': {'Russian': 'Ещё',
+    'More': {'Russian': 'Ещё...',
              'English': 'More...',
              'Hebrew': 'More...'
              },
