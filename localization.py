@@ -409,8 +409,8 @@ class Utils(object):
     @staticmethod
     def get_holiday_menu(lang: str) -> str:
         responses = {
-            'Russian': 'Выберите: (клавиатуру можно скроллить)',
-            'English': 'Choose: (scroll keyboard)',
+            'Russian': 'Выберите:',
+            'English': 'Choose:',
             'Hebrew': 'празднички' #TODO перевод
         }
         response = responses.get(lang, '')

@@ -644,7 +644,7 @@ def handle_text(user_id: int, message: str) -> None:
             'F.A.Q.': faq,
             '🇷🇺': faq,
             '🇱🇷': faq,
-            'Больше...': more_holiday_menu,
+            'Ещё...': more_holiday_menu,
             'More...': more_holiday_menu,
             'Основные праздники': holidays,
             'Main holidays': holidays,
