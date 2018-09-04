@@ -657,6 +657,60 @@ class LagBaomerSender(PictureSender):
         return pic
 
 
-# text = '''Дата: |21 Января 2019 годa^Понедельник'''
-# lang = 'Russian'
-# TuBiShvatSnder(lang).get_image(text)
+class PurimSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/purim.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 70
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_purim_data(self, text: str):
+        start_position_y = 450
+        start_position_x = 100
+        y_offset = 90
+        y_offset_small = 75
+        draw = self._draw
+        # date_title
+        date_title_text = text.split('|')[0]
+        draw.text(
+            (start_position_x, start_position_y),  # coordinates
+            date_title_text,
+            font=self._bold_font
+        )
+        # date
+        date_text = text.split('|')[1].split('^')[0]
+        date_offset = self._bold_font_offset(date_title_text)[0]
+        draw.text(
+            (start_position_x + date_offset,  start_position_y),
+            date_text,
+            font=self._regular_font
+        )
+        start_position_y += y_offset_small
+
+        # day of week
+        day_text = text.split('|')[1].split('^')[1]
+        draw.text(
+            (start_position_x + date_offset, start_position_y),
+            day_text,
+            font=self._regular_font
+        )
+        start_position_y += y_offset
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['purim'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_purim_data(text)
+        self._image.save('test.png')
+        # pic = self._convert_img_to_bytes_io(self._image)
+        # return pic
+
