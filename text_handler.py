@@ -276,10 +276,9 @@ def purim():
     if not loc:
         return request_location()
     else:
-        get_purim = h.get_holiday_pic('Purim', user, lang)
-        get_shushan_purim = h.get_holiday_pic('Shushan Purim', user, lang)
-        response = get_purim + '\n\n' + get_shushan_purim
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('Purim', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def pesach():
