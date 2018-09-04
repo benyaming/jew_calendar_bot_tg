@@ -518,7 +518,7 @@ class FastSender(PictureSender):
         # return pic'''
 
 
-class TuBiShvatSnder(PictureSender):
+class TuBiShvatSender(PictureSender):
 
     def __init__(self, lang):
         self._lang = lang
@@ -578,6 +578,70 @@ class TuBiShvatSnder(PictureSender):
         title = localization.Holidays.titles['tubishvat'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_tubishvat_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+class LagBaomerSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/lagbaomer.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 70
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_lagbaomer_data(self, text: str):
+        start_position_y = 450
+        start_position_x = 100
+        y_offset = 90
+        draw = self._draw
+
+        # holiday_name
+        holiday_name_text = text.split('|')[0]
+        draw.text(
+            (start_position_x, start_position_y),  # coordinates
+            holiday_name_text,
+            font=self._bold_font
+        )
+        # date
+        date_text = text.split('|')[1].split('^')[0]
+        draw.text(
+            (
+                start_position_x +
+                self._bold_font_offset(holiday_name_text)[0],
+                start_position_y
+            ),
+            date_text,
+            font=self._regular_font
+        )
+
+        start_position_y += y_offset
+
+        # day of week
+        day_text = text.split('|')[1].split('^')[1]
+        draw.text(
+            (
+                start_position_x +
+                self._bold_font_offset(holiday_name_text)[0],
+                start_position_y
+            ),
+            day_text,
+            font=self._regular_font
+        )
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['lagbaomer'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_lagbaomer_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
 

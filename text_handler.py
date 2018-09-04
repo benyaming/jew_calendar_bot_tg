@@ -296,8 +296,9 @@ def lag_baomer():
     if not loc:
         return request_location()
     else:
-        response = h.get_holiday_pic('Lag Ba\'omer', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('Lag Ba\'omer', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def shavuot():
