@@ -8,8 +8,8 @@ from pyluach import dates, hebrewcal
 
 import data
 import db_operations
+import picture_maker
 from localization import Holidays
-from picture_maker import FastSender
 
 
 URL_HOLIDAYS = 'http://db.ou.org/zmanim/getHolidayCalData.php'
@@ -220,8 +220,6 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
 # Перевод названия праздника
 def get_holiday_name(holiday_info: dict, lang: str) -> str:
     holiday_name = ''
-    # Берем из data.py иконки для праздников
-    holiday_icon = data.holiday_icon[holiday_info['name']]
 
     holiday_names = {
         'Russian': data.holidays_name[holiday_info['name']],
@@ -229,12 +227,6 @@ def get_holiday_name(holiday_info: dict, lang: str) -> str:
         'Hebrew': data.holidays_name_he[holiday_info['name']]
     }
     holiday_name = holiday_names.get(lang, '')
-
-    # Для израильских праздников иконка сверху
-    if holiday_info['name'] == 'YomHaShoah':
-        holiday_name = holiday_icon + holiday_name
-    else:
-        holiday_name = holiday_name + holiday_icon
 
     return holiday_name
 
@@ -592,14 +584,20 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
 
 # Собираем строку для праздника
-def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
+def get_holiday_str(holiday_name: str, user_id: int, lang: str):
+    israel_holidays = (
+        'YomHaShoah',
+        'YomHaZikaron',
+        'YomHaAtzmaut',
+        'YomYerushalayim'
+    )
     holiday_dict = transform_holiday_dict(holiday_name, user_id)
     holiday_name = get_holiday_name(holiday_dict, lang)
     holiday_date = get_holiday_date(holiday_dict, lang)
     fast_time = get_fast_time(holiday_dict, user_id, lang)
     holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
 
-    holiday_string = f'*{holiday_name}*\n' + holiday_date
+    holiday_string = holiday_date
 
     if holiday_dict['name'] in ['Succos', 'Rosh Hashana', 'Shavuos']:
         holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n'\
@@ -634,6 +632,33 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
                                   '9 of Av', 'Tzom Gedalia', '10 of Teves']:
         holiday_string = f'{holiday_name}\n\n' + f'{holiday_date}\n'\
                          + fast_time
-        holiday_pic = FastSender(lang).get_fast_image(holiday_string)
-        return holiday_pic
     return holiday_string
+
+
+def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
+    israel_holidays = (
+        'YomHaShoah',
+        'YomHaZikaron',
+        'YomHaAtzmaut',
+        'YomYerushalayim'
+    )
+
+    if holiday_name == 'israel_holidays':
+        text = ''
+        for holiday in israel_holidays:
+            text += get_holiday_str(holiday, user_id, lang) + '\n'
+    else:
+        text = get_holiday_str(holiday_name, user_id, lang)
+    print(text)
+    pic_renders = {
+        'Taanis Esther': picture_maker.FastSender,
+        '17 of Tamuz': picture_maker.FastSender,
+        'Yom Kippur': picture_maker.FastSender,
+        '9 of Av': picture_maker.FastSender,
+        'Tzom Gedalia': picture_maker.FastSender,
+        '10 of Teves': picture_maker.FastSender,
+        'Tu B\'shvat': picture_maker.TuBiShvatSnder
+
+    }
+    pic = pic_renders.get(holiday_name)(lang).get_image(text)
+    return pic

@@ -593,9 +593,21 @@ class Utils(object):
         return response
 
 
-
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):
+
+    titles = {
+        'israel_holidays': {
+            'Russian': 'ИЗРАИЛЬСКИЕ ПРАЗДНИКИ',
+            'English': 'ISRAEL HOLIDAYS',
+            'Hebrew': ''  # TODO
+        },
+        'tubishvat': {
+            'Russian': 'ТУ БИ-ШВАТ',
+            'English': 'TU BI-SHVAT',
+            'Hebrew': ''  # TODO
+        }
+    }
 
     # Когда невозможно определить времена
     @staticmethod

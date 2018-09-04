@@ -1048,57 +1048,57 @@ holiday_menu_buttons = {
                    },
     'Israel holidays': {'Russian': 'Израильские праздники',
                         'English': 'Israel holidays',
-                        'Hebrew': 'Israel holidays'
+                        'Hebrew': 'Israel holidays' # TODO
                         },
     'Main holidays': {'Russian': 'Основные праздники',
                       'English': 'Main holidays',
-                      'Hebrew': 'Main holidays'
+                      'Hebrew': 'Main holidays'# TODO
                       },
     'Main menu': {'Russian': 'Главное меню',
                   'English': 'Main menu',
-                  'Hebrew': 'Main menu'
+                  'Hebrew': 'Main menu'# TODO
                   },
     'More': {'Russian': 'Ещё...',
              'English': 'More...',
-             'Hebrew': 'More...'
+             'Hebrew': 'More...'# TODO
              },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'
+             'Hebrew': 'Back'# TODO
              }
 }
 
 settings_menu_buttons = {
     'Select zmanim': {'Russian': 'Выбрать зманим',
                       'English': 'Select zmanim',
-                      'Hebrew': 'Select zmanim'
+                      'Hebrew': 'Select zmanim'# TODO
                       },
     'Candle lighting': {'Russian': 'Зажигание свечей',
                         'English': 'Candle lighting',
-                        'Hebrew': 'Candle lighting'
+                        'Hebrew': 'Candle lighting'# TODO
                         },
     'Language': {'Russian': 'Язык',
                  'English': 'Language',
-                 'Hebrew': 'Language'
+                 'Hebrew': 'Language'# TODO
                  },
     'Diaspora': {'Russian': 'Диаспора',
                  'English': 'Diaspora',
-                 'Hebrew': 'Diaspora'
+                 'Hebrew': 'Diaspora'# TODO
                  },
     'Location': {'Russian': 'Локация',
                  'English': 'Location',
-                 'Hebrew': 'Location'
+                 'Hebrew': 'Location'# TODO
                  },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'
+             'Hebrew': 'Back'# TODO
              }
 }
 
 fast_menu_buttons = {
     'Tzom Gedaliah': {'Russian': 'Пост Гедалии',
                       'English': 'Tzom Gedaliah',
-                      'Hebrew': 'Tzom Gedaliah'
+                      'Hebrew': 'Tzom Gedaliah'# TODO
                       },
     'Asarah BTevet': {'Russian': '10 Тевета',
                       'English': 'Asarah BTevet',
@@ -1118,6 +1118,6 @@ fast_menu_buttons = {
                   },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'
+             'Hebrew': 'Back'# TODO
              },
 }
