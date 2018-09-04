@@ -465,7 +465,7 @@ class FastSender(PictureSender):
         return pic
 
 
-class IsraelHolidaysSender(PictureSender):
+'''class IsraelHolidaysSender(PictureSender):
 
     def __init__(self, lang):
         self._lang = lang
@@ -473,6 +473,51 @@ class IsraelHolidaysSender(PictureSender):
         self._draw = self._get_draw(self._background_path)
         self._data_font_size = 60
         self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_fast_data(self, text: str):
+        start_position_y = 290
+        start_position_x = 100
+        y_offset = 80
+        draw = self._draw
+        lines = text.split('\n')
+
+        for line in lines:
+            # definition part separetes from value part by '|' symbol
+            line_parts = line.split('|')
+            print()
+            draw.text(
+                (start_position_x, start_position_y),  # coordinates
+                line_parts[0] + ' ',
+                font=self._bold_font
+            )
+            draw.text(
+                (
+                    start_position_x +
+                    self._bold_font_offset(line_parts[0])[0],
+                    start_position_y
+                ),
+                line_parts[1],
+                font=self._regular_font
+            )
+            start_position_y += y_offset
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['israel_holidays'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_fast_data(text)
+        self._image.save('test.png')
+        # pic = self._convert_img_to_bytes_io(self._image)
+        # return pic'''
+
+
 class TuBiShvatSnder(PictureSender):
 
     def __init__(self, lang):
@@ -537,5 +582,6 @@ class TuBiShvatSnder(PictureSender):
         return pic
 
 
+# text = '''Дата: |21 Января 2019 годa^Понедельник'''
 # lang = 'Russian'
-# FastSender(lang).get_fast_image(text)
+# TuBiShvatSnder(lang).get_image(text)
