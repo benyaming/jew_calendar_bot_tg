@@ -606,6 +606,11 @@ class Holidays(object):
             'Russian': 'ТУ БИ-ШВАТ',
             'English': 'TU BI-SHVAT',
             'Hebrew': ''  # TODO
+        },
+        'lagbaomer':  {
+            'Russian': 'ЛАГ БА-ОМЕР',
+            'English': 'LAG BA-OMER',
+            'Hebrew': ''  # TODO
         }
     }
 
