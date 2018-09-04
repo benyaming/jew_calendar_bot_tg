@@ -710,7 +710,6 @@ class PurimSender(PictureSender):
         title = localization.Holidays.titles['purim'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_purim_data(text)
-        self._image.save('test.png')
-        # pic = self._convert_img_to_bytes_io(self._image)
-        # return pic
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
 
