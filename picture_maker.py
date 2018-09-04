@@ -226,7 +226,7 @@ class ShabbosSender(PictureSender):
         self._draw = self._get_draw(self._background_path)
 
     def _bold_font_offset(self, text):
-        offset = self._bold_font_offset().getsize(text)[0]
+        offset = self._bold_font.getsize(text)[0]
         return offset
 
     def _draw_shabbos_data(self, data: str, shabbos_warning: bool):
@@ -457,7 +457,7 @@ class FastSender(PictureSender):
                 else:
                     start_position_y += y_offset
 
-    def get_fast_image(self, text: str) -> BytesIO:
+    def get_image(self, text: str) -> BytesIO:
         title = text.split('\n\n')[0]
         self._draw_title(self._draw, title, self._lang)
         self._draw_fast_data(text.split('\n\n')[1])
@@ -465,13 +465,77 @@ class FastSender(PictureSender):
         return pic
 
 
-# text = '''ПОСТ ГЕДАЛИИ
-#
-# Дата: |12 Сентября 2018 годa^Воскресенье
-# Начало поста:| 03:58
-# %Выход звезд:| 19:31
-# Сефер бен Ашмашот:| 19:25
-# Неварешет:| 19:22
-# Шмират шаббат килхата:| 19:19'''
+class IsraelHolidaysSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/israel_holidays.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 60
+        self._regular_font = ImageFont.truetype(
+class TuBiShvatSnder(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/tubishvat.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 70
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_tubishvat_data(self, text: str):
+        start_position_y = 450
+        start_position_x = 100
+        y_offset = 90
+        draw = self._draw
+
+        # holiday_name
+        holiday_name_text = text.split('|')[0]
+        draw.text(
+            (start_position_x, start_position_y),  # coordinates
+            holiday_name_text,
+            font=self._bold_font
+        )
+        # date
+        date_text = text.split('|')[1].split('^')[0]
+        draw.text(
+            (
+                start_position_x +
+                self._bold_font_offset(holiday_name_text)[0],
+                start_position_y
+            ),
+            date_text,
+            font=self._regular_font
+        )
+
+        start_position_y += y_offset
+
+        # day of week
+        day_text = text.split('|')[1].split('^')[1]
+        draw.text(
+            (
+                start_position_x +
+                self._bold_font_offset(holiday_name_text)[0],
+                start_position_y
+            ),
+            day_text,
+            font=self._regular_font
+        )
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['tubishvat'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_tubishvat_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
 # lang = 'Russian'
 # FastSender(lang).get_fast_image(text)
