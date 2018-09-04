@@ -324,14 +324,9 @@ def israel():
     if not loc:
         return request_location()
     else:
-        get_yom_hashoa = h.get_holiday_pic('YomHaShoah', user, lang)
-        get_yom_hazikaron = h.get_holiday_pic('YomHaZikaron', user, lang)
-        get_yom_hatzmaut = h.get_holiday_pic('YomHaAtzmaut', user, lang)
-        get_yom_yerushalaim = h.get_holiday_pic(
-            'YomYerushalayim', user, lang)
-        response = get_yom_hashoa + '\n\n' + get_yom_hazikaron + \
-            '\n\n' + get_yom_hatzmaut + '\n\n' + get_yom_yerushalaim
-        bot.send_message(user, response, parse_mode='Markdown')
+        response_pic = h.get_holiday_pic('israel_holidays', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def fast_gedaliah():

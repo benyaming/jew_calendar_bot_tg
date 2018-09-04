@@ -465,13 +465,13 @@ class FastSender(PictureSender):
         return pic
 
 
-'''class IsraelHolidaysSender(PictureSender):
+class IsraelHolidaysSender(PictureSender):
 
     def __init__(self, lang):
         self._lang = lang
         self._background_path = 'res/backgrounds/israel_holidays.png'
         self._draw = self._get_draw(self._background_path)
-        self._data_font_size = 60
+        self._data_font_size = 50
         self._regular_font = ImageFont.truetype(
             self._regular_font_path,
             size=self._data_font_size
@@ -483,39 +483,50 @@ class FastSender(PictureSender):
         self._bold_font_offset = self._bold_font.getsize
 
     def _draw_fast_data(self, text: str):
-        start_position_y = 290
+        start_position_y = 320
         start_position_x = 100
         y_offset = 80
+        y_offset_small = 60
         draw = self._draw
         lines = text.split('\n')
 
         for line in lines:
-            # definition part separetes from value part by '|' symbol
-            line_parts = line.split('|')
-            print()
+            # draw holiday name
+            holiday_name = line.split('%')[0]
             draw.text(
                 (start_position_x, start_position_y),  # coordinates
-                line_parts[0] + ' ',
+                holiday_name,
                 font=self._bold_font
             )
+            start_position_y += y_offset_small
+
+            # draw date title
+            date_title = line.split('%')[1].split('|')[0]
             draw.text(
-                (
-                    start_position_x +
-                    self._bold_font_offset(line_parts[0])[0],
-                    start_position_y
-                ),
-                line_parts[1],
+                (start_position_x, start_position_y),  # coordinates
+                date_title,
+                font=self._bold_font
+            )
+
+            # draw date value
+            date_value = line.split('%')[1].split('|')[1]
+            # delete '^' symbol from string
+            date_value = date_value.replace('^', ', ')
+            date_title_offset = self._bold_font_offset(date_title)[0]
+            draw.text(
+                (start_position_x + date_title_offset, start_position_y),
+                date_value,
                 font=self._regular_font
             )
+
             start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['israel_holidays'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_fast_data(text)
-        self._image.save('test.png')
-        # pic = self._convert_img_to_bytes_io(self._image)
-        # return pic'''
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
 
 
 class TuBiShvatSender(PictureSender):
