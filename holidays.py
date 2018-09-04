@@ -15,6 +15,12 @@ from localization import Holidays
 URL_HOLIDAYS = 'http://db.ou.org/zmanim/getHolidayCalData.php'
 URL_ZMANIM = 'http://db.ou.org/zmanim/getCalendarData.php'
 
+israel_holidays = (
+        'YomHaShoah',
+        'YomHaZikaron',
+        'YomHaAtzmaut',
+        'YomYerushalayim'
+    )
 
 # Получение текущих данных о пользователе (дата, локация, тайм-зона)
 def get_current_year_month_day_tz(user_id: int) -> dict:
@@ -585,12 +591,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
 # Собираем строку для праздника
 def get_holiday_str(holiday_name: str, user_id: int, lang: str):
-    israel_holidays = (
-        'YomHaShoah',
-        'YomHaZikaron',
-        'YomHaAtzmaut',
-        'YomYerushalayim'
-    )
+
     holiday_dict = transform_holiday_dict(holiday_name, user_id)
     holiday_name = get_holiday_name(holiday_dict, lang)
     holiday_date = get_holiday_date(holiday_dict, lang)
@@ -602,6 +603,8 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str):
     if holiday_dict['name'] in ['Succos', 'Rosh Hashana', 'Shavuos']:
         holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n'\
                          + holiday_time
+    elif holiday_dict['name'] in israel_holidays:
+        holiday_string = holiday_name + '%' + holiday_date
 
     elif holiday_dict['name'] == 'Pesach':
         holiday_time_last_days = get_holiday_time(
@@ -636,17 +639,14 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str):
 
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
-    israel_holidays = (
-        'YomHaShoah',
-        'YomHaZikaron',
-        'YomHaAtzmaut',
-        'YomYerushalayim'
-    )
-
     if holiday_name == 'israel_holidays':
         text = ''
         for holiday in israel_holidays:
-            text += get_holiday_str(holiday, user_id, lang) + '\n'
+            if text:
+                text += '\n' + get_holiday_str(holiday, user_id, lang)
+            else:
+                text += get_holiday_str(holiday, user_id, lang)
+
     else:
         text = get_holiday_str(holiday_name, user_id, lang)
     print(text)
@@ -658,7 +658,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Tzom Gedalia': picture_maker.FastSender,
         '10 of Teves': picture_maker.FastSender,
         'Tu B\'shvat': picture_maker.TuBiShvatSender,
-        'Lag Ba\'omer': picture_maker.LagBaomerSender
+        'Lag Ba\'omer': picture_maker.LagBaomerSender,
+        'israel_holidays': picture_maker.IsraelHolidaysSender
 
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
