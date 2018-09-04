@@ -646,7 +646,6 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
                 text += '\n' + get_holiday_str(holiday, user_id, lang)
             else:
                 text += get_holiday_str(holiday, user_id, lang)
-
     else:
         text = get_holiday_str(holiday_name, user_id, lang)
     print(text)
@@ -659,7 +658,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         '10 of Teves': picture_maker.FastSender,
         'Tu B\'shvat': picture_maker.TuBiShvatSender,
         'Lag Ba\'omer': picture_maker.LagBaomerSender,
-        'israel_holidays': picture_maker.IsraelHolidaysSender
+        'israel_holidays': picture_maker.IsraelHolidaysSender,
+        'Purim': picture_maker.PurimSender
 
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)

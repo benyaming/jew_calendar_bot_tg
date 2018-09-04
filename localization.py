@@ -611,7 +611,12 @@ class Holidays(object):
             'Russian': 'ЛАГ БА-ОМЕР',
             'English': 'LAG BA-OMER',
             'Hebrew': ''  # TODO
-        }
+        },
+        'purim': {
+            'Russian': 'ПУРИМ',
+            'English': 'PURIM',
+            'Hebrew': ''  # TODO
+        },
     }
 
     # Когда невозможно определить времена
