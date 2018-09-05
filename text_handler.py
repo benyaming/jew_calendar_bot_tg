@@ -681,8 +681,6 @@ def handle_text(user_id: int, message: str) -> None:
             'Шавуот': shavuot,
             'Shavuot': shavuot,
             'שבועות': shavuot,
-            '15 Ава': tu_beav,
-            'Tu BAv': tu_beav,
             'Израильские праздники': israel,
             'Israel holidays': israel,
             'Пост Гедалии': fast_gedaliah,
