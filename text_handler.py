@@ -107,6 +107,7 @@ def shabbat():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = shabbos.get_shabbos(loc, lang, user)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -117,6 +118,7 @@ def rosh_chodesh() -> None:
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = rosh_hodesh.get_rh(loc, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -139,6 +141,7 @@ def daf_yomi() -> None:
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = daf.get_daf(loc, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -219,6 +222,7 @@ def yom_kippur():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Yom Kippur', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -267,6 +271,7 @@ def tu_beshvat():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Tu B\'shvat', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -277,6 +282,7 @@ def purim():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Purim', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -296,6 +302,7 @@ def lag_baomer():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Lag Ba\'omer', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -310,20 +317,12 @@ def shavuot():
         bot.send_message(user, response, parse_mode='Markdown')
 
 
-def tu_beav():
-    loc = db_operations.get_location_by_id(user)
-    if not loc:
-        return request_location()
-    else:
-        response = h.get_holiday_pic('Tu B\'av', user, lang)
-        bot.send_message(user, response, parse_mode='Markdown')
-
-
 def israel():
     loc = db_operations.get_location_by_id(user)
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('israel_holidays', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -334,6 +333,7 @@ def fast_gedaliah():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Tzom Gedalia', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -344,6 +344,7 @@ def asarah_betevet():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('10 of Teves', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -354,6 +355,7 @@ def fast_esther():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Taanis Esther', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -364,6 +366,7 @@ def sheva_asar_betammuz():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('17 of Tamuz', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
@@ -374,6 +377,7 @@ def tisha_beav():
     if not loc:
         return request_location()
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('9 of Av', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
