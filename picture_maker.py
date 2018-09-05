@@ -713,3 +713,94 @@ class PurimSender(PictureSender):
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
 
+
+class YomKippurSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/yom_kippur.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 60
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_fast_data(self, text: str):
+        start_position_y = 300
+        start_position_x = 100
+        y_offset = 120
+        y_offset_small = 60
+        draw = self._draw
+        lines = text.split('\n')
+        for line in lines:
+            if '|' in line:
+                line_parts = line.split('|')
+                # draw parameter name
+                param_name = line_parts[0]
+                draw.text(
+                    (start_position_x, start_position_y),  # coordinates
+                    param_name,
+                    font=self._bold_font
+                )
+
+                param_value = line_parts[1]
+                param_name_offset = self._bold_font_offset(param_name)[0]
+
+                # draw param value without day of week
+                draw.text(
+                    (start_position_x + param_name_offset, start_position_y),
+                    param_value.split('^')[0],
+                    font=self._regular_font
+                )
+                start_position_y += y_offset_small
+
+                # draw day of week
+                draw.text(
+                    (start_position_x + param_name_offset, start_position_y),
+                    param_value.split('^')[1],
+                    font=self._regular_font
+                )
+                start_position_y += y_offset
+            elif '%' in line:
+                header = line.split('%')[0]
+                candle_lighting_date = line.split('%')[1]
+
+                if '?' in header:
+                    headers = [
+                        header.split('?')[0],
+                        header.split('?')[1]
+                    ]
+                else:
+                    headers = [header,]
+
+                for header in headers:
+                    # draw headers
+                    draw.text(
+                        (start_position_x, start_position_y),  # coordinates
+                        header,
+                        font=self._bold_font
+                    )
+                    start_position_y += y_offset_small
+
+                # draw candle lighting value
+                draw.text(
+                    (start_position_x, start_position_y),  # coordinates
+                    candle_lighting_date,
+                    font=self._regular_font
+                )
+                start_position_y += y_offset
+
+    def get_image(self, text: str) -> BytesIO:
+        title = text.split('\n\n')[0]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_fast_data(text.split('\n\n')[1])
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
