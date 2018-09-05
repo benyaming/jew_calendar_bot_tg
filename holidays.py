@@ -652,14 +652,14 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
-        'Yom Kippur': picture_maker.FastSender,
         '9 of Av': picture_maker.FastSender,
         'Tzom Gedalia': picture_maker.FastSender,
         '10 of Teves': picture_maker.FastSender,
         'Tu B\'shvat': picture_maker.TuBiShvatSender,
         'Lag Ba\'omer': picture_maker.LagBaomerSender,
         'israel_holidays': picture_maker.IsraelHolidaysSender,
-        'Purim': picture_maker.PurimSender
+        'Purim': picture_maker.PurimSender,
+        'Yom Kippur': picture_maker.YomKippurSender
 
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
