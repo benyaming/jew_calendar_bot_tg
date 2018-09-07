@@ -180,7 +180,6 @@ def collect_custom_zmanim(
         'chatzos_laila': get_chazos_laila
     }
     user_zmanim_str = ''
-    print(user_zmanim_set)
     user_zmanim = user_zmanim_set
     first_zman_flag = True
     for i in range(len(user_zmanim)):
