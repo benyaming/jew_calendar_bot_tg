@@ -180,6 +180,7 @@ def collect_custom_zmanim(
         'chatzos_laila': get_chazos_laila
     }
     user_zmanim_str = ''
+    print(user_zmanim_set)
     user_zmanim = user_zmanim_set
     first_zman_flag = True
     for i in range(len(user_zmanim)):
@@ -240,6 +241,10 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
 def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
     response = {'polar_error': False, 'zmanim_set_error': False}
     zmanim_dict = get_zmanim_dict(user, custom_date)
+    for zman in zmanim_dict.keys():
+        if zmanim_dict[zman] == 'X:XX:XX':
+            response['polar_error'] = localization.Zmanim.get_polar_error(lang)
+            return  response
     if zmanim_dict['chatzos'] == 'X:XX:XX':
         response['polar_error'] = localization.Zmanim.get_polar_error(lang)
     else:
