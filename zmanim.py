@@ -244,10 +244,9 @@ def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
     for zman in zmanim_dict.keys():
         if zmanim_dict[zman] == 'X:XX:XX':
             response['polar_error'] = localization.Zmanim.get_polar_error(lang)
-            return  response
-    if zmanim_dict['chatzos'] == 'X:XX:XX':
-        response['polar_error'] = localization.Zmanim.get_polar_error(lang)
-    else:
+            break
+
+    if not response['polar_error']:
         user_zmanim_set = db_operations.get_zmanim_set(user)
         user_zmanim_str = collect_custom_zmanim(
             zmanim_dict,
