@@ -731,7 +731,7 @@ class YomKippurSender(PictureSender):
         )
         self._bold_font_offset = self._bold_font.getsize
 
-    def _draw_fast_data(self, text: str):
+    def _draw_yomkippur_data(self, text: str):
         start_position_y = 300
         start_position_x = 100
         y_offset = 120
@@ -799,8 +799,69 @@ class YomKippurSender(PictureSender):
     def get_image(self, text: str) -> BytesIO:
         title = text.split('\n\n')[0]
         self._draw_title(self._draw, title, self._lang)
-        self._draw_fast_data(text.split('\n\n')[1])
+        self._draw_yomkippur_data(text.split('\n\n')[1])
+        # self._image.save('test.png')
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
 
 
+class ChanukaSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/chanuka.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 60
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_chanuka_data(self, text: str) -> None:
+        start_position_y = 450
+        start_position_x = 100
+        y_offset = 90
+        y_offset_small = 75
+        draw = self._draw
+
+        date_title = text.split('|')[0]
+        text_lines = text.split('|')[1].split('^')
+        date_value = text_lines[0]
+        date_days = text_lines[1]
+
+        # draw date title
+        draw.text(
+            (start_position_x, start_position_y),  # coordinates
+            date_title,
+            font=self._bold_font
+        )
+        date_title_offset = self._bold_font_offset(date_title)[0]
+
+        # draw date value
+        draw.text(
+            (start_position_x + date_title_offset, start_position_y),
+            date_value,
+            font=self._regular_font
+        )
+        start_position_y += y_offset_small
+
+        # draw date days
+        draw.text(
+            (start_position_x + date_title_offset, start_position_y),
+            date_days,
+            font=self._regular_font
+        )
+        start_position_y += y_offset_small
+
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['chanuka'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_chanuka_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic

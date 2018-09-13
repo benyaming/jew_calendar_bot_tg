@@ -22,8 +22,10 @@ israel_holidays = (
         'YomYerushalayim'
     )
 
+
 # Получение текущих данных о пользователе (дата, локация, тайм-зона)
 def get_current_year_month_day_tz(user_id: int) -> dict:
+
     location = db_operations.get_location_by_id(user_id)
     tz = db_operations.get_tz_by_id(user_id)
     tz_time = pytz.timezone(tz)
@@ -251,7 +253,7 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
             'year': holiday_info['year'][0]
         }
         # Длинные праздники (Пейсах, Ханука; Суккот),
-        # даты которых приходят на 1 григорианский месяц
+        # даты которых приходят на 2 григорианских года
         if holiday_info['name'] == 'Chanuka' and\
                 len(holiday_info['year']) == 2:
             holiday_date = Holidays.long_holiday_two_months_two_years(
@@ -302,7 +304,6 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
         holiday_date = Holidays.one_day_holiday(
             lang, date['day'], date['month'], date['year'], date['day_of_week']
         )
-
     return holiday_date
 
 
@@ -597,7 +598,6 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str):
     holiday_date = get_holiday_date(holiday_dict, lang)
     fast_time = get_fast_time(holiday_dict, user_id, lang)
     holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
-
     holiday_string = holiday_date
 
     if holiday_dict['name'] in ['Succos', 'Rosh Hashana', 'Shavuos']:
@@ -659,7 +659,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Lag Ba\'omer': picture_maker.LagBaomerSender,
         'israel_holidays': picture_maker.IsraelHolidaysSender,
         'Purim': picture_maker.PurimSender,
-        'Yom Kippur': picture_maker.YomKippurSender
+        'Yom Kippur': picture_maker.YomKippurSender,
+        'Chanuka': picture_maker.ChanukaSender,
 
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
