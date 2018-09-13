@@ -42,8 +42,8 @@ class RoshHodesh(object):
             second_year: int
     ) -> str:
         responses = {
-            'Russian': f'31 декабря {first_year} года и *1 '
-                       f'января {second_year} года*',
+            'Russian': f'31 декабря {first_year} и *1 '
+                       f'января {second_year}*',
             'English': f'31 December {first_year} and *1 '
                        f'January {second_year}*',
             'Hebrew': f' ו {first_year} בדצמבר 31'
@@ -63,7 +63,7 @@ class RoshHodesh(object):
     ) -> str:
         responses = {
             'Russian': f'{first_day} и 1 {data.gr_months_index[first_month]} '
-                       f'и {data.gr_months_index[second_month]} {year} года*',
+                       f'и {data.gr_months_index[second_month]} {year}*',
             'English': f'{first_day} and 1 '
                        f'{data.gr_months_index_en[first_month]}'
                        f' and {data.gr_months_index_en[second_month]} {year}*',
@@ -85,7 +85,7 @@ class RoshHodesh(object):
     ) -> str:
         responses = {
             'Russian': f'{first_day} и {second_day} '
-                       f'{data.gr_months_index[month]} {year} года*',
+                       f'{data.gr_months_index[month]} {year}*',
             'English': f'{first_day} and {second_day} '
                        f'{data.gr_months_index_en[month]} {year}*',
             'Hebrew': f'{first_day} ו {second_day} '
@@ -98,7 +98,7 @@ class RoshHodesh(object):
     @staticmethod
     def one_day_first_day_of_jan(lang: str, year: int) -> str:
         responses = {
-            'Russian': f'1 января {year} года',
+            'Russian': f'1 января {year}',
             'English': f'1 January {year}',
             'Hebrew': f'1 {year} בינואר'
         }
@@ -113,7 +113,7 @@ class RoshHodesh(object):
             year: int
     ) -> str:
         responses = {
-            'Russian': f'1 {data.gr_months_index[month]} {year} года',
+            'Russian': f'1 {data.gr_months_index[month]} {year}',
             'English': f'1 {data.gr_months_index_en[month]} {year}',
             'Hebrew': f'1 {data.gr_months_index_he[month]} {year}'
         }
@@ -129,7 +129,7 @@ class RoshHodesh(object):
             year: int
     ) -> str:
         responses = {
-            'Russian': f'{day} {data.gr_months_index[month]} {year} года',
+            'Russian': f'{day} {data.gr_months_index[month]} {year}',
             'English': f'{day} {data.gr_months_index_en[month]} {year}',
             'Hebrew': f'{day} {data.gr_months_index_he[month]} {year}'
         }
@@ -617,6 +617,11 @@ class Holidays(object):
             'English': 'PURIM',
             'Hebrew': ''  # TODO
         },
+        'chanuka': {
+            'Russian': 'ХАНУКА',
+            'English': 'CHANUKAH',
+            'Hebrew': ''  # TODO
+        }
     }
 
     # Когда невозможно определить времена
@@ -1052,16 +1057,12 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'📅 Дата: {day_start}-'
-                       f'{day_end}'
-                       f' {data.gr_months_index[month]}'
-                       f' {year} годa,'
-                       f' {data.hdays_of_7[weekday_start]}-'
+            'Russian': f'Дата: |{day_start}-{day_end} '
+                       f'{data.gr_months_index[month]} {year},^'
+                       f'{data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'📅 Date: {day_start}-'
-                       f'{day_end}'
-                       f' {data.gr_months_index_en[month]}'
-                       f' {year}, '
+            'English': f'Date: |{day_start}-{day_end} '
+                       f'{data.gr_months_index_en[month]} {year},^'
                        f'{data.hdays_of_7_en[weekday_start]}-'
                        f'{data.hdays_of_7_en[weekday_end]}',
             'Hebrew': f'📅 תאריך:'
@@ -1086,13 +1087,13 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'📅 Дата: {day_start} и '
+            'Russian': f'Дата: {day_start} и '
                        f'{day_end}'
                        f' {data.gr_months_index[month]}'
-                       f' {year} годa,'
+                       f' {year},'
                        f' {data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'📅 Date: {day_start} and '
+            'English': f'Date: {day_start} and '
                        f'{day_end}'
                        f' {data.gr_months_index_en[month]}'
                        f' {year}, '
@@ -1122,14 +1123,14 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'📅 Дата: {day_start}'
+            'Russian': f'Дата: {day_start}'
                        f' {data.gr_months_index[month_start]} - '
                        f'{day_end}'
                        f' {data.gr_months_index[month_end]}'
-                       f' {year} годa,'
+                       f' {year},'
                        f' {data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'📅 Date: {day_start}'
+            'English': f'Date: {day_start}'
                        f' {data.gr_months_index_en[month_start]} - '
                        f'{day_end}'
                        f' {data.gr_months_index_en[month_end]}'
@@ -1161,20 +1162,16 @@ class Holidays(object):
     ) -> str:
 
         responses = {
-            'Russian': f'📅 Дата: {day_start}'
-                       f' {data.gr_months_index[month_start]} '
-                       f'{year_start} года - '
-                       f'{day_end}'
-                       f' {data.gr_months_index[month_end]}'
-                       f' {year_end} годa,'
-                       f' {data.hdays_of_7[weekday_start]}-'
+            'Russian': f'Дата: |{day_start} '
+                       f'{data.gr_months_index[month_start]} '
+                       f'{year_start} -^{day_end} '
+                       f'{data.gr_months_index[month_end]} {year_end},^'
+                       f'{data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'📅 Date: {day_start}'
-                       f' {data.gr_months_index_en[month_start]}'
-                       f' {year_start} - '
-                       f'{day_end}'
-                       f' {data.gr_months_index_en[month_end]}'
-                       f' {year_end}, '
+            'English': f'Date: |{day_start} '
+                       f'{data.gr_months_index_en[month_start]} '
+                       f'{year_start} -^{day_end} '
+                       f'{data.gr_months_index_en[month_end]} {year_end},^'
                        f'{data.hdays_of_7_en[weekday_start]}-'
                        f'{data.hdays_of_7_en[weekday_end]}',
             'Hebrew': f'📅 תאריך: '
@@ -1202,14 +1199,14 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'📅 Дата: {day_start}'
+            'Russian': f'Дата: {day_start}'
                        f' {data.gr_months_index[month_start]} и '
                        f'{day_end}'
                        f' {data.gr_months_index[month_end]}'
-                       f' {year} годa,'
+                       f' {year},'
                        f' {data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'📅 Date: {day_start}'
+            'English': f'Date: {day_start}'
                        f' {data.gr_months_index_en[month_start]} and '
                        f'{day_end}'
                        f' {data.gr_months_index_en[month_end]}'
@@ -1358,7 +1355,7 @@ class Converter(object):
         responses = {
             'Russian': f'Грегорианская дата: *{greg_date[2]} '
                        f'{data.gr_months_index[greg_date[1]]} '
-                       f'{greg_date[0]}* года, {data.days_ru[day_of_week]}\n'
+                       f'{greg_date[0]}*, {data.days_ru[day_of_week]}\n'
                        f'Еврейская дата: *{heb_date[2]} '
                        f'{data.jewish_months_a[heb_date[1]]} {heb_date[0]}*',
             'English': f'Gregorian date: *{greg_date[2]} '
@@ -1384,7 +1381,7 @@ class Converter(object):
                        f'{data.heb_months_codes_ru[heb_date[1]]} '
                        f'{heb_date[0]}*\nГрегорианская дата: *{greg_date[2]} '
                        f'{data.gr_months_index[greg_date[1]]} '
-                       f'{greg_date[0]}* года, {data.days_ru[day_of_week]}',
+                       f'{greg_date[0]}*, {data.days_ru[day_of_week]}',
             'English': f'Hebrew date: *{heb_date[2]} '
                        f'{data.heb_months_codes_en[heb_date[1]]} '
                        f'{heb_date[0]}*\nGregorian date: *{greg_date[2]} '
