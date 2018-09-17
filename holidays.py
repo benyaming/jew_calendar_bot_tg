@@ -604,7 +604,10 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
             holiday_dict = transform_holiday_dict(israel_name, user_id)
             holiday_name = get_holiday_name(holiday_dict, lang)
             holiday_date = get_holiday_date(holiday_dict, lang)
-            holiday = f'{holiday_name}\n{holiday_date}\n\n'
+            if israel_name == 'YomYerushalayim':
+                holiday = f'{holiday_name}%{holiday_date}'
+            else:
+                holiday = f'{holiday_name}%{holiday_date}\n'
             holiday_string += holiday
         return holiday_string
 
@@ -660,15 +663,8 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
 
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
-    if holiday_name == 'israel_holidays':
-        text = ''
-        for holiday in israel_holidays:
-            if text:
-                text += '\n' + get_holiday_str(holiday, user_id, lang)
-            else:
-                text += get_holiday_str(holiday, user_id, lang)
-    else:
-        text = get_holiday_str(holiday_name, user_id, lang)
+    text = get_holiday_str(holiday_name, user_id, lang)
+    print(text)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,

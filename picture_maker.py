@@ -482,7 +482,7 @@ class IsraelHolidaysSender(PictureSender):
         )
         self._bold_font_offset = self._bold_font.getsize
 
-    def _draw_fast_data(self, text: str):
+    def _draw_isr_holidays_data(self, text: str):
         start_position_y = 320
         start_position_x = 100
         y_offset = 80
@@ -511,7 +511,7 @@ class IsraelHolidaysSender(PictureSender):
             # draw date value
             date_value = line.split('%')[1].split('|')[1]
             # delete '^' symbol from string
-            date_value = date_value.replace('^', ', ')
+            date_value = date_value.replace('^', ' ')
             date_title_offset = self._bold_font_offset(date_title)[0]
             draw.text(
                 (start_position_x + date_title_offset, start_position_y),
@@ -524,7 +524,7 @@ class IsraelHolidaysSender(PictureSender):
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['israel_holidays'][self._lang]
         self._draw_title(self._draw, title, self._lang)
-        self._draw_fast_data(text)
+        self._draw_isr_holidays_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
 
@@ -931,4 +931,4 @@ text = ('Дата: |24-30 Сентября 2018,^Понедельник-Воск
         'Зажигание свечей 24 Сентября: |19:18\n'
         'Авдала 25 Сентября: |19:15\n'
         '!Дата: |30 Сентября 2018,^Суббота')
-SucosSender('Russian').get_image(text)
+# SucosSender('Russian').get_image(text)
