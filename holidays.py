@@ -394,8 +394,12 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
 
 
 # Получение зманим для праздников
-def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
-                     last_days_pesach: bool) -> str:
+def get_holiday_time(
+        holiday_info: dict,
+        user_id: int,
+        lang: str,
+        last_days_pesach: bool
+) -> str:
     location = get_current_year_month_day_tz(user_id)['current_location']
     tz = get_current_year_month_day_tz(user_id)['current_time_zone']
     diaspora = True
@@ -601,8 +605,8 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str):
     holiday_string = holiday_date
 
     if holiday_dict['name'] in ['Succos', 'Rosh Hashana', 'Shavuos']:
-        holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n'\
-                         + holiday_time
+        holiday_string = f'{holiday_date}\n{holiday_time}'
+
     elif holiday_dict['name'] in israel_holidays:
         holiday_string = holiday_name + '%' + holiday_date
 
@@ -646,9 +650,12 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
                 text += '\n' + get_holiday_str(holiday, user_id, lang)
             else:
                 text += get_holiday_str(holiday, user_id, lang)
+    elif holiday_name == 'Sucos':
+        succos_text = get_holiday_str('Succos', user_id, lang)
+        hr_text = get_holiday_str('HoshanaRabba', user_id, lang)
+        text = f'{succos_text}\n!{hr_text}'
     else:
         text = get_holiday_str(holiday_name, user_id, lang)
-    print(text)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
@@ -661,7 +668,7 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Purim': picture_maker.PurimSender,
         'Yom Kippur': picture_maker.YomKippurSender,
         'Chanuka': picture_maker.ChanukaSender,
-
+        'Sucos': picture_maker.SucosSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic

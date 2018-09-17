@@ -233,10 +233,10 @@ def succot():
     if not loc:
         return request_location()
     else:
-        get_succot = h.get_holiday_pic('Succos', user, lang)
-        get_hoshana_rabba = h.get_holiday_pic('HoshanaRabba', user, lang)
-        response = get_succot + '\n\n' + get_hoshana_rabba
-        bot.send_message(user, response, parse_mode='Markdown')
+        # bot.send_chat_action(user, 'upload_photo')
+        response_pic = h.get_holiday_pic('Sucos', user, lang)
+        # bot.send_photo(user, response_pic)
+        # response_pic.close()
 
 
 def shmini_atzeret():

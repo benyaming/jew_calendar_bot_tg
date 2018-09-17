@@ -825,7 +825,6 @@ class ChanukaSender(PictureSender):
     def _draw_chanuka_data(self, text: str) -> None:
         start_position_y = 450
         start_position_x = 100
-        y_offset = 90
         y_offset_small = 75
         draw = self._draw
 
@@ -858,10 +857,78 @@ class ChanukaSender(PictureSender):
         )
         start_position_y += y_offset_small
 
-
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['chanuka'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_chanuka_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
+
+
+class SucosSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/succos.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 50
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_sucos_data(self, text: str) -> None:
+        start_position_y = 250
+        start_position_x = 100
+        y_offset = 75
+        y_offset_small = 65
+        draw = self._draw
+
+        succos_data = text.split('\n!')[0].split('\n')
+        hr_data = text.split('\n!')[1]
+
+        # draw succos data
+        for line in succos_data:
+            defenition = line.split('|')[0]
+            value = line.split('|')[1]
+            defenition_offset = self._bold_font_offset(defenition)
+
+            # print definition
+            draw.text(
+                (start_position_x, start_position_y),
+                defenition,
+                font=self._bold_font
+            )
+
+            value_parts = value.split('^')
+
+            # print value
+            draw.text(
+                (start_position_x + defenition_offset[0], start_position_y),
+                value,
+                font=self._regular_font
+            )
+            start_position_y += y_offset
+
+
+    def get_image(self, text: str) -> BytesIO:
+        print(text)
+        title = localization.Holidays.titles['succos'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_sucos_data(text)
+        self._image.save('test.png')
+        # pic = self._convert_img_to_bytes_io(self._image)
+        # return pic
+
+
+text = ('Дата: |24-30 Сентября 2018,^Понедельник-Воскресенье\n'
+        'Зажигание свечей 23 Сентября: |18:08\n'
+        'Зажигание свечей 24 Сентября: |19:18\n'
+        'Авдала 25 Сентября: |19:15\n'
+        '!Дата: |30 Сентября 2018,^Суббота')
+SucosSender('Russian').get_image(text)
