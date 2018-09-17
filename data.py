@@ -717,7 +717,7 @@ holidays_name_en = {
     'Tzom Gedalia': 'TZOM GEDALIAH  ',
     'Yom Kippur': 'Yom Kippur',
     'Succos': 'Succos',
-    'HoshanaRabba': 'HoshanaRabba',
+    'HoshanaRabba': 'Hoshana Rabba',
     'Shmini Atzeres': 'Shmini Atzeres',
     'Simchas Torah': 'Simhat Torah',
     'Chanuka': 'Chanukah',

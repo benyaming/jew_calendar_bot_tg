@@ -1253,6 +1253,29 @@ class Holidays(object):
         holiday_number = responses.get(lang, '')
         return holiday_number
 
+    # Специальный сбор строки для Ошана Раба
+    @staticmethod
+    def one_day_holiday_hoshana_rabba(
+            lang: str,
+            first_day: str,
+            month: str,
+            year: int,
+            weekday: str
+    ) -> str:
+        responses = {
+            'Russian': f': {first_day}'
+                       f' {data.gr_months_index[month]}'
+                       f' {year} годa^{data.hdays_of_7[weekday]}',
+            'English': f': {first_day}'
+                       f' {data.gr_months_index_en[month]}'
+                       f' {year}^{data.hdays_of_7_en[weekday]}',
+            'Hebrew': f'{first_day} {data.gr_months_index_he[month]}'
+                      f' {year},'
+                      f' {data.hdays_of_7_he[weekday]}'
+        }
+        holiday_number = responses.get(lang, '')
+        return holiday_number
+
     # Для поста 9 ава
     @staticmethod
     def tisha_av_fast(
