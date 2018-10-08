@@ -655,18 +655,18 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей {light_day}'
-                       f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting {light_day}'
-                       f' {data.gr_months_index_en[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей {light_day} '
+                       f'{data.gr_months_index[light_month]}: '
+                       f'|{light_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: '
+                       f'|{avdala_time:.5s}',
+            'English': f'Candle lighting {light_day} '
+                       f'{data.gr_months_index_en[light_month]}: '
+                       f'|{light_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: '
+                       f'|{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות {light_day}'
                       f' {data.gr_months_index_he[light_month]}:'
                       f' *{light_time:.5s}*\n'
@@ -1239,12 +1239,12 @@ class Holidays(object):
             weekday: str
     ) -> str:
         responses = {
-            'Russian': f'Дата: |{first_day}'
-                       f' {data.gr_months_index[month]}'
-                       f' {year},^{data.hdays_of_7[weekday]}',
-            'English': f'Date: |{first_day}'
-                       f' {data.gr_months_index_en[month]}'
-                       f' {year},^{data.hdays_of_7_en[weekday]}',
+            'Russian': f'Дата: |{first_day} '
+                       f'{data.gr_months_index[month]} '
+                       f'{year},^{data.hdays_of_7[weekday]}',
+            'English': f'Date: |{first_day} '
+                       f'{data.gr_months_index_en[month]} '
+                       f'{year},^{data.hdays_of_7_en[weekday]}',
             'Hebrew': f'📅 תאריך: '
                       f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'

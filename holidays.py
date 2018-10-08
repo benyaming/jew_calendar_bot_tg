@@ -404,7 +404,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                      last_days_pesach: bool) -> str:
     location = get_current_year_month_day_tz(user_id)['current_location']
     tz = get_current_year_month_day_tz(user_id)['current_time_zone']
-    diaspora = True
+    diaspora = db_operations.get_diaspora_status(user_id)
 
     date = {
         'day_of_week': holiday_info['day_of_week'][0],
@@ -666,7 +666,6 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
     text = get_holiday_str(holiday_name, user_id, lang)
-    print(text)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
