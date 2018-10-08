@@ -626,7 +626,7 @@ class Holidays(object):
             'Russian': 'СУККОТ',
             'English': 'SUCCOS',
             'Hebrew': ''  # TODO
-        }
+        },
     }
 
     # Когда невозможно определить времена
@@ -1263,12 +1263,10 @@ class Holidays(object):
             weekday: str
     ) -> str:
         responses = {
-            'Russian': f': {first_day}'
-                       f' {data.gr_months_index[month]}'
-                       f' {year} годa^{data.hdays_of_7[weekday]}',
-            'English': f': {first_day}'
-                       f' {data.gr_months_index_en[month]}'
-                       f' {year}^{data.hdays_of_7_en[weekday]}',
+            'Russian': f'{first_day} {data.gr_months_index[month]} {year}^'
+                       f'{data.hdays_of_7[weekday]}',
+            'English': f'{first_day} {data.gr_months_index_en[month]} {year}^'
+                       f'{data.hdays_of_7_en[weekday]}',
             'Hebrew': f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'
                       f' {data.hdays_of_7_he[weekday]}'

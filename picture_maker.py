@@ -883,14 +883,13 @@ class SucosSender(PictureSender):
         self._bold_font_offset = self._bold_font.getsize
 
     def _draw_sucos_data(self, text: str) -> None:
-        start_position_y = 250
+        start_position_y = 300
         start_position_x = 100
         y_offset = 75
         y_offset_small = 65
         draw = self._draw
 
-        succos_data = text.split('\n!')[0].split('\n')
-        hr_data = text.split('\n!')[1]
+        succos_data = text.split('\n')
 
         # draw succos data
         for line in succos_data:
@@ -906,13 +905,20 @@ class SucosSender(PictureSender):
             )
 
             value_parts = value.split('^')
-
+            first_iteration = True
             # print value
-            draw.text(
-                (start_position_x + defenition_offset[0], start_position_y),
-                value,
-                font=self._regular_font
-            )
+            for value_part in value_parts:
+                if not first_iteration:
+                    start_position_y += y_offset_small
+                draw.text(
+                    (
+                        start_position_x + defenition_offset[0],
+                        start_position_y
+                    ),
+                    value_part,
+                    font=self._regular_font
+                )
+                first_iteration = False
             start_position_y += y_offset
 
 
@@ -921,14 +927,13 @@ class SucosSender(PictureSender):
         title = localization.Holidays.titles['succos'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_sucos_data(text)
-        self._image.save('test.png')
-        # pic = self._convert_img_to_bytes_io(self._image)
-        # return pic
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
 
 
 text = ('Дата: |24-30 Сентября 2018,^Понедельник-Воскресенье\n'
         'Зажигание свечей 23 Сентября: |18:08\n'
         'Зажигание свечей 24 Сентября: |19:18\n'
         'Авдала 25 Сентября: |19:15\n'
-        '!Дата: |30 Сентября 2018,^Суббота')
-# SucosSender('Russian').get_image(text)
+        'Ошана Раба: |20 Октября 2019^Суббота')
+SucosSender('Russian').get_image(text)

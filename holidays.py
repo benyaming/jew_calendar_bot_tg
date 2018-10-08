@@ -631,9 +631,8 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
         hoshana_rabba_dict = transform_holiday_dict('HoshanaRabba', user_id)
         hoshana_rabba_name = get_holiday_name(hoshana_rabba_dict, lang)
         hoshana_rabba_date = get_holiday_date(hoshana_rabba_dict, lang)
-        holiday_string = f'{holiday_name}\n\n{holiday_date}\n' \
-                         f'{holiday_time}\n\n{hoshana_rabba_name}' \
-                         f'{hoshana_rabba_date}'
+        holiday_string = f'{holiday_date}\n{holiday_time}\n' \
+                         f'{hoshana_rabba_name}: |{hoshana_rabba_date}'
 
     elif holiday_dict['name'] == 'Pesach':
         holiday_time_last_days = get_holiday_time(
@@ -677,7 +676,7 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Purim': picture_maker.PurimSender,
         'Yom Kippur': picture_maker.YomKippurSender,
         'Chanuka': picture_maker.ChanukaSender,
-        'Sucos': picture_maker.SucosSender
+        'Succos': picture_maker.SucosSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic
