@@ -44,10 +44,10 @@ def get_current_year_month_day_tz(user_id: int) -> dict:
 
 
 # Получение данных о празднике (название, дата)
-def get_holiday_dict(holiday_name: str, year: int) -> dict:
+def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
     begin_date = dates.HebrewDate(year=year, month=7, day=1).to_pydate()
     holiday_dict = {}
-    diaspora = True
+    diaspora = db_operations.get_diaspora_status(user_id)
     number_days_of_hebrew_year = 365
     for days in hebrewcal.Year(year).iterdays():
         number_days_of_hebrew_year = days
@@ -165,7 +165,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
 
     hebrew_year = dates.GregorianDate(year=year, month=month, day=day).to_heb()
     hebrew_year = str(hebrew_year).split('-')
-    holiday_dict = get_holiday_dict(holiday_name, int(hebrew_year[0]))
+    holiday_dict = get_holiday_dict(holiday_name, int(hebrew_year[0]), user_id)
     if holiday_dict['name'] == '10 of Teves' and \
             holiday_dict['month'][0] == '01':
         if holiday_dict['month'][0] == '01' and \
@@ -174,7 +174,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     elif holiday_dict['name'] == 'Chanuka' and \
             holiday_dict['month'][0] == '01':
@@ -185,7 +185,10 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][1]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name,
+                int(hebrew_year[0]) + 1,
+                user_id
+            )
 
     elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) != 2:
         if month > int(holiday_dict['month'][0]) and \
@@ -196,7 +199,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) == 2:
 
@@ -208,7 +211,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 or year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
     else:
 
         if month > int(holiday_dict['month'][0]) and \
@@ -219,7 +222,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     return holiday_dict
 
