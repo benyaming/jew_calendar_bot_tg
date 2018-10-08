@@ -1263,9 +1263,9 @@ class Holidays(object):
             weekday: str
     ) -> str:
         responses = {
-            'Russian': f'{first_day} {data.gr_months_index[month]} {year}^'
+            'Russian': f'{first_day} {data.gr_months_index[month]} {year},^'
                        f'{data.hdays_of_7[weekday]}',
-            'English': f'{first_day} {data.gr_months_index_en[month]} {year}^'
+            'English': f'{first_day} {data.gr_months_index_en[month]} {year},^'
                        f'{data.hdays_of_7_en[weekday]}',
             'Hebrew': f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'
