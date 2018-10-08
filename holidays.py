@@ -25,7 +25,6 @@ israel_holidays = (
 
 # Получение текущих данных о пользователе (дата, локация, тайм-зона)
 def get_current_year_month_day_tz(user_id: int) -> dict:
-
     location = db_operations.get_location_by_id(user_id)
     tz = db_operations.get_tz_by_id(user_id)
     tz_time = pytz.timezone(tz)
@@ -45,10 +44,10 @@ def get_current_year_month_day_tz(user_id: int) -> dict:
 
 
 # Получение данных о празднике (название, дата)
-def get_holiday_dict(holiday_name: str, year: int) -> dict:
+def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
     begin_date = dates.HebrewDate(year=year, month=7, day=1).to_pydate()
     holiday_dict = {}
-    diaspora = True
+    diaspora = db_operations.get_diaspora_status(user_id)
     number_days_of_hebrew_year = 365
     for days in hebrewcal.Year(year).iterdays():
         number_days_of_hebrew_year = days
@@ -166,7 +165,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
 
     hebrew_year = dates.GregorianDate(year=year, month=month, day=day).to_heb()
     hebrew_year = str(hebrew_year).split('-')
-    holiday_dict = get_holiday_dict(holiday_name, int(hebrew_year[0]))
+    holiday_dict = get_holiday_dict(holiday_name, int(hebrew_year[0]), user_id)
     if holiday_dict['name'] == '10 of Teves' and \
             holiday_dict['month'][0] == '01':
         if holiday_dict['month'][0] == '01' and \
@@ -175,7 +174,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     elif holiday_dict['name'] == 'Chanuka' and \
             holiday_dict['month'][0] == '01':
@@ -186,7 +185,10 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][1]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name,
+                int(hebrew_year[0]) + 1,
+                user_id
+            )
 
     elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) != 2:
         if month > int(holiday_dict['month'][0]) and \
@@ -197,7 +199,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) == 2:
 
@@ -209,7 +211,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 or year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
     else:
 
         if month > int(holiday_dict['month'][0]) and \
@@ -220,15 +222,13 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
                 year > int(holiday_dict['year'][0]):
 
             holiday_dict = get_holiday_dict(
-                holiday_name, int(hebrew_year[0]) + 1)
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
 
     return holiday_dict
 
 
 # Перевод названия праздника
 def get_holiday_name(holiday_info: dict, lang: str) -> str:
-    holiday_name = ''
-
     holiday_names = {
         'Russian': data.holidays_name[holiday_info['name']],
         'English': data.holidays_name_en[holiday_info['name']],
@@ -253,7 +253,7 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
             'year': holiday_info['year'][0]
         }
         # Длинные праздники (Пейсах, Ханука; Суккот),
-        # даты которых приходят на 2 григорианских года
+        # даты которых приходят на 1 григорианский месяц
         if holiday_info['name'] == 'Chanuka' and\
                 len(holiday_info['year']) == 2:
             holiday_date = Holidays.long_holiday_two_months_two_years(
@@ -304,6 +304,12 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
         holiday_date = Holidays.one_day_holiday(
             lang, date['day'], date['month'], date['year'], date['day_of_week']
         )
+        if holiday_info['name'] == 'HoshanaRabba':
+            holiday_date = Holidays.one_day_holiday_hoshana_rabba(
+                lang, date['day'], date['month'], date['year'],
+                date['day_of_week']
+            )
+
     return holiday_date
 
 
@@ -398,7 +404,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                      last_days_pesach: bool) -> str:
     location = get_current_year_month_day_tz(user_id)['current_location']
     tz = get_current_year_month_day_tz(user_id)['current_time_zone']
-    diaspora = True
+    diaspora = db_operations.get_diaspora_status(user_id)
 
     date = {
         'day_of_week': holiday_info['day_of_week'][0],
@@ -591,64 +597,75 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
 
 # Собираем строку для праздника
-def get_holiday_str(holiday_name: str, user_id: int, lang: str):
+def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
+    diaspora = db_operations.get_diaspora_status(user_id)
+    holiday_string = ''
+
+    if holiday_name in 'israel_holidays':
+        for israel_name in ['YomHaShoah', 'YomHaZikaron', 'YomHaAtzmaut',
+                            'YomYerushalayim']:
+            holiday_dict = transform_holiday_dict(israel_name, user_id)
+            holiday_name = get_holiday_name(holiday_dict, lang)
+            holiday_date = get_holiday_date(holiday_dict, lang)
+            if israel_name == 'YomYerushalayim':
+                holiday = f'{holiday_name}%{holiday_date}'
+            else:
+                holiday = f'{holiday_name}%{holiday_date}\n'
+            holiday_string += holiday
+        return holiday_string
 
     holiday_dict = transform_holiday_dict(holiday_name, user_id)
     holiday_name = get_holiday_name(holiday_dict, lang)
     holiday_date = get_holiday_date(holiday_dict, lang)
-    fast_time = get_fast_time(holiday_dict, user_id, lang)
-    holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
+
     holiday_string = holiday_date
 
-    if holiday_dict['name'] in ['Succos', 'Rosh Hashana', 'Shavuos']:
-        holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n'\
-                         + holiday_time
-    elif holiday_dict['name'] in israel_holidays:
-        holiday_string = holiday_name + '%' + holiday_date
+    if holiday_dict['name'] in ['Taanis Esther', '17 of Tamuz', 'Yom Kippur',
+                                '9 of Av', 'Tzom Gedalia', '10 of Teves']:
+        fast_time = get_fast_time(holiday_dict, user_id, lang)
+        holiday_string = f'{holiday_name}\n\n{holiday_date}\n{fast_time}'
+
+    holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
+
+    if holiday_dict['name'] in ['Rosh Hashana', 'Shavuos']:
+        holiday_string = f'{holiday_name}\n\n{holiday_date}\n{holiday_time}'
+
+    if holiday_dict['name'] == 'Succos':
+        hoshana_rabba_dict = transform_holiday_dict('HoshanaRabba', user_id)
+        hoshana_rabba_name = get_holiday_name(hoshana_rabba_dict, lang)
+        hoshana_rabba_date = get_holiday_date(hoshana_rabba_dict, lang)
+        holiday_string = f'{holiday_date}\n{holiday_time}\n' \
+                         f'{hoshana_rabba_name}: |{hoshana_rabba_date}'
 
     elif holiday_dict['name'] == 'Pesach':
         holiday_time_last_days = get_holiday_time(
             holiday_dict, user_id, lang, True)
-        holiday_string = f'*{holiday_name}*\n\n' + f'{holiday_date}\n' \
-                         + holiday_time + '\n\n' + holiday_time_last_days
+        holiday_string = f'{holiday_name}\n\n{holiday_date}\n' \
+                         f'{holiday_time}\n\n{holiday_time_last_days}'
 
-    elif holiday_dict['name'] == 'Shmini Atzeres':
+    elif holiday_dict['name'] == 'Shmini Atzeres' and diaspora is False:
         if lang == 'Russian':
-            holiday_string = f'*{holiday_name} и Симхат Тора*\n\n' \
-                             + f'{holiday_date}\n' + holiday_time
-        elif lang == 'English':
-            holiday_string = f'*{holiday_name} and Simhat Torah*\n\n' \
-                             + f'{holiday_date}\n' + holiday_time
+            holiday_string = f'{holiday_name}и Симхат Тора\n\n' \
+                             f'{holiday_date}\n{holiday_time}'
+        if lang == 'English':
+            holiday_string = f'{holiday_name}and Simhat Torah\n\n' \
+                             f'{holiday_date}\n{holiday_time}'
         elif lang == 'Hebrew':
-            holiday_string = f'*{holiday_name}ו שמחת תורה*\n\n' \
-                             + f'{holiday_date}\n' + holiday_time
+            holiday_string = f'{holiday_name}ו שמחת תורה\n\n' \
+                             f'{holiday_date}\n{holiday_time}'
 
-    elif holiday_dict['name'] == 'Simchas Torah':
-        shmini_atzeret_dict = transform_holiday_dict('Shmini Atzeres', user_id)
+    elif holiday_dict['name'] == 'Shmini Atzeres' and diaspora is True:
+        shmini_atzeret_dict = transform_holiday_dict('Simchas Torah', user_id)
         shmini_atzeret_name = get_holiday_name(shmini_atzeret_dict, lang)
         shmini_atzeret_date = get_holiday_date(shmini_atzeret_dict, lang)
-        holiday_string = f'*{shmini_atzeret_name}, {holiday_name}*\n\n' \
-                         + f'{shmini_atzeret_date}\n{holiday_date}\n\n'\
-                         + holiday_time
-
-    elif holiday_dict['name'] in ['Taanis Esther', '17 of Tamuz', 'Yom Kippur',
-                                  '9 of Av', 'Tzom Gedalia', '10 of Teves']:
-        holiday_string = f'{holiday_name}\n\n' + f'{holiday_date}\n'\
-                         + fast_time
+        holiday_string = f'{holiday_name}, {shmini_atzeret_name}\n\n' \
+                         f'{holiday_date}\n{shmini_atzeret_date}\n\n' \
+                         f'{holiday_time}'
     return holiday_string
 
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
-    if holiday_name == 'israel_holidays':
-        text = ''
-        for holiday in israel_holidays:
-            if text:
-                text += '\n' + get_holiday_str(holiday, user_id, lang)
-            else:
-                text += get_holiday_str(holiday, user_id, lang)
-    else:
-        text = get_holiday_str(holiday_name, user_id, lang)
-    print(text)
+    text = get_holiday_str(holiday_name, user_id, lang)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
@@ -661,7 +678,7 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Purim': picture_maker.PurimSender,
         'Yom Kippur': picture_maker.YomKippurSender,
         'Chanuka': picture_maker.ChanukaSender,
-
+        'Succos': picture_maker.SucosSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic

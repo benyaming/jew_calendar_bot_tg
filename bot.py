@@ -160,4 +160,4 @@ if __name__ == '__main__':
         logger.info('STARTING POLLING....')
         # bot.remove_webhook()
         # sleep(2)
-        bot.polling(True)
+        bot.polling(True, timeout=50)

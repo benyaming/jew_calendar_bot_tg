@@ -621,7 +621,12 @@ class Holidays(object):
             'Russian': 'ХАНУКА',
             'English': 'CHANUKAH',
             'Hebrew': ''  # TODO
-        }
+        },
+        'succos': {
+            'Russian': 'СУККОТ',
+            'English': 'SUCCOS',
+            'Hebrew': ''  # TODO
+        },
     }
 
     # Когда невозможно определить времена
@@ -650,18 +655,18 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей {light_day}'
-                       f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting {light_day}'
-                       f' {data.gr_months_index_en[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей {light_day} '
+                       f'{data.gr_months_index[light_month]}: '
+                       f'|{light_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: '
+                       f'|{avdala_time:.5s}',
+            'English': f'Candle lighting {light_day} '
+                       f'{data.gr_months_index_en[light_month]}: '
+                       f'|{light_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: '
+                       f'|{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות {light_day}'
                       f' {data.gr_months_index_he[light_month]}:'
                       f' *{light_time:.5s}*\n'
@@ -909,24 +914,24 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей {light_1_day}'
-                       f' {data.gr_months_index[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Зажигание свечей {light_2_day}'
-                       f' {data.gr_months_index[light_2_month]}:'
-                       f' *{light_2_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting {light_1_day}'
-                       f' {data.gr_months_index_en[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Candle lighting {light_2_day}'
-                       f' {data.gr_months_index_en[light_2_month]}:'
-                       f' *{light_2_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей {light_1_day} '
+                       f'{data.gr_months_index[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Зажигание свечей {light_2_day} '
+                       f'{data.gr_months_index[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
+            'English': f'Candle lighting {light_1_day} '
+                       f'{data.gr_months_index_en[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Candle lighting {light_2_day} '
+                       f'{data.gr_months_index_en[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות {light_1_day}'
                       f' {data.gr_months_index_he[light_1_month]}:'
                       f' *{light_1_time:.5s}*\n'
@@ -1234,14 +1239,35 @@ class Holidays(object):
             weekday: str
     ) -> str:
         responses = {
-            'Russian': f'Дата: |{first_day}'
-                       f' {data.gr_months_index[month]}'
-                       f' {year},^{data.hdays_of_7[weekday]}',
-            'English': f'Date: |{first_day}'
-                       f' {data.gr_months_index_en[month]}'
-                       f' {year},^{data.hdays_of_7_en[weekday]}',
+            'Russian': f'Дата: |{first_day} '
+                       f'{data.gr_months_index[month]} '
+                       f'{year},^{data.hdays_of_7[weekday]}',
+            'English': f'Date: |{first_day} '
+                       f'{data.gr_months_index_en[month]} '
+                       f'{year},^{data.hdays_of_7_en[weekday]}',
             'Hebrew': f'📅 תאריך: '
                       f'{first_day} {data.gr_months_index_he[month]}'
+                      f' {year},'
+                      f' {data.hdays_of_7_he[weekday]}'
+        }
+        holiday_number = responses.get(lang, '')
+        return holiday_number
+
+    # Специальный сбор строки для Ошана Раба
+    @staticmethod
+    def one_day_holiday_hoshana_rabba(
+            lang: str,
+            first_day: str,
+            month: str,
+            year: int,
+            weekday: str
+    ) -> str:
+        responses = {
+            'Russian': f'{first_day} {data.gr_months_index[month]} {year},^'
+                       f'{data.hdays_of_7[weekday]}',
+            'English': f'{first_day} {data.gr_months_index_en[month]} {year},^'
+                       f'{data.hdays_of_7_en[weekday]}',
+            'Hebrew': f'{first_day} {data.gr_months_index_he[month]}'
                       f' {year},'
                       f' {data.hdays_of_7_he[weekday]}'
         }
