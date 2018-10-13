@@ -446,6 +446,7 @@ def select_diaspora():
         user_markup = keyboards.get_diaspora_callback_menu(lang, user)
         diaspora_status = db_operations.get_diaspora_status(user)
         response = l.Utils.diaspora(lang, diaspora_status)
+        print(1, response)
         bot.send_message(
             user,
             response,

@@ -627,6 +627,11 @@ class Holidays(object):
             'English': 'SUCCOS',
             'Hebrew': ''  # TODO
         },
+        'pesah': {
+            'Russian': 'ПЕЙСАХ',
+            'English': 'PESACH',
+            'Hebrew': ''  # TODO
+        },
     }
 
     # Когда невозможно определить времена
@@ -810,24 +815,24 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей {light_day}'
-                       f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'🕯 Зажигание свечей (Шаббат) {light_shab_day} '
-                       f'{data.gr_months_index[light_shab_month]}: '
-                       f'*{light_shab_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting {light_day}'
-                       f' {data.gr_months_index_en[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'🕯 Candle lighting (Shabbat) {light_shab_day} '
-                       f'{data.gr_months_index_en[light_shab_month]}: '
-                       f'*{light_shab_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей {light_day} '
+                       f'{data.gr_months_index[light_month]}: |'
+                       f'{light_time:.5s}\n'
+                       f'Зажигание свечей (Шаббат) {light_shab_day} '
+                       f'{data.gr_months_index[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
+            'English': f'Candle lighting {light_day} '
+                       f'{data.gr_months_index_en[light_month]}: |'
+                       f'{light_time:.5s}\n'
+                       f'Candle lighting (Shabbat) {light_shab_day} '
+                       f'{data.gr_months_index_en[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
             'Hevrew': f'🕯 הדלקת נרות {light_day}'
                       f' {data.gr_months_index_he[light_month]}:'
                       f' *{light_time:.5s}*\n'
@@ -960,24 +965,24 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей {light_1_day}'
-                       f' {data.gr_months_index[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Зажигание свечей {light_2_day}'
-                       f' {data.gr_months_index[light_2_month]}:'
-                       f' *{light_2_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting {light_1_day}'
-                       f' {data.gr_months_index_en[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Candle lighting {light_2_day}'
-                       f' {data.gr_months_index_en[light_2_month]}:'
-                       f' *{light_2_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей (Шаббат) {light_1_day} '
+                       f'{data.gr_months_index[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Зажигание свечей {light_2_day} '
+                       f'{data.gr_months_index[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
+            'English': f'Candle lighting (Shabbat) {light_1_day} '
+                       f'{data.gr_months_index_en[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Candle lighting {light_2_day} '
+                       f'{data.gr_months_index_en[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות {light_1_day} '
                       f' {data.gr_months_index_he[light_1_month]}:'
                       f' *{light_1_time:.5s}*\n'

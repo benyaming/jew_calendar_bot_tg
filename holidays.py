@@ -640,8 +640,9 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
     elif holiday_dict['name'] == 'Pesach':
         holiday_time_last_days = get_holiday_time(
             holiday_dict, user_id, lang, True)
-        holiday_string = f'{holiday_name}\n\n{holiday_date}\n' \
-                         f'{holiday_time}\n\n{holiday_time_last_days}'
+        holiday_string = f'{holiday_date}\n' \
+                         f'{holiday_time}\n' \
+                         f'!{holiday_time_last_days}'
 
     elif holiday_dict['name'] == 'Shmini Atzeres' and diaspora is False:
         if lang == 'Russian':
@@ -666,6 +667,7 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
     text = get_holiday_str(holiday_name, user_id, lang)
+    print(text)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
