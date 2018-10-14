@@ -921,7 +921,6 @@ class SucosSender(PictureSender):
                 first_iteration = False
             start_position_y += y_offset
 
-
     def get_image(self, text: str) -> BytesIO:
         print(text)
         title = localization.Holidays.titles['succos'][self._lang]
@@ -931,9 +930,82 @@ class SucosSender(PictureSender):
         return pic
 
 
-text = ('Дата: |24-30 Сентября 2018,^Понедельник-Воскресенье\n'
-        'Зажигание свечей 23 Сентября: |18:08\n'
-        'Зажигание свечей 24 Сентября: |19:18\n'
-        'Авдала 25 Сентября: |19:15\n'
-        'Ошана Раба: |20 Октября 2019^Суббота')
-SucosSender('Russian').get_image(text)
+class PesahSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/pesah.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 43
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_pesah_data(self, text: str) -> None:
+        start_position_y = 270
+        start_position_x = 100
+        y_offset = 65
+        y_offset_small = 65
+        draw = self._draw
+        pesah_data = text.split('\n')
+
+        # draw pesah data
+        for line in pesah_data:
+            defenition = line.split('|')[0]
+            value = line.split('|')[1]
+
+            if '!' in defenition:
+                start_position_y += y_offset_small
+                defenition = defenition.replace('!', '')
+
+            defenition_offset = self._bold_font_offset(defenition)
+
+            # print definition
+            draw.text(
+                (start_position_x, start_position_y),
+                defenition,
+                font=self._bold_font
+            )
+
+            value_parts = value.split('^')
+            first_iteration = True
+
+            # print value
+            for value_part in value_parts:
+                if not first_iteration:
+                    start_position_y += y_offset_small
+                draw.text(
+                    (
+                        start_position_x + defenition_offset[0],
+                        start_position_y
+                    ),
+                    value_part,
+                    font=self._regular_font
+                )
+                first_iteration = False
+            start_position_y += y_offset
+
+    def get_image(self, text: str) -> BytesIO:
+        if self._lang == 'English' or '(' not in text:
+            self._data_font_size = 50
+            self._regular_font = ImageFont.truetype(
+                self._regular_font_path,
+                size=self._data_font_size
+            )
+            self._bold_font = ImageFont.truetype(
+                self._bold_font_path,
+                size=self._data_font_size
+            )
+            self._bold_font_offset = self._bold_font.getsize
+
+        title = localization.Holidays.titles['pesah'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_pesah_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
