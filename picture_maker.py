@@ -936,7 +936,7 @@ class PesahSender(PictureSender):
         self._lang = lang
         self._background_path = 'res/backgrounds/pesah.png'
         self._draw = self._get_draw(self._background_path)
-        self._data_font_size = 50
+        self._data_font_size = 43
         self._regular_font = ImageFont.truetype(
             self._regular_font_path,
             size=self._data_font_size
@@ -948,9 +948,9 @@ class PesahSender(PictureSender):
         self._bold_font_offset = self._bold_font.getsize
 
     def _draw_pesah_data(self, text: str) -> None:
-        start_position_y = 300
+        start_position_y = 270
         start_position_x = 100
-        y_offset = 75
+        y_offset = 60
         y_offset_small = 65
         draw = self._draw
 
@@ -976,6 +976,7 @@ class PesahSender(PictureSender):
 
             value_parts = value.split('^')
             first_iteration = True
+
             # print value
             for value_part in value_parts:
                 if not first_iteration:
@@ -992,20 +993,8 @@ class PesahSender(PictureSender):
             start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
-        print(text)
         title = localization.Holidays.titles['pesah'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_pesah_data(text)
-        self._image.save('test.png')
-        # pic = self._convert_img_to_bytes_io(self._image)
-        # return pic
-
-
-text = ('Дата: |20-27 Апреля 2019,^Суббота-Суббота\n'
-        'Зажигание свечей 19 Апреля: |19:24\n'
-        'Зажигание свечей 20 Апреля: |20:47\n'
-        'Авдала 21 Апреля: |20:49\n'
-        '!Зажигание свечей 25 Апреля: |19:36\n'
-        'Зажигание свечей (Шаббат) 26 Апреля: |19:39\n'
-        'Авдала 27 Апреля: |21:04')
-PesahSender('Russian').get_image(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
