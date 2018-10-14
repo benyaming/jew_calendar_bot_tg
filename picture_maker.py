@@ -1071,8 +1071,7 @@ class RoshHashanaSender(PictureSender):
                 start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
-        print(text)
-        title = localization.Holidays.titles['succos'][self._lang]
+        title = localization.Holidays.titles['rosh_hashana'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_rosh_hashana_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
