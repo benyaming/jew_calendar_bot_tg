@@ -950,7 +950,7 @@ class PesahSender(PictureSender):
     def _draw_pesah_data(self, text: str) -> None:
         start_position_y = 270
         start_position_x = 100
-        y_offset = 60
+        y_offset = 65
         y_offset_small = 65
         draw = self._draw
         pesah_data = text.split('\n')
@@ -992,7 +992,7 @@ class PesahSender(PictureSender):
             start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
-        if self._lang == 'English' or len(max(text.split('\n'))) < 45:
+        if self._lang == 'English' or '(' not in text:
             self._data_font_size = 50
             self._regular_font = ImageFont.truetype(
                 self._regular_font_path,
@@ -1003,7 +1003,7 @@ class PesahSender(PictureSender):
                 size=self._data_font_size
             )
             self._bold_font_offset = self._bold_font.getsize
-        print(self._data_font_size)
+
         title = localization.Holidays.titles['pesah'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_pesah_data(text)
