@@ -993,6 +993,8 @@ class PesahSender(PictureSender):
             start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
+        if self._lang == 'English' or len(max(text.split('\n'))) < 45:
+            self._data_font_size = 50
         title = localization.Holidays.titles['pesah'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_pesah_data(text)
