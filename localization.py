@@ -632,6 +632,11 @@ class Holidays(object):
             'English': 'PESACH',
             'Hebrew': ''  # TODO
         },
+        'rosh_hashana': {
+            'Russian': 'РОШ АШАНА',
+            'English': 'ROSH HASHANA',
+            'Hebrew': ''  # TODO
+        }
     }
 
     # Когда невозможно определить времена
@@ -1170,7 +1175,6 @@ class Holidays(object):
             weekday_start: str,
             weekday_end: str
     ) -> str:
-
         responses = {
             'Russian': f'Дата: |{day_start} '
                        f'{data.gr_months_index[month_start]} '
@@ -1209,18 +1213,14 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'Дата: {day_start}'
-                       f' {data.gr_months_index[month_start]} и '
-                       f'{day_end}'
-                       f' {data.gr_months_index[month_end]}'
-                       f' {year},'
-                       f' {data.hdays_of_7[weekday_start]}-'
+            'Russian': f'Дата: |{day_start} '
+                       f'{data.gr_months_index[month_start]} и {day_end} '
+                       f'{data.gr_months_index[month_end]} {year},^'
+                       f'{data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'Date: {day_start}'
-                       f' {data.gr_months_index_en[month_start]} and '
-                       f'{day_end}'
-                       f' {data.gr_months_index_en[month_end]}'
-                       f' {year}, '
+            'English': f'Date: |{day_start} '
+                       f'{data.gr_months_index_en[month_start]} and {day_end} '
+                       f'{data.gr_months_index_en[month_end]} {year},^'
                        f'{data.hdays_of_7_en[weekday_start]}-'
                        f'{data.hdays_of_7_en[weekday_end]}',
             'Hebrew': f'📅 תאריך:'
