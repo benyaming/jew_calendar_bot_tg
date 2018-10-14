@@ -12,15 +12,7 @@ import picture_maker
 from localization import Holidays
 
 
-URL_HOLIDAYS = 'http://db.ou.org/zmanim/getHolidayCalData.php'
 URL_ZMANIM = 'http://db.ou.org/zmanim/getCalendarData.php'
-
-israel_holidays = (
-        'YomHaShoah',
-        'YomHaZikaron',
-        'YomHaAtzmaut',
-        'YomYerushalayim'
-    )
 
 
 # Получение текущих данных о пользователе (дата, локация, тайм-зона)
@@ -249,7 +241,7 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
             'day_of_week_begin': holiday_info['day_of_week'][0],
             'day_of_week_end': holiday_info['day_of_week'][1],
             'month_begin': holiday_info['month'][0],
-            'month_end': holiday_info['month'][0],
+            'month_end': holiday_info['month'][1],
             'year': holiday_info['year'][0]
         }
         # Длинные праздники (Пейсах, Ханука; Суккот),
@@ -628,7 +620,7 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
     holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
 
     if holiday_dict['name'] in ['Rosh Hashana', 'Shavuos']:
-        holiday_string = f'{holiday_name}\n\n{holiday_date}\n{holiday_time}'
+        holiday_string = f'{holiday_date}\n{holiday_time}'
 
     if holiday_dict['name'] == 'Succos':
         hoshana_rabba_dict = transform_holiday_dict('HoshanaRabba', user_id)
@@ -681,7 +673,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Yom Kippur': picture_maker.YomKippurSender,
         'Chanuka': picture_maker.ChanukaSender,
         'Succos': picture_maker.SucosSender,
-        'Pesach': picture_maker.PesahSender
+        'Pesach': picture_maker.PesahSender,
+        'Rosh Hashana': picture_maker.RoshHashanaSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic
