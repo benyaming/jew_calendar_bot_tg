@@ -234,26 +234,27 @@ def get_holiday_name(holiday_info: dict, lang: str) -> str:
 # Получение даты праздника
 def get_holiday_date(holiday_info: dict, lang: str) -> str:
     # Проверка на длину праздника
-    if len(holiday_info['day']) >= 2 and len(holiday_info['month']) == 2:
-        date = {
-            'day_begin': holiday_info['day'][0],
-            'day_end': holiday_info['day'][1],
-            'day_of_week_begin': holiday_info['day_of_week'][0],
-            'day_of_week_end': holiday_info['day_of_week'][1],
-            'month_begin': holiday_info['month'][0],
-            'month_end': holiday_info['month'][1],
-            'year': holiday_info['year'][0]
-        }
-    elif len(holiday_info['day']) >= 2:
-        date = {
-            'day_begin': holiday_info['day'][0],
-            'day_end': holiday_info['day'][1],
-            'day_of_week_begin': holiday_info['day_of_week'][0],
-            'day_of_week_end': holiday_info['day_of_week'][1],
-            'month_begin': holiday_info['month'][0],
-            'month_end': holiday_info['month'][0],
-            'year': holiday_info['year'][0]
-        }
+    if len(holiday_info['day']) >= 2:
+        if len(holiday_info['month']) == 2:
+            date = {
+                'day_begin': holiday_info['day'][0],
+                'day_end': holiday_info['day'][1],
+                'day_of_week_begin': holiday_info['day_of_week'][0],
+                'day_of_week_end': holiday_info['day_of_week'][1],
+                'month_begin': holiday_info['month'][0],
+                'month_end': holiday_info['month'][1],
+                'year': holiday_info['year'][0]
+            }
+        else:
+            date = {
+                'day_begin': holiday_info['day'][0],
+                'day_end': holiday_info['day'][1],
+                'day_of_week_begin': holiday_info['day_of_week'][0],
+                'day_of_week_end': holiday_info['day_of_week'][1],
+                'month_begin': holiday_info['month'][0],
+                'month_end': holiday_info['month'][0],
+                'year': holiday_info['year'][0]
+            }
 
         # Длинные праздники (Пейсах, Ханука; Суккот),
         # даты которых приходят на 1 григорианский месяц
