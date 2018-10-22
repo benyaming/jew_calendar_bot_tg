@@ -686,7 +686,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Chanuka': picture_maker.ChanukaSender,
         'Succos': picture_maker.SucosSender,
         'Pesach': picture_maker.PesahSender,
-        'Rosh Hashana': picture_maker.RoshHashanaSender
+        'Rosh Hashana': picture_maker.RoshHashanaSender,
+        'Shavuos': picture_maker.ShavuotSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic

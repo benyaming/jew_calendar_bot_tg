@@ -1043,7 +1043,7 @@ class RoshHashanaSender(PictureSender):
             value = line.split('|')[1]
             defenition_offset = self._bold_font_offset(defenition)
 
-            # print definition
+            # draw definition
             draw.text(
                 (start_position_x, start_position_y),
                 defenition,
@@ -1053,18 +1053,22 @@ class RoshHashanaSender(PictureSender):
             # print value
             if '^' in value:
                 day_lines = value.split('^')
-                for line in day_lines:
+                for day_line in day_lines:
                     draw.text(
                         (start_position_x + defenition_offset[0],
                          start_position_y),
-                        line,
+                        day_line,
                         font=self._regular_font
                     )
                     start_position_y += y_offset_small
                 start_position_y += y_offset_small
             else:
                 draw.text(
-                    (start_position_x + defenition_offset[0], start_position_y),
+                    (
+                        start_position_x +
+                        defenition_offset[0],
+                        start_position_y
+                    ),
                     value,
                     font=self._regular_font
                 )
@@ -1074,5 +1078,76 @@ class RoshHashanaSender(PictureSender):
         title = localization.Holidays.titles['rosh_hashana'][self._lang]
         self._draw_title(self._draw, title, self._lang)
         self._draw_rosh_hashana_data(text)
+        pic = self._convert_img_to_bytes_io(self._image)
+        return pic
+
+
+class ShavuotSender(PictureSender):
+
+    def __init__(self, lang):
+        self._lang = lang
+        self._background_path = 'res/backgrounds/shavuot.png'
+        self._draw = self._get_draw(self._background_path)
+        self._data_font_size = 45
+        self._regular_font = ImageFont.truetype(
+            self._regular_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font = ImageFont.truetype(
+            self._bold_font_path,
+            size=self._data_font_size
+        )
+        self._bold_font_offset = self._bold_font.getsize
+
+    def _draw_shavuot_data(self, text: str) -> None:
+        start_position_y = 300
+        start_position_x = 100
+        y_offset = 70
+        y_offset_small = 65
+        draw = self._draw
+
+        succos_data = text.split('\n')
+
+        # draw shavuot data
+        for line in succos_data:
+            defenition = line.split('|')[0]
+            value = line.split('|')[1]
+            defenition_offset = self._bold_font_offset(defenition)
+
+            # draw definition
+            draw.text(
+                (start_position_x, start_position_y),
+                defenition,
+                font=self._bold_font
+            )
+
+            # print value
+            if '^' in value:
+                day_lines = value.split('^')
+                for day_line in day_lines:
+                    draw.text(
+                        (start_position_x + defenition_offset[0],
+                         start_position_y),
+                        day_line,
+                        font=self._regular_font
+                    )
+                    start_position_y += y_offset_small
+                start_position_y += y_offset_small
+            else:
+                draw.text(
+                    (
+                        start_position_x +
+                        defenition_offset[0],
+                        start_position_y
+                    ),
+                    value,
+                    font=self._regular_font
+                )
+                start_position_y += y_offset
+
+    def get_image(self, text: str) -> BytesIO:
+        title = localization.Holidays.titles['shavuot'][self._lang]
+        self._draw_title(self._draw, title, self._lang)
+        self._draw_shavuot_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
