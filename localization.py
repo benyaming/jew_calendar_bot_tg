@@ -636,6 +636,11 @@ class Holidays(object):
             'Russian': 'РОШ АШАНА',
             'English': 'ROSH HASHANA',
             'Hebrew': ''  # TODO
+        },
+        'shavuot': {
+            'Russian': 'ШАВУОТ',
+            'English': 'SHAVOUT',
+            'Hebrew': ''  # TODO
         }
     }
 
@@ -702,24 +707,24 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей (Шаббат) {light_shab_day}'
-                       f' {data.gr_months_index[light_shab_month]}:'
-                       f' *{light_shab_time:.5s}*\n'
-                       f'✨🕯 Авдала и зажигание свечей {light_day}'
-                       f' {data.gr_months_index[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting (Shabbat) {light_shab_day}'
-                       f' {data.gr_months_index_en[light_shab_month]}:'
-                       f' *{light_shab_time:.5s}*\n'
-                       f'✨🕯 Avdala and candle lighting {light_day}'
-                       f' {data.gr_months_index_en[light_month]}:'
-                       f' *{light_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей (Шаббат) {light_shab_day} '
+                       f'{data.gr_months_index[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Авдала и зажигание свечей {light_day} '
+                       f'{data.gr_months_index[light_month]}: |'
+                       f'{light_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
+            'English': f'Candle lighting (Shabbat) {light_shab_day} '
+                       f'{data.gr_months_index_en[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Avdala and candle lighting {light_day} '
+                       f'{data.gr_months_index_en[light_month]}: |'
+                       f'{light_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות שבת {light_shab_day}'
                       f' {data.gr_months_index_he[light_shab_month]}:'
                       f' *{light_shab_time:.5s}*\n'
@@ -869,30 +874,30 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'🕯 Зажигание свечей (Шаббат) {light_shab_day}'
-                       f' {data.gr_months_index[light_shab_month]}:'
-                       f' *{light_shab_time:.5s}*\n'
-                       f'✨🕯 Авдала и зажигание свечей {light_1_day}'
-                       f' {data.gr_months_index[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Зажигание свечей {light_2_day}'
-                       f' {data.gr_months_index[light_2_month]}:'
-                       f' *{light_2_time:.5s}*\n'
-                       f'✨ Авдала {avdala_day}'
-                       f' {data.gr_months_index[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
-            'English': f'🕯 Candle lighting (Shabbat) {light_shab_day}'
-                       f' {data.gr_months_index_en[light_shab_month]}:'
-                       f' *{light_shab_time:.5s}*\n'
-                       f'✨🕯 Avdala and candle lighting {light_1_day}'
-                       f' {data.gr_months_index_en[light_1_month]}:'
-                       f' *{light_1_time:.5s}*\n'
-                       f'🕯 Candle lighting {light_2_day}'
-                       f' {data.gr_months_index_en[light_2_month]}: '
-                       f'*{light_2_time:.5s}*\n'
-                       f'✨ Avdala {avdala_day}'
-                       f' {data.gr_months_index_en[avdala_month]}:'
-                       f' *{avdala_time:.5s}*',
+            'Russian': f'Зажигание свечей (Шаббат) {light_shab_day} '
+                       f'{data.gr_months_index[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Авдала и зажигание свечей {light_1_day} '
+                       f'{data.gr_months_index[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Зажигание свечей {light_2_day} '
+                       f'{data.gr_months_index[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Авдала {avdala_day} '
+                       f'{data.gr_months_index[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
+            'English': f'Candle lighting (Shabbat) {light_shab_day} '
+                       f'{data.gr_months_index_en[light_shab_month]}: |'
+                       f'{light_shab_time:.5s}\n'
+                       f'Avdala and candle lighting {light_1_day} '
+                       f'{data.gr_months_index_en[light_1_month]}: |'
+                       f'{light_1_time:.5s}\n'
+                       f'Candle lighting {light_2_day} '
+                       f'{data.gr_months_index_en[light_2_month]}: |'
+                       f'{light_2_time:.5s}\n'
+                       f'Avdala {avdala_day} '
+                       f'{data.gr_months_index_en[avdala_month]}: |'
+                       f'{avdala_time:.5s}',
             'Hebrew': f'🕯 הדלקת נרות שבת {light_shab_day}'
                       f' {data.gr_months_index_he[light_shab_month]}:'
                       f' *{light_shab_time:.5s}*\n'
@@ -1102,16 +1107,12 @@ class Holidays(object):
             weekday_end: str
     ) -> str:
         responses = {
-            'Russian': f'Дата: {day_start} и '
-                       f'{day_end}'
-                       f' {data.gr_months_index[month]}'
-                       f' {year},'
-                       f' {data.hdays_of_7[weekday_start]}-'
+            'Russian': f'Дата: |{day_start} и {day_end} '
+                       f'{data.gr_months_index[month]} {year},^'
+                       f'{data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'Date: {day_start} and '
-                       f'{day_end}'
-                       f' {data.gr_months_index_en[month]}'
-                       f' {year}, '
+            'English': f'Date: |{day_start} and {day_end} '
+                       f'{data.gr_months_index_en[month]} {year},^'
                        f'{data.hdays_of_7_en[weekday_start]}-'
                        f'{data.hdays_of_7_en[weekday_end]}',
             'Hebrew': f'📅 תאריך: '
