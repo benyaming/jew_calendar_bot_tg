@@ -1111,7 +1111,7 @@ class Holidays(object):
                        f'{data.gr_months_index[month]} {year},^'
                        f'{data.hdays_of_7[weekday_start]}-'
                        f'{data.hdays_of_7[weekday_end]}',
-            'English': f'Date: {day_start} and {day_end} '
+            'English': f'Date: |{day_start} and {day_end} '
                        f'{data.gr_months_index_en[month]} {year},^'
                        f'{data.hdays_of_7_en[weekday_start]}-'
                        f'{data.hdays_of_7_en[weekday_end]}',
