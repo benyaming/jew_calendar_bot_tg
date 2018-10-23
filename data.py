@@ -1097,23 +1097,23 @@ settings_menu_buttons = {
 
 fast_menu_buttons = {
     'Tzom Gedaliah': {'Russian': 'Пост Гедалии',
-                      'English': 'Tzom Gedaliah',
+                      'English': 'Fast of Gedaliah',
                       'Hebrew': 'Tzom Gedaliah'# TODO
                       },
     'Asarah BTevet': {'Russian': '10 Тевета',
-                      'English': 'Asarah BTevet',
+                      'English': '10 of Tevet',
                       'Hebrew': 'עשרה בטבת'
                       },
     'Taanit Esther': {'Russian': 'Пост Эстер',
-                      'English': 'Taanit Esther',
+                      'English': 'Fast of Esther',
                       'Hebrew': 'תענית אסתר'
                       },
     'Shiva Asar BTammuz': {'Russian': '17 Таммуза',
-                           'English': 'Shiva Asar BTammuz',
+                           'English': '17 of Tammuz',
                            'Hebrew': 'שבעה עשר בתמוז'
                            },
     'Tisha BAv': {'Russian': '9 Ава',
-                  'English': 'Tisha BAv',
+                  'English': '9 of Av',
                   'Hebrew': 'תשעה באב'
                   },
     'Back': {'Russian': 'Назад',
