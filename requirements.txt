@@ -1,4 +1,4 @@
--e git+git://github.com/google/chatbase-python.git
+git+git://github.com/google/chatbase-python.git
 pytelegrambotapi
 requests
 pytz
