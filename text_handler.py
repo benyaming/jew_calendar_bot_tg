@@ -24,13 +24,16 @@ def get_zmanim():
     else:
         response = zmanim.get_zmanim(user, lang)
         if response['polar_error']:
+            bot.send_chat_action(user, 'typing')
             response_message = response['polar_error']
             bot.send_message(user, response_message)
         elif response['zmanim_set_error']:
+            bot.send_chat_action(user, 'typing')
             response_message = response['zmanim_set_error']
             user_markup = keyboards.get_zmanim_callback_menu(lang, user)
             bot.send_message(user, response_message, reply_markup=user_markup)
         else:
+            bot.send_chat_action(user, 'upload_photo')
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
@@ -41,6 +44,7 @@ def request_date():
     if not loc:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         states.set_state(user, 'waiting_for_date')
         response = l.Utils.request_date(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
@@ -78,13 +82,16 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
         custom_date = (year, month, day)
         response = zmanim.get_zmanim(user, lang, custom_date)
         if response['polar_error']:
+            bot.send_chat_action(user, 'typing')
             response_message = response['polar_error']
             bot.send_message(user, response_message)
         elif response['zmanim_set_error']:
+            bot.send_chat_action(user, 'typing')
             response_message = response['zmanim_set_error']
             user_markup = keyboards.get_zmanim_callback_menu(lang, user)
             bot.send_message(user, response_message, reply_markup=user_markup)
         else:
+            bot.send_chat_action(user, 'upload_photo')
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
@@ -93,6 +100,7 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
 
 
 def incorrect_date(error_type: str) -> None:
+    bot.send_chat_action(user, 'typing')
     responses = {
         'incorrect_date_format': l.Utils.incorrect_date_format(lang),
         'incorrect_date_value': l.Utils.incorrect_date_value(lang),
@@ -134,12 +142,14 @@ def rosh_chodesh() -> None:
 
 
 def holidays():
+    bot.send_chat_action(user, 'typing')
     response = l.Utils.get_holiday_menu(lang)
     holiday_menu = keyboards.get_holiday_menu(lang)
     bot.send_message(user, response, reply_markup=holiday_menu)
 
 
 def fasts():
+    bot.send_chat_action(user, 'typing')
     response = l.Utils.get_fast_menu(lang)
     fast_menu = keyboards.get_fast_menu(lang)
     bot.send_message(user, response, reply_markup=fast_menu)
@@ -157,6 +167,7 @@ def daf_yomi() -> None:
 
 
 def update_location():
+    bot.send_chat_action(user, 'typing')
     geobutton = keyboards.get_geobutton(lang, True)
     response = l.Utils.request_location(lang)
     bot.send_message(
@@ -168,6 +179,7 @@ def update_location():
 
 
 def request_location():
+    bot.send_chat_action(user, 'typing')
     geobutton = keyboards.get_geobutton(lang)
     response = l.Utils.request_location(lang)
     bot.send_message(
@@ -194,6 +206,7 @@ def main_menu():
 
 
 def faq():
+    bot.send_chat_action(user, 'typing')
     responses = {
         'Russian': 'http://telegra.ph/Hebrew-Calendar-Bot-FAQ-05-10',
         'English': 'http://telegra.ph/Hebrew-Calendar-Bot-FAQ-EN-05-10'
@@ -203,6 +216,7 @@ def faq():
 
 
 def report():
+    bot.send_chat_action(user, 'typing')
     response = l.Utils.report(lang)
     bot.send_message(user, response, disable_web_page_preview=True)
 
@@ -400,6 +414,7 @@ def change_lang():
 
 
 def incorrect_text():
+    bot.send_chat_action(user, 'typing')
     response = l.Utils.incorrect_text(lang)
     bot.send_message(user, response)
 
@@ -424,6 +439,7 @@ def select_zmanim():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         user_markup = keyboards.get_zmanim_callback_menu(lang, user)
         responses = {
             'Russian': 'Выберите зманим для отображения',
@@ -439,6 +455,7 @@ def select_candle_offset():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         user_markup = keyboards.get_candle_offset_callback_menu(user)
         response = l.Shabos.shabos_candle_offset(lang)
         bot.send_message(user, response, reply_markup=user_markup)
@@ -451,6 +468,7 @@ def select_diaspora():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         user_markup = keyboards.get_diaspora_callback_menu(lang, user)
         diaspora_status = db_operations.get_diaspora_status(user)
         response = l.Utils.diaspora(lang, diaspora_status)
@@ -470,6 +488,7 @@ def converter_startup():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         response = l.Converter.welcome_to_converter(lang)
         markup = keyboards.get_converter_menu(lang)
         bot.send_message(user, response, reply_markup=markup)
@@ -480,6 +499,7 @@ def converter_greg_to_heb():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         states.set_state(user, 'waiting_for_greg_date')
         response = l.Converter.request_date_for_converter_greg(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
@@ -496,6 +516,7 @@ def convert_heb_to_greg():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         states.set_state(user, 'waiting_for_heb_date')
         response = l.Converter.request_date_for_converter_heb(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
@@ -508,6 +529,7 @@ def convert_heb_to_greg():
 
 
 def handle_greg_date():
+    bot.send_chat_action(user, 'typing')
     reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
     extracted_date = re.search(reg_pattern, text)
     if extracted_date:
@@ -534,6 +556,7 @@ def handle_greg_date():
 
 
 def handle_heb_date():
+    bot.send_chat_action(user, 'typing')
     year, month, day = None, None, None
     input_data = text.split()
     if len(input_data) in [3, 4]:
@@ -595,6 +618,7 @@ def get_help():
     if not auth:
         request_location()
     else:
+        bot.send_chat_action(user, 'typing')
         response = localization.Utils.help_menu(lang)
         keyboard = keyboards.get_help_menu(lang)
         bot.send_message(user, response, reply_markup=keyboard)

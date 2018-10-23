@@ -53,13 +53,16 @@ def get_zmanim_by_date():
     )
     response = zmanim.get_zmanim(user, lang, custom_date)
     if response['polar_error']:
+        bot.send_chat_action(user, 'typing')
         response_message = response['polar_error']
         bot.send_message(user, response_message)
     elif response['zmanim_set_error']:
+        bot.send_chat_action(user, 'typing')
         response_message = response['zmanim_set_error']
         user_markup = keyboards.get_zmanim_callback_menu(lang, user)
         bot.send_message(user, response_message, reply_markup=user_markup)
     else:
+        bot.send_chat_action(user, 'upload_photo')
         response_pic = response['zmanim_pic']
         bot.send_photo(user, response_pic)
         response_pic.close()

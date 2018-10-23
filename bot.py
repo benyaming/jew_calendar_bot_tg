@@ -51,6 +51,7 @@ def webhook():
 
 @bot.message_handler(commands=['start'])
 def handle_start(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\start\', from: {message.from_user.id}, START'
@@ -64,6 +65,7 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['help'])
 def handle_help(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, START'
@@ -77,6 +79,7 @@ def handle_help(message: telebot.types.Message):
 
 @bot.message_handler(commands=['settings'])
 def handle_start(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
@@ -87,6 +90,7 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['language'])
 def handle_start(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
@@ -97,6 +101,7 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['location'])
 def handle_start(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
@@ -107,6 +112,7 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['converter'])
 def handle_start(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\converter\', from: {message.from_user.id}, '
@@ -118,6 +124,7 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['report'])
 def handle_report(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
@@ -130,6 +137,7 @@ def handle_report(message: telebot.types.Message):
     func=lambda message: True, content_types=['location', 'venue']
 )
 def handle_venue(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     if db_operations.check_location(
             message.from_user.id,
@@ -146,6 +154,7 @@ def handle_venue(message: telebot.types.Message):
 
 @bot.message_handler(regexp=r'^-?\d{1,2}\.{1}\d+, {0,1}-?\d{1,3}\.{1}\d+$')
 def handle_reg(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     loc = message.text.split(sep=', ')
     if loc[0] == message.text:
@@ -160,6 +169,7 @@ def handle_reg(message: telebot.types.Message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
+    bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     text_handler.handle_text(message.from_user.id, message.text)
 
