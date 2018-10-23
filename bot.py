@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 from logging.handlers import RotatingFileHandler
-from time import sleep
 
 from time import sleep
 from os import path
@@ -10,6 +9,7 @@ import telebot
 import db_operations, settings, text_handler, callback_handler, utils
 
 from flask import Flask, request
+
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
@@ -36,7 +36,6 @@ formatter = logging.Formatter(
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
 bot = telebot.TeleBot(settings.TOKEN)
 
 app = Flask(__name__)
@@ -51,39 +50,33 @@ def webhook():
 
 
 @bot.message_handler(commands=['start'])
-def handle_start(message):
+def handle_start(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\start\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-    user_markup.row('Русский', 'English')
-    bot.send_message(message.from_user.id,
-                     'Выберите язык/Choose the language',
-                     reply_markup=user_markup
-                     )
+    keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
+    keyboard.row('Русский', 'English')
+    response = 'Выберите язык/Choose the language'
+    bot.send_message(message.from_user.id, response, reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['help'])
-def handle_help(message):
+def handle_help(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    menu = telebot.types.ReplyKeyboardMarkup(True, False)
-    menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
-    help_str = 'Пожалуйста, выберите язык справки'
-    bot.send_message(
-        message.from_user.id,
-        help_str,
-        reply_markup=menu
-    )
+    keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
+    keyboard.row('🇷🇺', '🇱🇷', 'Назад/Back')
+    response = 'Пожалуйста, выберите язык справки'
+    bot.send_message(message.from_user.id, response, reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['settings'])
-def handle_start(message):
+def handle_start(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
@@ -93,7 +86,7 @@ def handle_start(message):
 
 
 @bot.message_handler(commands=['language'])
-def handle_start(message):
+def handle_start(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
@@ -103,7 +96,7 @@ def handle_start(message):
 
 
 @bot.message_handler(commands=['location'])
-def handle_start(message):
+def handle_start(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
@@ -113,7 +106,7 @@ def handle_start(message):
 
 
 @bot.message_handler(commands=['converter'])
-def handle_start(message):
+def handle_start(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\converter\', from: {message.from_user.id}, '
@@ -124,28 +117,19 @@ def handle_start(message):
 
 
 @bot.message_handler(commands=['report'])
-def handle_report(message):
+def handle_report(message: telebot.types.Message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
         )
     db_operations.check_id_in_db(message.from_user)
-    report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
-                 't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
-                 ' убедитесь, что вы ознакомились с часто задаваемыми' \
-                 ' вопросами, доступными по команде /help\n\nFor bug report ' \
-                 'please write to \nt.me/benyomin or \nt.me/Meir_Yartzev. ' \
-                 '\nPlease, make sure that you had been read '\
-                 'F.A.Q. available by command /help'
-    bot.send_message(message.from_user.id,
-                     report_str,
-                     disable_web_page_preview=True)
+    text_handler.handle_text(message.from_user.id, 'Report a bug')
 
 
 @bot.message_handler(
     func=lambda message: True, content_types=['location', 'venue']
 )
-def handle_venue(message):
+def handle_venue(message: telebot.types.Message):
     db_operations.check_id_in_db(message.from_user)
     if db_operations.check_location(
             message.from_user.id,
@@ -155,13 +139,13 @@ def handle_venue(message):
     ):
         text_handler.handle_text(message.from_user.id, 'Back')
         tz = utils.get_tz_by_location(
-            db_operations.get_location_by_id(message.from_user.id))
+            db_operations.get_location_by_id(message.from_user.id)
+        )
         db_operations.check_tz(message.from_user.id, tz)
-        # 'Получил геометку')
 
 
 @bot.message_handler(regexp=r'^-?\d{1,2}\.{1}\d+, {0,1}-?\d{1,3}\.{1}\d+$')
-def handle_reg(message):
+def handle_reg(message: telebot.types.Message):
     db_operations.check_id_in_db(message.from_user)
     loc = message.text.split(sep=', ')
     if loc[0] == message.text:
@@ -169,18 +153,19 @@ def handle_reg(message):
     if db_operations.check_location(message.from_user.id, loc[0], loc[1], bot):
         text_handler.handle_text(message.from_user.id, 'Back')
         tz = utils.get_tz_by_location(
-            db_operations.get_location_by_id(message.from_user.id))
+            db_operations.get_location_by_id(message.from_user.id)
+        )
         db_operations.check_tz(message.from_user.id, tz)
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
-def handle_text_message(message):
+def handle_text_message(message: telebot.types.Message):
     db_operations.check_id_in_db(message.from_user)
     text_handler.handle_text(message.from_user.id, message.text)
 
 
 @bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call):
+def handle_callback(call: telebot.types.CallbackQuery):
     callback_handler.handle_callback(call.from_user.id, call)
 
 
@@ -188,7 +173,7 @@ if __name__ == '__main__':
     if settings.IS_SERVER:
         logger.info('STARTING WEBHOOK...')
         bot.remove_webhook()
-        sleep(2)
+        sleep(1)
         bot.set_webhook(
             url=f'{base_url}{route_path}',
             certificate=open(ssl_cert, 'r')
@@ -196,6 +181,6 @@ if __name__ == '__main__':
 
     else:
         logger.info('STARTING POLLING....')
-        # bot.remove_webhook()
-        # sleep(2)
+        bot.remove_webhook()
+        sleep(1)
         bot.polling(True, timeout=50)
