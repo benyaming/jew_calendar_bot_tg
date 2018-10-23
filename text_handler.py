@@ -711,8 +711,6 @@ def select_candle_offset():
         response = l.Shabos.shabos_candle_offset(lang)
         bot.send_message(user, response, reply_markup=user_markup)
         jcb_chatbase.chatbase_bot_handler(user, 'open candle offset options')
-        # TODO предупреждение о настройках
-        # TODO init
 
 
 def select_diaspora():
@@ -738,8 +736,6 @@ def select_diaspora():
             parse_mode='Markdown'
         )
         jcb_chatbase.chatbase_bot_handler(user, 'open diaspora options')
-        # TODO предупреждение о настройках
-        # TODO init
 
 
 def converter_startup():

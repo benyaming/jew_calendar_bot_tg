@@ -326,7 +326,7 @@ class Shabos(object):
     def same_offset_error(lang: str) -> str:
         responses = {
             'Russian': 'Чтобы изменить сдвиг, выберите другое значение.',
-            'English': '',  # TODO перевод
+            'English': 'To change offset, set another value',
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
@@ -569,7 +569,8 @@ class Utils(object):
         responses = {
             'Russian': f'Режим диаспоры {diaspora_activated}\n'
                        f'Чтобы изменить режим, нажмите на кнопку.',
-            'English': '',  # TODO перевод
+            'English': f'The diaspora mode {diaspora_activated}\n'
+                       'For change, press the button.',
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
@@ -1349,7 +1350,10 @@ class Converter(object):
                        'григорианского календаря в еврейский и обратно, а '
                        'также получить зманим на сконвертированную дату.\n'
                        'Выберите подходящий вам вариант:',
-            'English': 'W',  # TODO перевод
+            'English': 'Here you can convert dates from gregorian to hebrew '
+                       'calendar and vice versa, and get zmanim to the '
+                       'converted date.\n'
+                       'Choose the option:'
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
