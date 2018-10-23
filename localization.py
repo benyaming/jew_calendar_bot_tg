@@ -475,19 +475,19 @@ class Utils(object):
     @staticmethod
     def request_location(lang: str) -> str:
         responses = {
-            'Russian': 'Пожалуйста, предоставьте новые координаты, нажав на '
+            'Russian': 'Пожалуйста, предоставьте координаты, нажав на '
                        'кнопку.\n*Внимание*! Telegram на ПК пока что не '
                        'поддерживает отправку координат таким методом. Чтобы '
                        'отправить координаты с ПК, отправьте их в текстовом '
                        'виде через запятую, например "_55.5, 37.7_", либо '
                        'перешлите сюда сообщение с геометкой.',
-            'English': 'Please, send new location by tapping the button.\n'
+            'English': 'Please, send location by tapping the button.\n'
                        '*Notice* that Telegram on PC is not supported yet '
                        'sending locations in this way. In order to send '
                        'location on PC, send it like text, for example, '
                        '"_55.5, 37.7_", or forward message '
                        'with location here.',
-            'Hebrew': 'נא לשלוח מיקום חדש ע״י הקשה על הכפתור . שימו לב שגרסת'
+            'Hebrew': 'נא לשלוח מיקום ע״י הקשה על הכפתור . שימו לב שגרסת'
                       ' המחשב של טלגרם לא נתמכת בשליחת מיקומים בדרך זו. על '
                       'מנת לשלוח מיקום על מחשב, יש לשלוח אותו בצורה של טקסט, '
                       'לדוגמא: ״_55.5, 37.7_״ , או להעביר הודעה עם המיקום כאן.'
