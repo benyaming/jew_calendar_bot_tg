@@ -1,4 +1,4 @@
--e pip install git+git://github.com/google/chatbase-python.git
+-e git+git://github.com/google/chatbase-python.git
 pytelegrambotapi
 requests
 pytz
