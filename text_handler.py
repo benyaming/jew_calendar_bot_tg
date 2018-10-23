@@ -581,6 +581,16 @@ def handle_heb_date():
         return incorrect_date('incorrect_heb_date_format')
 
 
+def get_help():
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        request_location()
+    else:
+        response = localization.Utils.help_menu(lang)
+        keyboard = keyboards.get_help_menu(lang)
+        bot.send_message(user, response, reply_markup=keyboard)
+
+
 def handle_text(user_id: int, message: str) -> None:
     global bot, user, lang, text
     bot = TeleBot(settings.TOKEN)
@@ -714,6 +724,10 @@ def handle_text(user_id: int, message: str) -> None:
             'Gregorian ➡️ Hebrew': converter_greg_to_heb,
             'Еврейский ➡️ Григорианский': convert_heb_to_greg,
             'Hebrew ➡️ Gregorian': convert_heb_to_greg,
+            'Помощь': get_help,
+            'Help': get_help,
+            'Сообщить об ошибке': report,
+            'Report a bug': report
 
         }
         func = messages.get(message, incorrect_text)

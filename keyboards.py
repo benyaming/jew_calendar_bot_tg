@@ -5,6 +5,7 @@ from data import main_menu_buttons as main
 from data import holiday_menu_buttons as holiday
 from data import fast_menu_buttons as fast
 from data import settings_menu_buttons as setting
+from data import help_menu_buttons
 
 from localization import Zmanim
 from zmanim import ZmanimList
@@ -76,7 +77,7 @@ def get_fast_menu(lang):
 
 def get_lang_menu():
     lang_markup = ReplyKeyboardMarkup(True, False)
-    lang_markup.row('Русский', 'English', 'Hebrew')
+    lang_markup.row('Русский', 'English')
     return lang_markup
 
 
@@ -123,6 +124,16 @@ def get_converter_menu(lang: str) -> ReplyKeyboardMarkup:
     markup.row(data.converter_buttons_name_heb_to_greg[lang])
     markup.row(cancel.get(lang, ''))
     return markup
+
+
+def get_help_menu(lang: str) -> ReplyKeyboardMarkup:
+    user_markup = ReplyKeyboardMarkup(True, False)
+    user_markup.row(
+        help_menu_buttons['faq'][lang],
+        help_menu_buttons['report'][lang]
+    )
+    user_markup.row(setting['Back'][lang])
+    return user_markup
 
 # ============================================================================#
 

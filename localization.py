@@ -592,6 +592,17 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    # справочное меню
+    @staticmethod
+    def help_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Чем я могу вам помочь?',
+            'English': 'How can I help you?',
+            # TODO hebrew
+        }
+        response = responses.get(lang, '')
+        return response
+
 
 # ЛОКАЛИЗАЦИЯ ДЛЯ ПРАЗДНИКОВ
 class Holidays(object):

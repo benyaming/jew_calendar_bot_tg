@@ -1118,6 +1118,19 @@ fast_menu_buttons = {
                   },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'# TODO
+             'Hebrew': 'Back'  # TODO
              },
+}
+
+help_menu_buttons = {
+    'faq': {
+        'Russian': 'ЧаВо',
+        'English': 'F.A.Q.'
+        # todo hebrew
+    },
+    'report': {
+        'Russian': 'Сообщить об ошибке',
+        'English': 'Report a bug'
+        # todo hebrew
+    }
 }
