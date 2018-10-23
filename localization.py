@@ -641,6 +641,11 @@ class Holidays(object):
             'Russian': 'ШАВУОТ',
             'English': 'SHAVOUT',
             'Hebrew': ''  # TODO
+        },
+        'shemini_atzeres': {
+            'Russian': 'ШМИНИ АЦЕРЕТ/СИМХАТ ТОРА',
+            'English': 'SHMINI ATZERES/SIMCHAT TORAH',
+            'Hebrew': ''  # TODO
         }
     }
 

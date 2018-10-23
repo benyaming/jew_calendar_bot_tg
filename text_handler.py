@@ -243,20 +243,13 @@ def succot():
 
 def shmini_atzeret():
     loc = db_operations.get_location_by_id(user)
-    diaspora = True  # db_operations.get_diaspora_status(user)
     if not loc:
         return request_location()
     else:
-        if not diaspora:
-            get_shmini_atzeret = h.get_holiday_pic(
-                'Shmini Atzeres', user, lang
-            )
-        else:
-            get_shmini_atzeret = h.get_holiday_pic(
-                'Simchas Torah', user, lang
-            )
-        response = get_shmini_atzeret
-        bot.send_message(user, response, parse_mode='Markdown')
+        bot.send_chat_action(user, 'upload_photo')
+        response_pic = h.get_holiday_pic('Shmini Atzeres', user, lang)
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def chanukah():

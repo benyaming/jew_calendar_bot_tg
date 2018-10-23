@@ -50,11 +50,12 @@ def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
 
     for single_date in date_range(begin_date, number_days_of_hebrew_year):
         date_item = single_date.strftime("%Y/%m/%d").split('/')
-        date = {'year': [date_item[0], ],
-                'month': [date_item[1], ],
-                'day': [date_item[2], ],
-                'day_of_week': [str(single_date.weekday() + 1), ]
-                }
+        date = {
+            'year': [date_item[0], ],
+            'month': [date_item[1], ],
+            'day': [date_item[2], ],
+            'day_of_week': [str(single_date.weekday() + 1), ]
+        }
 
         single_hebrew_date = dates.GregorianDate(
             year=int(date['year'][0]),
@@ -227,7 +228,6 @@ def get_holiday_name(holiday_info: dict, lang: str) -> str:
         'Hebrew': data.holidays_name_he[holiday_info['name']]
     }
     holiday_name = holiday_names.get(lang, '')
-
     return holiday_name
 
 
@@ -648,24 +648,16 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
                          f'{holiday_time}\n' \
                          f'!{holiday_time_last_days}'
 
-    elif holiday_dict['name'] == 'Shmini Atzeres' and diaspora is False:
-        if lang == 'Russian':
-            holiday_string = f'{holiday_name}и Симхат Тора\n\n' \
-                             f'{holiday_date}\n{holiday_time}'
-        if lang == 'English':
-            holiday_string = f'{holiday_name}and Simhat Torah\n\n' \
-                             f'{holiday_date}\n{holiday_time}'
-        elif lang == 'Hebrew':
-            holiday_string = f'{holiday_name}ו שמחת תורה\n\n' \
-                             f'{holiday_date}\n{holiday_time}'
+    elif holiday_dict['name'] == 'Shmini Atzeres':
+        if diaspora:
+            holiday_dates = {
+                'Russian': 'Дата: |21-22 Октября 2019,^Понедельник-Вторник',
+                'English': 'Date: |21-22 October 2019,^Monday-Tuesday',
+                # TODO hebrew
+            }
+            holiday_date = holiday_dates.get(lang, '')
+        holiday_string = f'{holiday_date}\n{holiday_time}'
 
-    elif holiday_dict['name'] == 'Shmini Atzeres' and diaspora is True:
-        shmini_atzeret_dict = transform_holiday_dict('Simchas Torah', user_id)
-        shmini_atzeret_name = get_holiday_name(shmini_atzeret_dict, lang)
-        shmini_atzeret_date = get_holiday_date(shmini_atzeret_dict, lang)
-        holiday_string = f'{holiday_name}, {shmini_atzeret_name}\n\n' \
-                         f'{holiday_date}\n{shmini_atzeret_date}\n\n' \
-                         f'{holiday_time}'
     return holiday_string
 
 
@@ -687,7 +679,8 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
         'Succos': picture_maker.SucosSender,
         'Pesach': picture_maker.PesahSender,
         'Rosh Hashana': picture_maker.RoshHashanaSender,
-        'Shavuos': picture_maker.ShavuotSender
+        'Shavuos': picture_maker.ShavuotSender,
+        'Shmini Atzeres': picture_maker.ShminiAtzeretSender
     }
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
     return pic
