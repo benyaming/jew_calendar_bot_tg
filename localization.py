@@ -1442,13 +1442,13 @@ class Converter(object):
 
     # выдать название месяца
     @staticmethod
-    def get_month_name(lang:str, name:str) -> str:
+    def get_month_name(lang: str, name: str) -> str:
         responses = {
-            'Russian': data.heb_months_names_ru[name],
-            'English': data.heb_months_names_en[name],
-            'Hebrew': data.heb_months_names_he[name]
+            'Russian': data.heb_months_names_ru,
+            'English': data.heb_months_names_en,
+            'Hebrew': data.heb_months_names_he
         }
-        response = responses.get(lang, '')
+        response = responses.get(lang)[name]
         return response
 
     # некорректная дата

@@ -43,15 +43,26 @@ def edit_candle_offset():
 
 
 def get_zmanim_by_date():
+    bot.answer_callback_query(call.id)
+    bot.send_chat_action(user, 'upload_photo')
     raw_date = call.data.split('-')[1]
     custom_date = (
-        raw_date.split('.')[0],
-        raw_date.split('.')[1],
-        raw_date.split('.')[2])
+        int(raw_date.split('.')[0]),
+        int(raw_date.split('.')[1]),
+        int(raw_date.split('.')[2])
+    )
     response = zmanim.get_zmanim(user, lang, custom_date)
-    bot.answer_callback_query(call.id)
-    bot.send_message(user, response, parse_mode='Markdown')
-
+    if response['polar_error']:
+        response_message = response['polar_error']
+        bot.send_message(user, response_message)
+    elif response['zmanim_set_error']:
+        response_message = response['zmanim_set_error']
+        user_markup = keyboards.get_zmanim_callback_menu(lang, user)
+        bot.send_message(user, response_message, reply_markup=user_markup)
+    else:
+        response_pic = response['zmanim_pic']
+        bot.send_photo(user, response_pic)
+        response_pic.close()
 
 
 def edit_diaspora():

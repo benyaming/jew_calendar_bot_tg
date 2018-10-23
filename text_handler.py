@@ -77,8 +77,17 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
     else:
         custom_date = (year, month, day)
         response = zmanim.get_zmanim(user, lang, custom_date)
-        bot.send_message(user, response, parse_mode='Markdown')
-        states.delete_state(user)
+        if response['polar_error']:
+            response_message = response['polar_error']
+            bot.send_message(user, response_message)
+        elif response['zmanim_set_error']:
+            response_message = response['zmanim_set_error']
+            user_markup = keyboards.get_zmanim_callback_menu(lang, user)
+            bot.send_message(user, response_message, reply_markup=user_markup)
+        else:
+            response_pic = response['zmanim_pic']
+            bot.send_photo(user, response_pic)
+            response_pic.close()
         result = main_menu
     return result
 
@@ -404,7 +413,7 @@ def settings_menu():
         responses = {
             'Russian': 'Добро пожаловать в настройки!',
             'English': 'Welcome to settings!',
-            #TODO
+            # TODO
         }
         response = responses.get(lang, '')
         bot.send_message(user, response, reply_markup=user_markup)
