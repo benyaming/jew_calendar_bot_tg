@@ -122,6 +122,7 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
+            states.delete_state(user)
             jcb_chatbase.chatbase_bot_handler(user, 'zmanim by the date sent')
         result = main_menu
     return result
