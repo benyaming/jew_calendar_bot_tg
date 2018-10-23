@@ -1353,8 +1353,8 @@ class Converter(object):
             'English': 'Here you can convert dates from gregorian to hebrew '
                        'calendar and vice versa, and get zmanim to the '
                        'converted date.\n'
-                       'Choose the option:'
-            'Hebrew': ''  # TODO перевод
+                       'Choose the option:',
+            'Hebrew': f''  # TODO перевод
         }
         response = responses.get(lang, '')
         return response
