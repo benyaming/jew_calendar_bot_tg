@@ -82,7 +82,45 @@ def handle_help(message):
     )
 
 
-# TODO /settings
+@bot.message_handler(commands=['settings'])
+def handle_start(message):
+    if settings.IS_SERVER:
+        logger.info(
+            f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
+        )
+    db_operations.check_id_in_db(message.from_user)
+    text_handler.handle_text(message.from_user.id, 'Settings')
+
+
+@bot.message_handler(commands=['language'])
+def handle_start(message):
+    if settings.IS_SERVER:
+        logger.info(
+            f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
+        )
+    db_operations.check_id_in_db(message.from_user)
+    text_handler.handle_text(message.from_user.id, 'Language')
+
+
+@bot.message_handler(commands=['location'])
+def handle_start(message):
+    if settings.IS_SERVER:
+        logger.info(
+            f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
+        )
+    db_operations.check_id_in_db(message.from_user)
+    text_handler.handle_text(message.from_user.id, 'Location')
+
+
+@bot.message_handler(commands=['converter'])
+def handle_start(message):
+    if settings.IS_SERVER:
+        logger.info(
+            f' Command: \'\converter\', from: {message.from_user.id}, '
+            f'CONVERTER'
+        )
+    db_operations.check_id_in_db(message.from_user)
+    text_handler.handle_text(message.from_user.id, 'Date converter')
 
 
 @bot.message_handler(commands=['report'])
