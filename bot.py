@@ -6,7 +6,12 @@ from time import sleep
 from os import path
 
 import telebot
-import db_operations, settings, text_handler, callback_handler, utils
+import db_operations
+import settings
+import text_handler
+import callback_handler
+import utils
+import jcb_chatbase
 
 from flask import Flask, request
 
@@ -51,6 +56,11 @@ def webhook():
 
 @bot.message_handler(commands=['start'])
 def handle_start(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'start_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -65,20 +75,27 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['help'])
 def handle_help(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'help_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
-    keyboard.row('🇷🇺', '🇱🇷', 'Назад/Back')
-    response = 'Пожалуйста, выберите язык справки'
-    bot.send_message(message.from_user.id, response, reply_markup=keyboard)
+    text_handler.handle_text(message.from_user.id, 'Help')
 
 
 @bot.message_handler(commands=['settings'])
 def handle_start(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'settings_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -90,6 +107,11 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['language'])
 def handle_start(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'language_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -101,6 +123,11 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['location'])
 def handle_start(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'location_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -112,6 +139,11 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['converter'])
 def handle_start(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'converter_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -124,6 +156,11 @@ def handle_start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['report'])
 def handle_report(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'report_command'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
@@ -137,6 +174,11 @@ def handle_report(message: telebot.types.Message):
     func=lambda message: True, content_types=['location', 'venue']
 )
 def handle_venue(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'geotag received'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     if db_operations.check_location(
@@ -154,6 +196,11 @@ def handle_venue(message: telebot.types.Message):
 
 @bot.message_handler(regexp=r'^-?\d{1,2}\.{1}\d+, {0,1}-?\d{1,3}\.{1}\d+$')
 def handle_reg(message: telebot.types.Message):
+    jcb_chatbase.chatbase_user_msg_handler(
+        message.from_user.id,
+        message.text,
+        'text location received'
+    )
     bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     loc = message.text.split(sep=', ')

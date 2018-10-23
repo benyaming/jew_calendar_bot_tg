@@ -1,6 +1,8 @@
 from telebot import TeleBot
 from telebot.types import CallbackQuery
 
+import jcb_chatbase
+
 import settings, data, keyboards, db_operations, localization, zmanim
 
 
@@ -43,6 +45,11 @@ def edit_candle_offset():
 
 
 def get_zmanim_by_date():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        'Callback button pressed',
+        'zmanim from the callback button'
+    )
     bot.answer_callback_query(call.id)
     bot.send_chat_action(user, 'upload_photo')
     raw_date = call.data.split('-')[1]
@@ -56,16 +63,22 @@ def get_zmanim_by_date():
         bot.send_chat_action(user, 'typing')
         response_message = response['polar_error']
         bot.send_message(user, response_message)
+        jcb_chatbase.chatbase_bot_handler(user, 'zmanim polar error')
     elif response['zmanim_set_error']:
         bot.send_chat_action(user, 'typing')
         response_message = response['zmanim_set_error']
         user_markup = keyboards.get_zmanim_callback_menu(lang, user)
         bot.send_message(user, response_message, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'zmanim set error')
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = response['zmanim_pic']
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(
+            user,
+            'zmanim from callback button sent'
+        )
 
 
 def edit_diaspora():

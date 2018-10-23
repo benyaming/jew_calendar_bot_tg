@@ -12,14 +12,21 @@ import rosh_hodesh
 import daf
 import settings
 import states
+import jcb_chatbase
 
 import localization as l
 import holidays as h
 
 
 def get_zmanim():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'zmanim'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         response = zmanim.get_zmanim(user, lang)
@@ -27,21 +34,30 @@ def get_zmanim():
             bot.send_chat_action(user, 'typing')
             response_message = response['polar_error']
             bot.send_message(user, response_message)
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim polar error')
         elif response['zmanim_set_error']:
             bot.send_chat_action(user, 'typing')
             response_message = response['zmanim_set_error']
             user_markup = keyboards.get_zmanim_callback_menu(lang, user)
             bot.send_message(user, response_message, reply_markup=user_markup)
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim set error')
         else:
             bot.send_chat_action(user, 'upload_photo')
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim sent')
 
 
 def request_date():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'zmanim by the date'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
@@ -54,9 +70,15 @@ def request_date():
             parse_mode='Markdown',
             reply_markup=keyboard
         )
+        jcb_chatbase.chatbase_bot_handler(user, 'request date for zmanim sent')
 
 
 def handle_date():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'received custom date'
+    )
     reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
     extracted_date = re.search(reg_pattern, text)
     if extracted_date:
@@ -69,13 +91,16 @@ def handle_date():
             main_menu()
         except ValueError:
             incorrect_date('incorrect_date_value')
+            jcb_chatbase.chatbase_bot_handler(user, 'incorrect date value')
     else:
         incorrect_date('incorrect_date_format')
+        jcb_chatbase.chatbase_bot_handler(user, 'incorrect date format')
 
 
 def get_zmanim_by_the_date(day: int, month: int, year: int):
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         states.delete_state(user)
         result = request_location
     else:
@@ -85,16 +110,19 @@ def get_zmanim_by_the_date(day: int, month: int, year: int):
             bot.send_chat_action(user, 'typing')
             response_message = response['polar_error']
             bot.send_message(user, response_message)
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim polar error')
         elif response['zmanim_set_error']:
             bot.send_chat_action(user, 'typing')
             response_message = response['zmanim_set_error']
             user_markup = keyboards.get_zmanim_callback_menu(lang, user)
             bot.send_message(user, response_message, reply_markup=user_markup)
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim set error')
         else:
             bot.send_chat_action(user, 'upload_photo')
             response_pic = response['zmanim_pic']
             bot.send_photo(user, response_pic)
             response_pic.close()
+            jcb_chatbase.chatbase_bot_handler(user, 'zmanim by the date sent')
         result = main_menu
     return result
 
@@ -120,53 +148,101 @@ def incorrect_date(error_type: str) -> None:
 
 
 def shabbat():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'shabbos'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = shabbos.get_shabbos(loc, lang, user)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'shabbos sent')
 
 
 def rosh_chodesh() -> None:
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'rosh chodesh'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = rosh_hodesh.get_rh(loc, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'rosh chodesh sent')
 
 
 def holidays():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'holidays menu'
+    )
     bot.send_chat_action(user, 'typing')
-    response = l.Utils.get_holiday_menu(lang)
-    holiday_menu = keyboards.get_holiday_menu(lang)
-    bot.send_message(user, response, reply_markup=holiday_menu)
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
+        return request_location()
+    else:
+        response = l.Utils.get_holiday_menu(lang)
+        holiday_menu = keyboards.get_holiday_menu(lang)
+        bot.send_message(user, response, reply_markup=holiday_menu)
+        jcb_chatbase.chatbase_bot_handler(user, 'open holidays menu')
 
 
 def fasts():
     bot.send_chat_action(user, 'typing')
-    response = l.Utils.get_fast_menu(lang)
-    fast_menu = keyboards.get_fast_menu(lang)
-    bot.send_message(user, response, reply_markup=fast_menu)
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'holidays menu'
+    )
+    loc = db_operations.get_location_by_id(user)
+    if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
+        return request_location()
+    else:
+        response = l.Utils.get_fast_menu(lang)
+        fast_menu = keyboards.get_fast_menu(lang)
+        bot.send_message(user, response, reply_markup=fast_menu)
+        jcb_chatbase.chatbase_bot_handler(user, 'open fasts menu')
 
 
 def daf_yomi() -> None:
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'daf yomi'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = daf.get_daf(loc, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'daf yomi sent')
 
 
 def update_location():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'update location'
+    )
     bot.send_chat_action(user, 'typing')
     geobutton = keyboards.get_geobutton(lang, True)
     response = l.Utils.request_location(lang)
@@ -176,6 +252,7 @@ def update_location():
         reply_markup=geobutton,
         parse_mode='Markdown'
     )
+    jcb_chatbase.chatbase_bot_handler(user, 'open menu update location')
 
 
 def request_location():
@@ -188,6 +265,7 @@ def request_location():
         reply_markup=geobutton,
         parse_mode='Markdown'
     )
+    jcb_chatbase.chatbase_bot_handler(user, 'request location')
 
 
 def set_lang():
@@ -203,9 +281,19 @@ def main_menu():
         user_markup = keyboards.get_main_menu(lang)
         response = l.Utils.get_main_menu(lang)
         bot.send_message(user, response, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open main menu')
 
 
 def faq():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'faq'
+    )
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
+        request_location()
     bot.send_chat_action(user, 'typing')
     responses = {
         'Russian': 'http://telegra.ph/Hebrew-Calendar-Bot-FAQ-05-10',
@@ -213,215 +301,364 @@ def faq():
     }
     response = responses.get(lang, '')
     bot.send_message(user, response)
+    jcb_chatbase.chatbase_bot_handler(user, 'faq sent')
 
 
 def report():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'report'
+    )
     bot.send_chat_action(user, 'typing')
-    response = l.Utils.report(lang)
-    bot.send_message(user, response, disable_web_page_preview=True)
+    auth = db_operations.get_location_by_id(user)
+    if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
+        request_location()
+    else:
+        response = l.Utils.report(lang)
+        bot.send_message(user, response, disable_web_page_preview=True)
+        jcb_chatbase.chatbase_bot_handler(user, 'report message sent')
 
 
 def more_holiday_menu():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'more holidays menu'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         user_markup = keyboards.get_more_holiday_menu(lang)
         response = l.Utils.get_more_holiday_menu(lang)
         bot.send_message(user, response, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open more holidays menu')
 
 
 def rosh_hashana():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'rosh hashana'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Rosh Hashana', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'rosh hashana sent')
 
 
 def yom_kippur():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'rosh hashana'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Yom Kippur', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'yom kippur sent')
 
 
 def succot():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'succos'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Succos', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'succos sent')
 
 
 def shmini_atzeret():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'shmini atzeres'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Shmini Atzeres', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'shmini atzeres sent')
 
 
 def chanukah():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'chanukah'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Chanuka', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'chanukah sent')
 
 
 def tu_beshvat():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'tu bishvat'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Tu B\'shvat', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'tu bishvat sent')
 
 
 def purim():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'purim'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Purim', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'purim sent')
 
 
 def pesach():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'pesach'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Pesach', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'pesach sent')
 
 
 def lag_baomer():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'lag baomer'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Lag Ba\'omer', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'lag baomer sent')
 
 
 def shavuot():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'shavuos'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Shavuos', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'shavuos sent')
 
 
 def israel():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'israel'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('israel_holidays', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'israel sent')
 
 
 def fast_gedaliah():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'fast gedaliah'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Tzom Gedalia', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'fast gedaliah sent')
 
 
 def asarah_betevet():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        '10 of tevet'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('10 of Teves', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, '10 of tevet sent')
 
 
 def fast_esther():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'fast esther'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('Taanis Esther', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, 'fast esther sent')
 
 
 def sheva_asar_betammuz():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        '17 of tammuz'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('17 of Tamuz', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, '17 of tammuz sent')
 
 
 def tisha_beav():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        '9 of av'
+    )
     loc = db_operations.get_location_by_id(user)
     if not loc:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         return request_location()
     else:
         bot.send_chat_action(user, 'upload_photo')
         response_pic = h.get_holiday_pic('9 of Av', user, lang)
         bot.send_photo(user, response_pic)
         response_pic.close()
+        jcb_chatbase.chatbase_bot_handler(user, '9 of av sent')
 
 
 def change_lang():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'change lang'
+    )
     response = 'Выберите язык/Choose the language'
     lang_markup = keyboards.get_lang_menu()
     bot.send_message(user, response, reply_markup=lang_markup)
+    jcb_chatbase.chatbase_bot_handler(user, 'open language menu')
 
 
 def incorrect_text():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'not handled',
+        not_handled=True
+    )
     bot.send_chat_action(user, 'typing')
     response = l.Utils.incorrect_text(lang)
     bot.send_message(user, response)
 
 
 def settings_menu():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'settings menu'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         user_markup = keyboards.get_settings_menu(lang)
@@ -432,11 +669,18 @@ def settings_menu():
         }
         response = responses.get(lang, '')
         bot.send_message(user, response, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open settings menu')
 
 
 def select_zmanim():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'select zmanim'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
@@ -448,24 +692,38 @@ def select_zmanim():
         }
         response = responses.get(lang, '')
         bot.send_message(user, response, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open zmanim options')
 
 
 def select_candle_offset():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'select candle offset'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
         user_markup = keyboards.get_candle_offset_callback_menu(user)
         response = l.Shabos.shabos_candle_offset(lang)
         bot.send_message(user, response, reply_markup=user_markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open candle offset options')
         # TODO предупреждение о настройках
         # TODO init
 
 
 def select_diaspora():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'select diaspora'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
@@ -479,27 +737,41 @@ def select_diaspora():
             reply_markup=user_markup,
             parse_mode='Markdown'
         )
+        jcb_chatbase.chatbase_bot_handler(user, 'open diaspora options')
         # TODO предупреждение о настройках
         # TODO init
 
 
 def converter_startup():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'converter'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
         response = l.Converter.welcome_to_converter(lang)
         markup = keyboards.get_converter_menu(lang)
         bot.send_message(user, response, reply_markup=markup)
+        jcb_chatbase.chatbase_bot_handler(user, 'open converter menu')
 
 
 def converter_greg_to_heb():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'convert greg -> heb'
+    )
+    bot.send_chat_action(user, 'typing')
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
-        bot.send_chat_action(user, 'typing')
         states.set_state(user, 'waiting_for_greg_date')
         response = l.Converter.request_date_for_converter_greg(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
@@ -509,14 +781,21 @@ def converter_greg_to_heb():
             parse_mode='Markdown',
             reply_markup=keyboard
         )
+        jcb_chatbase.chatbase_bot_handler(user, 'ask for date to convert')
 
 
 def convert_heb_to_greg():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'convert heb -> greg'
+    )
+    bot.send_chat_action(user, 'typing')
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
-        bot.send_chat_action(user, 'typing')
         states.set_state(user, 'waiting_for_heb_date')
         response = l.Converter.request_date_for_converter_heb(lang)
         keyboard = keyboards.get_cancel_keyboard(lang)
@@ -526,9 +805,15 @@ def convert_heb_to_greg():
             parse_mode='Markdown',
             reply_markup=keyboard
         )
+        jcb_chatbase.chatbase_bot_handler(user, 'ask for date to convert')
 
 
 def handle_greg_date():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'handle greg date'
+    )
     bot.send_chat_action(user, 'typing')
     reg_pattern = r'^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,4}$'
     extracted_date = re.search(reg_pattern, text)
@@ -549,13 +834,21 @@ def handle_greg_date():
             )
             states.delete_state(user)
             main_menu()
+            jcb_chatbase.chatbase_bot_handler(user, 'greg date converted')
         except Exception as e:
             incorrect_date('incorrect_date_value')
+            jcb_chatbase.chatbase_bot_handler(user, 'incorrect date value')
     else:
         incorrect_date('incorrect_date_format')
+        jcb_chatbase.chatbase_bot_handler(user, 'incorrect date format')
 
 
 def handle_heb_date():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'handle heb date'
+    )
     bot.send_chat_action(user, 'typing')
     year, month, day = None, None, None
     input_data = text.split()
@@ -606,22 +899,35 @@ def handle_heb_date():
                         reply_markup=keyboard
                     )
                     states.delete_state(user)
+                    jcb_chatbase.chatbase_bot_handler(
+                        user,
+                        'heb date converted'
+                    )
                     main_menu()
                 else:
                     return incorrect_date('incorrect_heb_date_value')
+                jcb_chatbase.chatbase_bot_handler(user, 'incorrect date value')
     else:
         return incorrect_date('incorrect_heb_date_format')
+    jcb_chatbase.chatbase_bot_handler(user, 'incorrect date format')
 
 
 def get_help():
+    jcb_chatbase.chatbase_user_msg_handler(
+        user,
+        text,
+        'help'
+    )
     auth = db_operations.get_location_by_id(user)
     if not auth:
+        jcb_chatbase.chatbase_bot_handler(user, 'location missed')
         request_location()
     else:
         bot.send_chat_action(user, 'typing')
         response = localization.Utils.help_menu(lang)
         keyboard = keyboards.get_help_menu(lang)
         bot.send_message(user, response, reply_markup=keyboard)
+        jcb_chatbase.chatbase_bot_handler(user, 'open help menu')
 
 
 def handle_text(user_id: int, message: str) -> None:
