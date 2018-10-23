@@ -1,6 +1,8 @@
 # -*- coding: utf-8
 from enum import Enum
 from datetime import datetime, timedelta
+from pyluach import dates
+from pyluach.hebrewcal import Month
 
 import re
 import pytz, requests
@@ -237,13 +239,46 @@ def get_zmanim_dict(user: int, custom_date=None) -> dict:
     return zmanim_dict
 
 
-def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
+def get_date(user_id, lang: str, cusom_date=None) -> str:
+    if not cusom_date:
+        tz = db_operations.get_tz_by_id(user_id)
+        tz_time = pytz.timezone(tz)
+        now = datetime.now(tz_time)
+    else:
+        now = datetime(*cusom_date)
+    gr_months_dict = {
+        'Russian': data.gr_months_index[now.month],
+        'English': data.gr_months_index_en[now.month],
+        # todo hebrew
+    }
+    month = gr_months_dict.get(lang)
+    greg_date_tuple = (
+        now.timetuple()[0],
+        now.timetuple()[1],
+        now.timetuple()[2]
+    )
+    greg_date = f'{now.day} {month} {now.year}'
+
+    heb_date = dates.GregorianDate(*greg_date_tuple).to_heb().tuple()
+    heb_month_name = Month(heb_date[0], heb_date[1]).name
+    he_months_dict = {
+        'Russian': data.jewish_months_a[heb_month_name],
+        'English': heb_month_name,
+        # todo hebrew
+    }
+    heb_month = he_months_dict.get(lang)
+    heb_date_str = f'{heb_date[2]} {heb_month} {heb_date[0]}'
+    date = f'{greg_date}/{heb_date_str}'
+    return date
+
+
+def get_zmanim(user_id: int, lang: str, custom_date=None) -> dict:
     response = {'polar_error': False, 'zmanim_set_error': False}
-    zmanim_dict = get_zmanim_dict(user, custom_date)
+    zmanim_dict = get_zmanim_dict(user_id, custom_date)
     if zmanim_dict['chatzos'] == 'X:XX:XX':
         response['polar_error'] = localization.Zmanim.get_polar_error(lang)
     else:
-        user_zmanim_set = db_operations.get_zmanim_set(user)
+        user_zmanim_set = db_operations.get_zmanim_set(user_id)
         user_zmanim_str = collect_custom_zmanim(
             zmanim_dict,
             user_zmanim_set,
@@ -251,7 +286,9 @@ def get_zmanim(user: int, lang: str, custom_date=None) -> dict:
         )
         # check if user have enabled zmanim
         if user_zmanim_str:
+            date = get_date(user_id, lang, custom_date)
             response['zmanim_pic'] = ZmanimSender(lang).get_zmanim_picture(
+                date,
                 user_zmanim_str
             )
         else:

@@ -39,9 +39,13 @@ class PictureSender(object):
         draw = ImageDraw.Draw(background)
         return draw
 
-    def _draw_title(self, draw: ImageDraw, title: str, lang: str) -> None:
+    def _draw_title(self, draw: ImageDraw, title: str, zmanim=False) -> None:
+        if not zmanim:
+            coordinates = (250, 90)
+        else:
+            coordinates = (250, 65)
         draw.text(
-            (250, 90),
+            coordinates,
             title,
             font=self._title_font
         )
@@ -137,11 +141,8 @@ class RoshHodeshSender(PictureSender):
             self,
             text: str,
     ) -> BytesIO:
-        self._draw_title(
-            self._draw,
-            localization.RoshHodesh.titles[self._lang],
-            self._lang
-        )
+        title = localization.RoshHodesh.titles[self._lang]
+        self._draw_title(self._draw, title)
         self._draw_rh_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -194,11 +195,8 @@ class DafYomiSender(PictureSender):
             start_position_y += y_offset
 
     def get_daf_picture(self, text: str) -> BytesIO:
-        self._draw_title(
-            self._draw,
-            localization.DafYomi.titles[self._lang],
-            self._lang
-        )
+        title = localization.DafYomi.titles[self._lang]
+        self._draw_title(self._draw, title)
         self._draw_daf_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -297,11 +295,8 @@ class ShabbosSender(PictureSender):
             shabbos_warning = True
             self._background_path = 'res/backgrounds/shabbos_attention.png'
             self._draw = self._get_draw(self._background_path)
-        self._draw_title(
-            self._draw,
-            localization.Shabos.titles[self._lang],
-            self._lang
-        )
+        title = localization.Shabos.titles[self._lang]
+        self._draw_title(self._draw, title)
         self._draw_shabbos_data(text, shabbos_warning)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -391,12 +386,25 @@ class ZmanimSender(PictureSender):
             )
             start_position_y += y_offset
 
-    def get_zmanim_picture(self, text: str) -> BytesIO:
-        self._draw_title(
-            self._draw,
-            localization.Zmanim.titles[self._lang],
-            self._lang
+    def _draw_date(self, date: str):
+        start_position_x = 250
+        start_position_y = 80
+        draw = self._draw
+        date_font = ImageFont.truetype(
+            self._regular_font_path,
+            40
         )
+
+        draw.text(
+            (start_position_x, start_position_y + 50),  # coordinates
+            date,
+            font=date_font
+        )
+
+    def get_zmanim_picture(self, date: str, text: str) -> BytesIO:
+        title = localization.Zmanim.titles[self._lang]
+        self._draw_date(date)
+        self._draw_title(self._draw, title, True)
         self._draw_zmanim(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -459,7 +467,7 @@ class FastSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = text.split('\n\n')[0]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_fast_data(text.split('\n\n')[1])
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -523,7 +531,7 @@ class IsraelHolidaysSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['israel_holidays'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_isr_holidays_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -587,7 +595,7 @@ class TuBiShvatSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['tubishvat'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_tubishvat_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -651,7 +659,7 @@ class LagBaomerSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['lagbaomer'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_lagbaomer_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -708,7 +716,7 @@ class PurimSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['purim'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_purim_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -798,7 +806,7 @@ class YomKippurSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = text.split('\n\n')[0]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_yomkippur_data(text.split('\n\n')[1])
         # self._image.save('test.png')
         pic = self._convert_img_to_bytes_io(self._image)
@@ -859,7 +867,7 @@ class ChanukaSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['chanuka'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_chanuka_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -924,7 +932,7 @@ class SucosSender(PictureSender):
     def get_image(self, text: str) -> BytesIO:
         print(text)
         title = localization.Holidays.titles['succos'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_sucos_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -1005,7 +1013,7 @@ class PesahSender(PictureSender):
             self._bold_font_offset = self._bold_font.getsize
 
         title = localization.Holidays.titles['pesah'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_pesah_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -1076,7 +1084,7 @@ class RoshHashanaSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['rosh_hashana'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_rosh_hashana_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -1147,7 +1155,7 @@ class ShavuotSender(PictureSender):
 
     def get_image(self, text: str) -> BytesIO:
         title = localization.Holidays.titles['shavuot'][self._lang]
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_shavuot_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
@@ -1222,7 +1230,7 @@ class ShminiAtzeretSender(PictureSender):
             self._bold_font_path,
             55
         )
-        self._draw_title(self._draw, title, self._lang)
+        self._draw_title(self._draw, title)
         self._draw_shmini_atzeret_data(text)
         pic = self._convert_img_to_bytes_io(self._image)
         return pic
