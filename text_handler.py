@@ -59,8 +59,8 @@ class TextHandler(object):
                 states.delete_state(self._user_id)
                 self._main_menu()
             else:
-                func = self._user_states.get(user_has_state['state'], '')
-                return func()
+                func = self._user_states.get(user_has_state['state'])
+                return func(self)
         else:
             func = self._handlers.get(self._text)
             if func:
