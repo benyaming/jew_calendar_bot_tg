@@ -444,10 +444,14 @@ class TextHandler(object):
                 if input_data[1].lower() in data.heb_months_names_ru or \
                         input_data[1].lower() in data.heb_months_names_en or \
                         input_data[1].lower() in data.heb_months_names_he:
-                    month = locale.Converter.get_month_name(
-                        self._lang,
-                        input_data[1].lower()
-                    )
+                    try:
+                        month = locale.Converter.get_month_name(
+                            self._lang,
+                            input_data[1].lower()
+                        )
+                    except KeyError:
+                        self._chatbase('incorrect heb date month')
+                        return self._incorrect_date('incorrect_heb_date_format')
             elif len(input_data) == 4 \
                     and input_data[1].lower() in ['adar', 'адар', 'qqqq'] \
                     and input_data[2] in ['1', '2']:

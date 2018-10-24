@@ -240,6 +240,7 @@ jewish_months_a = {
     'Teves': 'Тевета',
     'Tevet': 'Тевета',
     'Shevat': 'Швата',
+    'Shvat': 'Швата',
     'Adar': 'Адара',
     'Adar I': 'Адара I',
     'Adar II': 'Адара II',
