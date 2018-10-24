@@ -222,7 +222,6 @@ def handle_reg(message: telebot.types.Message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
-    bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, message.text).handle_text()
 
