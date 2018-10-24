@@ -1461,7 +1461,7 @@ class Converter(object):
             heb_date: tuple,
             day_of_week: int,
             greg_date: tuple,
-            lang: str
+            lang: str,
     ) -> str:
         responses = {
             'Russian': f'Еврейская дата: *{heb_date[2]} '
@@ -1474,6 +1474,43 @@ class Converter(object):
                        f'{heb_date[0]}*\nGregorian date: *{greg_date[2]} '
                        f'{data.gr_months_index_en[greg_date[1]]} '
                        f'{greg_date[0]}*, {data.days_en[day_of_week]}',
+            'Hebrew': f''  # TODO перевод
+        }
+        response = responses.get(lang, '')
+        return response
+
+    @staticmethod
+    def convert_heb_to_greg_two(
+            heb_date_1: tuple,
+            heb_date_2: tuple,
+            day_of_week_1: int,
+            day_of_week_2: int,
+            greg_date_1: tuple,
+            greg_date_2: tuple,
+            lang: str,
+    ) -> str:
+        responses = {
+            'Russian': f'Еврейская дата: *{heb_date_1[2]} '
+                       f'{data.heb_months_codes_ru[heb_date_1[1]]} '
+                       f'{heb_date_1[0]}*\nГрегорианская дата: *{greg_date_1[2]} '
+                       f'{data.gr_months_index[greg_date_1[1]]} '
+                       f'{greg_date_1[0]}*, {data.days_ru[day_of_week_1]}'
+                       f'Еврейская дата: *{heb_date_2[2]} '
+                       f'{data.heb_months_codes_ru[heb_date_2[1]]} '
+                       f'{heb_date_2[0]}*\nГрегорианская дата: *{greg_date_2[2]} '
+                       f'{data.gr_months_index[greg_date_2[1]]} '
+                       f'{greg_date_2[0]}*, {data.days_ru[day_of_week_2]}',
+            'English': f'Hebrew date: *{heb_date_1[2]} '
+                       f'{data.heb_months_codes_en[heb_date_1[1]]} '
+                       f'{heb_date_1[0]}*\nGregorian date: *{greg_date_1[2]} '
+                       f'{data.gr_months_index_en[greg_date_1[1]]} '
+                       f'{greg_date_1[0]}*, {data.days_en[day_of_week_1]}'
+                       f'Hebrew date: *{heb_date_2[2]} '
+                       f'{data.heb_months_codes_en[heb_date_2[1]]} '
+                       f'{heb_date_2[0]}*\nGregorian date: *{greg_date_2[2]} '
+                       f'{data.gr_months_index_en[greg_date_2[1]]} '
+                       f'{greg_date_2[0]}*, {data.days_en[day_of_week_2]}'
+            ,
             'Hebrew': f''  # TODO перевод
         }
         response = responses.get(lang, '')

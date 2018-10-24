@@ -453,7 +453,7 @@ class TextHandler(object):
                         self._chatbase('incorrect heb date month')
                         return self._incorrect_date('incorrect_heb_date_format')
             elif len(input_data) == 4 \
-                    and input_data[1].lower() in ['adar', 'адар', 'qqqq'] \
+                    and input_data[1].lower() in ['adar', 'адар'] \
                     and input_data[2] in ['1', '2']:
                 month = locale.Converter.get_month_name(
                     self._lang,
