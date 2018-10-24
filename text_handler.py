@@ -875,7 +875,8 @@ class TextHandler(object):
         'Помощь': _get_help,
         'Help': _get_help,
         'Сообщить об ошибке': _report,
-        'Report a bug': _report
+        'Report a bug': _report,
+        'Локация': _update_location
     }
     _user_states = {
         'waiting_for_date': _handle_date,
