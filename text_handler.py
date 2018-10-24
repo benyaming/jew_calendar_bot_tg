@@ -420,7 +420,7 @@ class TextHandler(object):
                 states.delete_state(self._user_id)
                 self._chatbase('greg date converted')
                 self._main_menu()
-            except:
+            except Exception:
                 self._incorrect_date('incorrect_date_value')
                 self._chatbase('incorrect date value')
         else:
@@ -437,7 +437,7 @@ class TextHandler(object):
             if input_data[0].isdigit():
                 day = int(input_data[0])
                 if not 0 < day < 31:
-                    self._incorrect_date('incorrect_heb_date_value')
+                    return self._incorrect_date('incorrect_heb_date_value')
             # check month
             if len(input_data) == 3:
                 # all exept adar ii
@@ -456,12 +456,12 @@ class TextHandler(object):
                     f'{input_data[1].lower()} {input_data[2]}'
                 )
             else:
-                self._incorrect_date('incorrect_heb_date_format')
+                return self._incorrect_date('incorrect_heb_date_format')
             # check year
             if input_data[-1].isdigit():
                 year = int(input_data[-1])
                 if year < 0:
-                    self._incorrect_date('incorrect_heb_date_value')
+                    return self._incorrect_date('incorrect_heb_date_value')
                 # final calculation
                 else:
                     hebrew_date = (year, month, day)
@@ -486,10 +486,10 @@ class TextHandler(object):
                         self._main_menu()
                     else:
                         self._chatbase('incorrect date value')
-                        self._incorrect_date('incorrect_heb_date_value')
+                        return self._incorrect_date('incorrect_heb_date_value')
         else:
             self._chatbase('incorrect date format')
-            self._incorrect_date('incorrect_heb_date_format')
+            return self._incorrect_date('incorrect_heb_date_format')
 
     def _incorrect_date(self, error_type: str) -> None:
         self._bot.send_chat_action(self._user_id, 'typing')
