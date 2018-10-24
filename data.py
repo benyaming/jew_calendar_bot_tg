@@ -242,7 +242,9 @@ jewish_months_a = {
     'Shevat': 'Швата',
     'Adar': 'Адара',
     'Adar I': 'Адара I',
-    'Adar II': 'Адара II'
+    'Adar II': 'Адара II',
+    'Adar Rishon': 'Адара I',
+    'Adar Sheni': 'Адара II'
 }
 
 jewish_months_he = {
