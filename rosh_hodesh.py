@@ -1,7 +1,9 @@
 import requests, pytz
 import calendar, re
 
-import localization as l
+import localization as locale
+import db_operations
+
 from utils import get_tz_by_location
 from io import BytesIO
 from picture_maker import RoshHodeshSender
@@ -71,7 +73,7 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                                            )[1]
         if first_day == month_length:
             if last_month_day[1] == 12:  # проверка на случай если это декабрь
-                rh_days = l.RoshHodesh.two_days_in_different_years(
+                rh_days = locale.RoshHodesh.two_days_in_different_years(
                     lang,
                     last_month_day[0],
                     last_month_day[0] + 1
@@ -79,13 +81,13 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                 # определяем день недели
                 day_of_week_id = calendar.weekday(
                     last_month_day[0], 12, 31)
-                day_of_week = l.RoshHodesh.get_rh_day_of_week(
+                day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                     lang,
                     day_of_week_id,
                     day_of_week_id + 1
                 )
             else:
-                rh_days = l.RoshHodesh.two_days_in_different_months(
+                rh_days = locale.RoshHodesh.two_days_in_different_months(
                     lang,
                     first_day,
                     last_month_day[1],
@@ -98,13 +100,13 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                     last_month_day[1],
                     first_day
                 )
-                day_of_week = l.RoshHodesh.get_rh_day_of_week(
+                day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                     lang,
                     day_of_week_id,
                     day_of_week_id + 1
                 )
         else:
-            rh_days = l.RoshHodesh.two_days(
+            rh_days = locale.RoshHodesh.two_days(
                 lang,
                 first_day,
                 first_day + 1,
@@ -117,7 +119,7 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                 last_month_day[1],
                 first_day
             )
-            day_of_week = l.RoshHodesh.get_rh_day_of_week(
+            day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                 lang,
                 day_of_week_id,
                 day_of_week_id + 1
@@ -131,7 +133,7 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
         if last_month_day[2] == month_length:
             # проверка, является ли это декабрь
             if last_month_day[1] == 12:
-                rh_days = l.RoshHodesh.one_day_first_day_of_jan(
+                rh_days = locale.RoshHodesh.one_day_first_day_of_jan(
                     lang,
                     last_month_day[0] + 1
                 )
@@ -141,12 +143,12 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                     1,
                     1
                 )
-                day_of_week = l.RoshHodesh.get_rh_day_of_week(
+                day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                     lang,
                     day_of_week_id
                 )
             else:  # если первое число месяца
-                rh_days = l.RoshHodesh.one_day_first_day_of_month(
+                rh_days = locale.RoshHodesh.one_day_first_day_of_month(
                     lang,
                     last_month_day[1] + 1,
                     last_month_day[0]
@@ -157,12 +159,12 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                     last_month_day[1] + 1,
                     1
                 )
-                day_of_week = l.RoshHodesh.get_rh_day_of_week(
+                day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                     lang,
                     day_of_week_id
                 )
         else:  # обычный рх
-            rh_days = l.RoshHodesh.one_day(
+            rh_days = locale.RoshHodesh.one_day(
                 lang,
                 last_month_day[2] + 1,
                 last_month_day[1],
@@ -173,7 +175,7 @@ def get_rh_date_and_day(hebrew_date, lenght, lang):
                 last_month_day[0],
                 last_month_day[1],
                 last_month_day[2] + 1)
-            day_of_week = l.RoshHodesh.get_rh_day_of_week(
+            day_of_week = locale.RoshHodesh.get_rh_day_of_week(
                 lang,
                 day_of_week_id
             )
@@ -190,7 +192,7 @@ def get_molad(chodesh_dict, lang):
     # парсим день недели молада
     day_of_week = re.search(r'[a-zA-z]+', chodesh_dict['DayOfWeek']).group(0)
 
-    molad = l.RoshHodesh.get_molad_str(
+    molad = locale.RoshHodesh.get_molad_str(
         lang,
         molad_day,
         molad_month,
@@ -205,7 +207,8 @@ def get_molad(chodesh_dict, lang):
     return molad
 
 
-def get_rh(loc, lang, date=None) -> BytesIO:
+def get_rh(user_id: int, lang, date=None) -> BytesIO:
+    loc = db_operations.get_location_by_id(user_id)
     tz = get_tz_by_location(loc)
 
     if not date:
@@ -245,7 +248,7 @@ def get_rh(loc, lang, date=None) -> BytesIO:
     params = {'hebrewYear': hebrew_date[0]}
     chodesh_dict = get_chodesh_dict(hebrew_date, params)
     length_of_rh = get_rh_lenght(hebrew_date)
-    rh_string = l.RoshHodesh.get_rh_str(
+    rh_string = locale.RoshHodesh.get_rh_str(
         lang,
         get_month_name(chodesh_dict),
         length_of_rh,

@@ -86,7 +86,7 @@ def handle_help(message: telebot.types.Message):
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Help')
+    text_handler.TextHandler(message.from_user.id, 'Help').handle_text()
 
 
 @bot.message_handler(commands=['settings'])
@@ -102,7 +102,7 @@ def handle_start(message: telebot.types.Message):
             f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Settings')
+    text_handler.TextHandler(message.from_user.id, 'Settings').handle_text()
 
 
 @bot.message_handler(commands=['language'])
@@ -118,7 +118,7 @@ def handle_start(message: telebot.types.Message):
             f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Language')
+    text_handler.TextHandler(message.from_user.id, 'Language').handle_text()
 
 
 @bot.message_handler(commands=['location'])
@@ -134,7 +134,7 @@ def handle_start(message: telebot.types.Message):
             f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Location')
+    text_handler.TextHandler(message.from_user.id, 'Location').handle_text()
 
 
 @bot.message_handler(commands=['converter'])
@@ -151,7 +151,10 @@ def handle_start(message: telebot.types.Message):
             f'CONVERTER'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Date converter')
+    text_handler.TextHandler(
+        message.from_user.id,
+        'Date converter'
+    ).handle_text()
 
 
 @bot.message_handler(commands=['report'])
@@ -167,7 +170,10 @@ def handle_report(message: telebot.types.Message):
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, 'Report a bug')
+    text_handler.TextHandler(
+        message.from_user.id,
+        'Report a bug'
+    ).handle_text()
 
 
 @bot.message_handler(
@@ -187,7 +193,7 @@ def handle_venue(message: telebot.types.Message):
             message.location.longitude,
             bot
     ):
-        text_handler.handle_text(message.from_user.id, 'Back')
+        text_handler.TextHandler(message.from_user.id, 'Back').handle_text()
         tz = utils.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id)
         )
@@ -207,23 +213,23 @@ def handle_reg(message: telebot.types.Message):
     if loc[0] == message.text:
         loc = message.text.split(sep=',')
     if db_operations.check_location(message.from_user.id, loc[0], loc[1], bot):
-        text_handler.handle_text(message.from_user.id, 'Back')
         tz = utils.get_tz_by_location(
             db_operations.get_location_by_id(message.from_user.id)
         )
         db_operations.check_tz(message.from_user.id, tz)
+        text_handler.TextHandler(message.from_user.id, 'Back').handle_text()
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     db_operations.check_id_in_db(message.from_user)
-    text_handler.handle_text(message.from_user.id, message.text)
+    text_handler.TextHandler(message.from_user.id, message.text).handle_text()
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call: telebot.types.CallbackQuery):
-    callback_handler.handle_callback(call.from_user.id, call)
+    callback_handler.CallbackHandler(call.from_user.id, call).handle_call()
 
 
 if __name__ == '__main__':

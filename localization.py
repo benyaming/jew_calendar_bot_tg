@@ -427,6 +427,39 @@ class Utils(object):
         response = responses.get(lang, '')
         return response
 
+    # перешли в меню настроек
+    @staticmethod
+    def get_settings_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Добро пожаловать в настройки!',
+            'English': 'Welcome to settings!',
+            # TODO
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # перешли в меню выбора зманим
+    @staticmethod
+    def get_zmanim_menu(lang: str) -> str:
+        responses = {
+            'Russian': 'Выберите зманим для отображения',
+            'English': 'Choose zmanim that will shown',
+            'Hebrew': ''  # TODO hebrew
+        }
+        response = responses.get(lang, '')
+        return response
+
+    # f.a.q.
+    @staticmethod
+    def get_faq(lang: str) -> str:
+        responses = {
+            'Russian': 'http://telegra.ph/Hebrew-Calendar-Bot-FAQ-05-10',
+            'English': 'http://telegra.ph/Hebrew-Calendar-Bot-FAQ-EN-05-10'
+            # TODO hebrew
+        }
+        response = responses.get(lang, '')
+        return response
+
     # координаты получены
     @staticmethod
     def location_received(lang: str) -> str:

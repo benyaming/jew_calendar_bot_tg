@@ -17,7 +17,8 @@ def get_next_weekday(startdate, weekday):
     return (d + t).strftime('%Y-%m-%d')
 
 
-def get_shabbos(loc, lang, user) -> BytesIO:
+def get_shabbos(lang, user) -> BytesIO:
+    loc = db_operations.get_location_by_id(user)
     tz = utils.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
