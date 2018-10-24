@@ -62,8 +62,11 @@ class TextHandler(object):
                 func = self._user_states.get(user_has_state['state'], '')
                 return func()
         else:
-            func = self._handlers.get(self._text, self._incorrect_text)
-            func(self)
+            func = self._handlers.get(self._text)
+            if func:
+                func(self)
+            else:
+                self._incorrect_text()
 
 ###############################################################################
 #                      MENU, LANGUAGE, LOCATION, HELP                         #

@@ -36,7 +36,7 @@ class CallbackHandler(object):
 
     def handle_call(self):
         payload_prefix = self._call.data.split('-')[0]
-        func = self._call_prefixes.get(payload_prefix, '')
+        func = self._call_prefixes.get(payload_prefix)
         func(self)
 
     @staticmethod
