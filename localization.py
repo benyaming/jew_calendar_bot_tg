@@ -1489,6 +1489,7 @@ class Converter(object):
             greg_date_2: tuple,
             lang: str,
     ) -> str:
+        print('*')
         responses = {
             'Russian': f'Еврейская дата: *{heb_date_1[2]} '
                        f'{data.heb_months_codes_ru[heb_date_1[1]]} '
