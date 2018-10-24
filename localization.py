@@ -314,8 +314,9 @@ class Shabos(object):
     def shabos_candle_offset(lang: str) -> str:
         responses = {
             'Russian': 'Выберите, за сколько минут до Шкии '
-                       'будет зажигание свечей:',
-            'English': 'Choose candle lighting offset before the shekiah',
+                       'вы зажигаете свечи:',
+            'English': 'Choose how many minutes before the Shekiah do you '
+                       'light the candles',
             'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
@@ -586,8 +587,9 @@ class Utils(object):
             'Russian': 'Введенная дата не существует. \nПожалуйста, введите '
                        'корректную дату в *формате ДД.ММ.ГГГГ*',
             'English': 'The date that you entered doesn\'t exist, '
-                       'please enter the correct date in format DD.MM.YYYY',
-            'Hebrew': '' #TODO перевод
+                       'please enter the correct date '
+                       '*in the format DD.MM.YYYY*',
+            'Hebrew': ''  # TODO перевод
         }
         response = responses.get(lang, '')
         return response
@@ -1383,7 +1385,7 @@ class Converter(object):
                        'григорианского календаря в еврейский и обратно, а '
                        'также получить зманим на сконвертированную дату.\n'
                        'Выберите подходящий вам вариант:',
-            'English': 'Here you can convert dates from gregorian to hebrew '
+            'English': 'Here you can convert dates from Gregorian to Hebrew '
                        'calendar and vice versa, and get zmanim to the '
                        'converted date.\n'
                        'Choose the option:',
@@ -1399,7 +1401,7 @@ class Converter(object):
             'Russian': 'Пожалуйста, введите дату грегорианского календаря, '
                        'которую вы хотите сконвертировать '
                        '*в формате ДД.ММ.ГГГГ*',
-            'English': 'Please enter the gregorian date to convert '
+            'English': 'Please enter the Gregorian date to convert '
                        'for your selection *in the format DD.MM.YYYY*',
             'Hebrew': ''  # TODO перевод
         }
