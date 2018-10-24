@@ -33,8 +33,7 @@ def get_settings_menu(lang):
     user_markup.row(setting['Select zmanim'][lang],
                     setting['Candle lighting'][lang],
                     setting['Language'][lang])
-    user_markup.row(setting['Diaspora'][lang],
-                    setting['Location'][lang],
+    user_markup.row(setting['Location'][lang],
                     setting['Back'][lang])
     return user_markup
 

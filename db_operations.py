@@ -47,6 +47,11 @@ def check_location(user, lat, long, bot):
                 response = localization.Utils.location_received(lang)
                 bot.send_message(user, response)
                 response = True
+                if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                    diaspora = False
+                else:
+                    diaspora = True
+                set_diaspora_status(user, diaspora)
             else:
                 response = localization.Utils.failed_check_tz(lang)
                 bot.send_message(user, response)
@@ -65,9 +70,10 @@ def check_location(user, lat, long, bot):
                     response = 'Координаты обновлены'
                 elif lang == 'English':
                     response = 'Location updated'
-                bot.send_message(user, response)
                 cur.execute(query)
                 conn.commit()
+
+                bot.send_message(user, response)
                 response = True
             else:
                 response = localization.Utils.failed_check_tz(lang)
@@ -101,6 +107,12 @@ def check_tz(user, tz):
             query = f'UPDATE public.tz SET tz = \'{tz}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
+            # set diaspora
+            if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                diaspora = False
+            else:
+                diaspora = True
+            set_diaspora_status(user, diaspora)
 
 
 def get_tz_by_id(user_id):
@@ -231,17 +243,29 @@ def get_diaspora_status(user: int) -> bool:
         if diaspora_status:
             return diaspora_status[0]
         else:
-            query = f'INSERT INTO diaspora_settings VALUES ({user}, DEFAULT)'
-            cur.execute(query)
-            conn.commit()
-            return get_diaspora_status(user)
+            tz = get_tz_by_id(user)
+            if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                diaspora = False
+            else:
+                diaspora = True
+            set_diaspora_status(user, diaspora)
+
+            return diaspora
 
 
-def toggle_diaspora_status(user: int) -> None:
+def set_diaspora_status(user: int, status) -> None:
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
-        query = f'UPDATE diaspora_settings ' \
-                f'SET diaspora_status = NOT diaspora_status ' \
+        query = f'SELECT diaspora_status FROM diaspora_settings ' \
                 f'WHERE user_id = {user}'
+        cur.execute(query)
+        current_status = cur.fetchone()
+        if current_status:
+            query = f'UPDATE diaspora_settings ' \
+                    f'SET diaspora_status = {status} ' \
+                    f'WHERE user_id = {user}'
+        else:
+            query = f'INSERT INTO diaspora_settings ' \
+                    f'VALUES ({user}, \'{status}\')'
         cur.execute(query)
         conn.commit()

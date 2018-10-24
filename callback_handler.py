@@ -121,7 +121,7 @@ class CallbackHandler(object):
             response_pic.close()
             self._chatbase('zmanim from callback button sent')
 
-    def _edit_diaspora(self):
+    '''def _edit_diaspora(self):
         status = bool(int(self._call.data.split('-')[1]))
         db_operations.toggle_diaspora_status(self._user_id)
         allert_text = localization.Utils.diaspora_status_allert(
@@ -141,11 +141,11 @@ class CallbackHandler(object):
             text=new_message_text,
             reply_markup=new_markup,
             parse_mode='Markdown'
-        )
+        )'''
 
     _call_prefixes = {
         'zmanim': _edit_zman_status,
         'candle_offset': _edit_candle_offset,
-        'diaspora': _edit_diaspora,
+        #       'diaspora': _edit_diaspora,
         'get_zmanim': _get_zmanim_by_date,
     }
