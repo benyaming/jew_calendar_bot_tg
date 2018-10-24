@@ -226,6 +226,7 @@ jewish_months = {
 
 jewish_months_a = {
     'Nisan': 'Ниcана',
+    'Nissan': 'Ниcана',
     'Iyar': 'Ияра',
     'Sivan': 'Сивана',
     'Tamuz': 'Таммуза',
