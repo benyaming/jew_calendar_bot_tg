@@ -55,7 +55,6 @@ def convert_heb_to_greg(hebrew_date: tuple, lang: str) -> dict:
             lang
         )
         response['date'] = greg_date
-    except Exception as e:
-        print(e)
+    except Exception:
         response = {}
     return response

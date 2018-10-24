@@ -387,7 +387,6 @@ class TextHandler(object):
             try:
                 datetime(year, month, day)
                 self._get_zmanim_by_the_date(day, month, year)
-                self._main_menu()
             except ValueError:
                 self._incorrect_date('incorrect_date_value')
                 self._chatbase('incorrect date value')

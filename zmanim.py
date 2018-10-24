@@ -245,7 +245,6 @@ def get_date(user_id, lang: str, cusom_date=None) -> str:
         tz_time = pytz.timezone(tz)
         now = datetime.now(tz_time)
     else:
-        print(cusom_date)
         now = datetime(*cusom_date)
     gr_months_dict = {
         'Russian': data.gr_months_index[now.month],

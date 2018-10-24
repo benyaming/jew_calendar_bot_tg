@@ -905,7 +905,7 @@ class SucosSender(PictureSender):
             value = line.split('|')[1]
             defenition_offset = self._bold_font_offset(defenition)
 
-            # print definition
+            # draw definition
             draw.text(
                 (start_position_x, start_position_y),
                 defenition,
@@ -914,7 +914,7 @@ class SucosSender(PictureSender):
 
             value_parts = value.split('^')
             first_iteration = True
-            # print value
+            # draw value
             for value_part in value_parts:
                 if not first_iteration:
                     start_position_y += y_offset_small
@@ -930,7 +930,6 @@ class SucosSender(PictureSender):
             start_position_y += y_offset
 
     def get_image(self, text: str) -> BytesIO:
-        print(text)
         title = localization.Holidays.titles['succos'][self._lang]
         self._draw_title(self._draw, title)
         self._draw_sucos_data(text)
@@ -974,7 +973,7 @@ class PesahSender(PictureSender):
 
             defenition_offset = self._bold_font_offset(defenition)
 
-            # print definition
+            # draw definition
             draw.text(
                 (start_position_x, start_position_y),
                 defenition,
@@ -984,7 +983,7 @@ class PesahSender(PictureSender):
             value_parts = value.split('^')
             first_iteration = True
 
-            # print value
+            # draw value
             for value_part in value_parts:
                 if not first_iteration:
                     start_position_y += y_offset_small
@@ -1058,7 +1057,7 @@ class RoshHashanaSender(PictureSender):
                 font=self._bold_font
             )
 
-            # print value
+            # draw value
             if '^' in value:
                 day_lines = value.split('^')
                 for day_line in day_lines:
@@ -1129,7 +1128,7 @@ class ShavuotSender(PictureSender):
                 font=self._bold_font
             )
 
-            # print value
+            # draw value
             if '^' in value:
                 day_lines = value.split('^')
                 for day_line in day_lines:
@@ -1200,7 +1199,7 @@ class ShminiAtzeretSender(PictureSender):
                 font=self._bold_font
             )
 
-            # print value
+            # draw value
             if '^' in value:
                 day_lines = value.split('^')
                 for day_line in day_lines:

@@ -663,7 +663,6 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
     text = get_holiday_str(holiday_name, user_id, lang)
-    print(text)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
