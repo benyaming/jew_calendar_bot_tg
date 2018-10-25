@@ -453,7 +453,7 @@ class TextHandler(object):
                         self._chatbase('incorrect heb date month')
                         return self._incorrect_date('incorrect_heb_date_format')
             elif len(input_data) == 4 \
-                    and input_data[1].lower() in ['adar', 'адар', 'qqqq'] \
+                    and input_data[1].lower() in ['adar', 'адар'] \
                     and input_data[2] in ['1', '2']:
                 month = locale.Converter.get_month_name(
                     self._lang,
@@ -475,10 +475,16 @@ class TextHandler(object):
                     )
                     if response:
                         message_text = response['response']
-                        keyboard = kbrd.get_zmanim_for_converter_button(
-                            response['date'],
-                            self._lang
-                        )
+                        if type(response['date']) == list:
+                            keyboard = kbrd.get_zmanim_for_converter_button_adars(
+                                response['date'],
+                                self._lang
+                            )
+                        else:
+                            keyboard = kbrd.get_zmanim_for_converter_button(
+                                response['date'],
+                                self._lang
+                            )
                         self._bot.send_message(
                             self._user_id,
                             message_text,
