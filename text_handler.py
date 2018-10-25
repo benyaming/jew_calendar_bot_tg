@@ -475,10 +475,16 @@ class TextHandler(object):
                     )
                     if response:
                         message_text = response['response']
-                        keyboard = kbrd.get_zmanim_for_converter_button(
-                            response['date'],
-                            self._lang
-                        )
+                        if type(response['date']) == list:
+                            keyboard = kbrd.get_zmanim_for_converter_button_adars(
+                                response['date'],
+                                self._lang
+                            )
+                        else:
+                            keyboard = kbrd.get_zmanim_for_converter_button(
+                                response['date'],
+                                self._lang
+                            )
                         self._bot.send_message(
                             self._user_id,
                             message_text,
