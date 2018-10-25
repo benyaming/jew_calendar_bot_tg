@@ -31,33 +31,39 @@ def convert_heb_to_greg(hebrew_date: tuple, lang: str) -> dict:
     month = hebrew_date[1]
     day = hebrew_date[2]
     year_is_leap = Year(year).leap
+    response = dict()
     try:
         if year_is_leap:
-            print('yoy')
-            if (month == 12) or (month == 13):
-                hebrew_date_2 = (
+        # если високосный год
+            if month == 12:
+            # просят адар (или адар 1) - то выводим на всякий и для адара 2
+                adar = True
+                hebrew_date_1 = (
                     hebrew_date[0],
-                    month+1,
+                    13, # чтобы вывело "адар 1"
                     hebrew_date[2]
                 )
-                print('uhu')
-                greg_date_1 = HebrewDate(year, month, day).to_greg().tuple()
+                greg_date_1 = HebrewDate(year, 12, day).to_greg().tuple()
                 day_of_week_1 = datetime(*greg_date_1).weekday()
-                greg_date_2 = HebrewDate(year, month+1, day).to_greg().tuple()
+                greg_date_2 = HebrewDate(year, 13, day).to_greg().tuple()
                 day_of_week_2 = datetime(*greg_date_2).weekday()
-                response = dict()
                 response['response'] = localization.Converter.convert_heb_to_greg_two(
-                    hebrew_date, hebrew_date_2,
+                    hebrew_date_1,
                     day_of_week_1, day_of_week_2,
                     greg_date_1, greg_date_2,
                     lang
                 )
-                print (response)
-                response['date'] = greg_date_1
+                response['date'] = [greg_date_1,greg_date_2]
                 return response
+            elif month == 13:
+                # спросили чётко про адар 2
+                hebrew_date = (
+                    hebrew_date[0],
+                    14,  # чтобы вывело "адар 2"
+                    hebrew_date[2]
+                )
         greg_date = HebrewDate(year, month, day).to_greg().tuple()
         day_of_week = datetime(*greg_date).weekday()
-        response = dict()
         response['response'] = localization.Converter.convert_heb_to_greg(
             hebrew_date,
             day_of_week,
@@ -65,6 +71,6 @@ def convert_heb_to_greg(hebrew_date: tuple, lang: str) -> dict:
             lang
         )
         response['date'] = greg_date
+        return  response
     except Exception:
-        response = {}
-    return response
+        return {}

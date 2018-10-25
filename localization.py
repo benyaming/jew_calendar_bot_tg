@@ -1479,34 +1479,32 @@ class Converter(object):
 
     @staticmethod
     def convert_heb_to_greg_two(
-            heb_date_1: tuple,
-            heb_date_2: tuple,
+            heb_date: tuple,
             day_of_week_1: int,
             day_of_week_2: int,
             greg_date_1: tuple,
             greg_date_2: tuple,
             lang: str,
     ) -> str:
-        print('*')
         responses = {
-            'Russian': f'Еврейская дата: *{heb_date_1[2]} '
-                       f'{data.heb_months_codes_ru[heb_date_1[1]]} '
-                       f'{heb_date_1[0]}*\nГрегорианская дата: *{greg_date_1[2]} '
+            'Russian': f'Еврейская дата: *{heb_date[2]} '
+                       f'{data.heb_months_codes_ru[heb_date[1]]} '
+                       f'{heb_date[0]}*\n\n'
+                       f'На всякий мы тут выведем вам ещё для адара 2\n\n'
+                       f'Грегорианская дата (адар 1): *{greg_date_1[2]} '
                        f'{data.gr_months_index[greg_date_1[1]]} '
-                       f'{greg_date_1[0]}*, {data.days_ru[day_of_week_1]}'
-                       f'Еврейская дата: *{heb_date_2[2]} '
-                       f'{data.heb_months_codes_ru[heb_date_2[1]]} '
-                       f'{heb_date_2[0]}*\nГрегорианская дата: *{greg_date_2[2]} '
+                       f'{greg_date_1[0]}*, {data.days_ru[day_of_week_1]}\n'
+                       f'Грегорианская дата (адар 2): *{greg_date_2[2]} '
                        f'{data.gr_months_index[greg_date_2[1]]} '
                        f'{greg_date_2[0]}*, {data.days_ru[day_of_week_2]}',
-            'English': f'Hebrew date: *{heb_date_1[2]} '
-                       f'{data.heb_months_codes_en[heb_date_1[1]]} '
-                       f'{heb_date_1[0]}*\nGregorian date: *{greg_date_1[2]} '
+            'English': f'Hebrew date: *{heb_date[2]} '
+                       f'{data.heb_months_codes_en[heb_date[1]]} '
+                       f'{heb_date[0]}*\n\n'
+                       f'We think you are dumb and give you additional info\n\n'
+                       f'Gregorian date (adar 1): *{greg_date_1[2]} '
                        f'{data.gr_months_index_en[greg_date_1[1]]} '
-                       f'{greg_date_1[0]}*, {data.days_en[day_of_week_1]}'
-                       f'Hebrew date: *{heb_date_2[2]} '
-                       f'{data.heb_months_codes_en[heb_date_2[1]]} '
-                       f'{heb_date_2[0]}*\nGregorian date: *{greg_date_2[2]} '
+                       f'{greg_date_1[0]}*, {data.days_en[day_of_week_1]}\n'
+                       f'Gregorian date (adar 2): *{greg_date_2[2]} '
                        f'{data.gr_months_index_en[greg_date_2[1]]} '
                        f'{greg_date_2[0]}*, {data.days_en[day_of_week_2]}'
             ,

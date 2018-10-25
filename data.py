@@ -857,6 +857,19 @@ get_zmanim_button_converter = {
     'Hebrew': ''  # TODO перевод
 }
 
+get_zmanim_button_converter_adar1 = {
+    'Russian': 'Получить зманим на этот день (адар 1)',
+    'English': 'Get zmanim for this day (adar 1)',
+    'Hebrew': ''  # TODO перевод
+}
+
+
+get_zmanim_button_converter_adar2 = {
+    'Russian': 'Получить зманим на этот день (адар 2)',
+    'English': 'Get zmanim for this day (adar 2)',
+    'Hebrew': ''  # TODO перевод
+}
+
 heb_months_names_ru = {
     'нисан': 1,
     'ияр': 2,
@@ -888,6 +901,7 @@ heb_months_names_en = {
     'tevet': 10,
     'shvat': 11,
     'adar': 12,
+    'adar 1': 12,
     'adar 2': 13
 }
 
@@ -904,6 +918,7 @@ heb_months_names_he = {  # TODO перевод
     'tevet': 10,
     'shvat': 11,
     'adar': 12,
+    'adar 1': 12,
     'adar 2': 13
 }
 

@@ -571,6 +571,26 @@ def get_zmanim_for_converter_button(
     return keyboard
 
 
+def get_zmanim_for_converter_button_adars(
+        date: list,
+        lang: str
+) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(
+        InlineKeyboardButton(
+            text=data.get_zmanim_button_converter_adar1[lang],
+            callback_data=f'get_zmanim-{date[0][0]}.{date[0][1]}.{date[0][2]}'
+        )
+    )
+    keyboard.add(
+        InlineKeyboardButton(
+            text=data.get_zmanim_button_converter_adar2[lang],
+            callback_data=f'get_zmanim-{date[1][0]}.{date[1][1]}.{date[1][2]}'
+        )
+    )
+    return keyboard
+
+
 funcs = {
         'alot_ma': get_alot_ma_button,
         'talis_ma': get_talis_ma_button,
