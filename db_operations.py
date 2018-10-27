@@ -47,6 +47,11 @@ def check_location(user, lat, long, bot):
                 response = localization.Utils.location_received(lang)
                 bot.send_message(user, response)
                 response = True
+                if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                    diaspora = False
+                else:
+                    diaspora = True
+                set_diaspora_status(user, diaspora)
             else:
                 response = localization.Utils.failed_check_tz(lang)
                 bot.send_message(user, response)
@@ -65,9 +70,10 @@ def check_location(user, lat, long, bot):
                     response = 'Координаты обновлены'
                 elif lang == 'English':
                     response = 'Location updated'
-                bot.send_message(user, response)
                 cur.execute(query)
                 conn.commit()
+
+                bot.send_message(user, response)
                 response = True
             else:
                 response = localization.Utils.failed_check_tz(lang)
@@ -101,6 +107,12 @@ def check_tz(user, tz):
             query = f'UPDATE public.tz SET tz = \'{tz}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
+            # set diaspora
+            if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                diaspora = False
+            else:
+                diaspora = True
+            set_diaspora_status(user, diaspora)
 
 
 def get_tz_by_id(user_id):
@@ -127,9 +139,13 @@ def set_lang(user, lang):
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
             conn.commit()
-            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-            r.set(f'{user}', lang)
-            r.expire(f'{user}', 31536000)
+            if settings.IS_SERVER:
+                r = redis.StrictRedis(
+                    host=settings.r_host,
+                    port=settings.r_port
+                )
+                r.set(f'{user}', lang)
+                r.expire(f'{user}', 31536000)
 
 
 def get_lang_by_id(user):
@@ -137,30 +153,119 @@ def get_lang_by_id(user):
         cur = conn.cursor()
         query = f'SELECT lang FROM lang WHERE id = {user}'
         cur.execute(query)
-        lang_in_bd = cur.fetchone()[0]
-        if not lang_in_bd:
-            response = False
+        lang_in_bd = cur.fetchone()
+        if lang_in_bd:
+            response = lang_in_bd[0]
         else:
-            r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-            r.set(f'{user}', lang_in_bd[0])
-            r.expire(f'{user}', 31536000)
-            response = lang_in_bd
+            response = text_handler.change_lang()
         return response
 
 
 def get_lang_from_redis(user):
-    r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
-    lang_in_redis = r.get(user)
-    if not lang_in_redis:
-        lang_in_db = get_lang_by_id(user)
-        if not lang_in_db:
-            response = text_handler.change_lang()
-        else:
+    if settings.IS_SERVER:
+        r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
+        lang_in_redis = r.get(user)
+        if not lang_in_redis:
+            lang_in_db = get_lang_by_id(user)
             r.set(user, lang_in_db)
             r.expire(user, 31536000)
+            response = lang_in_db
+        else:
             lang = r.get(user).decode('unicode_escape')
             response = lang
     else:
-        lang = r.get(user).decode('unicode_escape')
-        response = lang
+        response = get_lang_by_id(user)
     return response
+
+
+def get_candle_offset(user_id: int) -> int:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT candle_offset FROM shabos_settings ' \
+                f'WHERE user_id = {user_id}'
+        cur.execute(query)
+        offset = cur.fetchone()
+        if offset:
+            return offset[0]
+        else:
+            query = f'INSERT INTO shabos_settings VALUES ({user_id}, DEFAULT)'
+            cur.execute(query)
+            conn.commit()
+            return get_candle_offset(user_id)
+
+
+def update_candle_offset(user_id: int, new_offset: int) -> bool:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        result = True
+        old_offset = get_candle_offset(user_id)
+        if new_offset == old_offset:
+            result = None
+        cur = conn.cursor()
+        query = f'UPDATE shabos_settings SET candle_offset = {new_offset} ' \
+                f'WHERE user_id = {user_id}'
+        cur.execute(query)
+        conn.commit()
+        return result
+
+
+def get_zmanim_set(user: int) -> str:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT zmanim_set FROM zmanim_settings WHERE ' \
+                f'user_id = {user}'
+        cur.execute(query)
+        zmanim_set = cur.fetchone()
+        if not zmanim_set:
+            query = f'INSERT INTO zmanim_settings VALUES ({user}, DEFAULT)'
+            cur.execute(query)
+            conn.commit()
+            return get_zmanim_set(user)
+        else:
+            return zmanim_set[0]
+
+
+def update_zmanim_set(user: int, zmanim_set: str) -> None:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'UPDATE zmanim_settings SET zmanim_set = \'{zmanim_set}\' ' \
+                f'WHERE user_id = {user}'
+        cur.execute(query)
+        conn.commit()
+
+
+def get_diaspora_status(user: int) -> bool:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT diaspora_status FROM diaspora_settings WHERE ' \
+                f'user_id = {user}'
+        cur.execute(query)
+        diaspora_status = cur.fetchone()
+        if diaspora_status:
+            return diaspora_status[0]
+        else:
+            tz = get_tz_by_id(user)
+            if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
+                diaspora = False
+            else:
+                diaspora = True
+            set_diaspora_status(user, diaspora)
+
+            return diaspora
+
+
+def set_diaspora_status(user: int, status) -> None:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = f'SELECT diaspora_status FROM diaspora_settings ' \
+                f'WHERE user_id = {user}'
+        cur.execute(query)
+        current_status = cur.fetchone()
+        if current_status:
+            query = f'UPDATE diaspora_settings ' \
+                    f'SET diaspora_status = {status} ' \
+                    f'WHERE user_id = {user}'
+        else:
+            query = f'INSERT INTO diaspora_settings ' \
+                    f'VALUES ({user}, \'{status}\')'
+        cur.execute(query)
+        conn.commit()
