@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 import logging
 from logging.handlers import RotatingFileHandler
+from time import sleep
 
 from time import sleep
 from os import path
 
 import telebot
 import db_operations
+
 import settings
 import text_handler
-import callback_handler
-import utils
-import jcb_chatbase
+import utils as f
 
 from flask import Flask, request
-
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
@@ -41,6 +40,7 @@ formatter = logging.Formatter(
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 bot = telebot.TeleBot(settings.TOKEN)
 
 app = Flask(__name__)
@@ -55,137 +55,57 @@ def webhook():
 
 
 @bot.message_handler(commands=['start'])
-def handle_start(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'start_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
+def handle_start(message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\start\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
-    keyboard.row('Русский', 'English')
-    response = 'Выберите язык/Choose the language'
-    bot.send_message(message.from_user.id, response, reply_markup=keyboard)
+    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+    user_markup.row('Русский', 'English')
+    bot.send_message(message.from_user.id,
+                     'Выберите язык/Choose the language',
+                     reply_markup=user_markup
+                     )
 
 
 @bot.message_handler(commands=['help'])
-def handle_help(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'help_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
+def handle_help(message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(message.from_user.id, 'Help').handle_text()
-
-
-@bot.message_handler(commands=['settings'])
-def handle_start(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'settings_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
-        logger.info(
-            f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
-        )
-    db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(message.from_user.id, 'Settings').handle_text()
-
-
-@bot.message_handler(commands=['language'])
-def handle_start(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'language_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
-        logger.info(
-            f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
-        )
-    db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(message.from_user.id, 'Language').handle_text()
-
-
-@bot.message_handler(commands=['location'])
-def handle_start(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'location_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
-        logger.info(
-            f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
-        )
-    db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(message.from_user.id, 'Location').handle_text()
-
-
-@bot.message_handler(commands=['converter'])
-def handle_start(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'converter_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
-        logger.info(
-            f' Command: \'\converter\', from: {message.from_user.id}, '
-            f'CONVERTER'
-        )
-    db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(
-        message.from_user.id,
-        'Date converter'
-    ).handle_text()
+    menu = telebot.types.ReplyKeyboardMarkup(True, False)
+    menu.row('🇷🇺', '🇱🇷', 'Назад/Back')
+    help_str = 'Пожалуйста, выберите язык справки'
+    bot.send_message(message.from_user.id,
+                     help_str,
+                     reply_markup=menu)
 
 
 @bot.message_handler(commands=['report'])
-def handle_report(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'report_command'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
+def handle_report(message):
     if settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
         )
     db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(
-        message.from_user.id,
-        'Report a bug'
-    ).handle_text()
+    report_str = 'Чтобы сообщить об ошибке, пожалуйста, напишите сюда: \n' \
+                 't.me/benyomin, или сюда: \nt.me/Meir_Yartzev. \nПожалуйста,'\
+                 ' убедитесь, что вы ознакомились с часто задаваемыми' \
+                 ' вопросами, доступными по команде /help\n\nFor bug report ' \
+                 'please write to \nt.me/benyomin or \nt.me/Meir_Yartzev. ' \
+                 '\nPlease, make sure that you had been read '\
+                 'F.A.Q. available by command /help'
+    bot.send_message(message.from_user.id,
+                     report_str,
+                     disable_web_page_preview=True)
 
 
-@bot.message_handler(
-    func=lambda message: True, content_types=['location', 'venue']
-)
-def handle_venue(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'geotag received'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
+@bot.message_handler(func=lambda message: True, content_types=['location',
+                                                               'venue'])
+def handle_venue(message):
     db_operations.check_id_in_db(message.from_user)
     if db_operations.check_location(
             message.from_user.id,
@@ -193,49 +113,37 @@ def handle_venue(message: telebot.types.Message):
             message.location.longitude,
             bot
     ):
-        text_handler.TextHandler(message.from_user.id, 'Back').handle_text()
-        tz = utils.get_tz_by_location(
-            db_operations.get_location_by_id(message.from_user.id)
-        )
+        text_handler.handle_text(message.from_user.id, 'Back')
+        tz = f.get_tz_by_location(
+            db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
+        # 'Получил геометку')
 
 
 @bot.message_handler(regexp=r'^-?\d{1,2}\.{1}\d+, {0,1}-?\d{1,3}\.{1}\d+$')
-def handle_reg(message: telebot.types.Message):
-    jcb_chatbase.chatbase_user_msg_handler(
-        message.from_user.id,
-        message.text,
-        'text location received'
-    )
-    bot.send_chat_action(message.from_user.id, 'typing')
+def handle_reg(message):
     db_operations.check_id_in_db(message.from_user)
     loc = message.text.split(sep=', ')
     if loc[0] == message.text:
         loc = message.text.split(sep=',')
     if db_operations.check_location(message.from_user.id, loc[0], loc[1], bot):
-        tz = utils.get_tz_by_location(
-            db_operations.get_location_by_id(message.from_user.id)
-        )
+        text_handler.handle_text(message.from_user.id, 'Back')
+        tz = f.get_tz_by_location(
+            db_operations.get_location_by_id(message.from_user.id))
         db_operations.check_tz(message.from_user.id, tz)
-        text_handler.TextHandler(message.from_user.id, 'Back').handle_text()
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
-def handle_text_message(message: telebot.types.Message):
+def handle_text_message(message):
     db_operations.check_id_in_db(message.from_user)
-    text_handler.TextHandler(message.from_user.id, message.text).handle_text()
-
-
-@bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call: telebot.types.CallbackQuery):
-    callback_handler.CallbackHandler(call.from_user.id, call).handle_call()
+    text_handler.handle_text(message.from_user.id, message.text)
 
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
         logger.info('STARTING WEBHOOK...')
         bot.remove_webhook()
-        sleep(1)
+        sleep(2)
         bot.set_webhook(
             url=f'{base_url}{route_path}',
             certificate=open(ssl_cert, 'r')
@@ -244,6 +152,5 @@ if __name__ == '__main__':
     else:
         logger.info('STARTING POLLING....')
         bot.remove_webhook()
-        sleep(1)
-        bot.polling(True, timeout=50)
-
+        sleep(2)
+        bot.polling(True)
