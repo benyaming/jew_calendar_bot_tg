@@ -1,900 +1,685 @@
 # -*- coding: utf-8 -*-
+from io import BytesIO
 import requests
-import re
-
-from requests.adapters import HTTPAdapter
-from datetime import datetime, timedelta
-
 import pytz
+
+from datetime import datetime, timedelta
+from pyluach import dates, hebrewcal
 
 import data
 import db_operations
-
+import picture_maker
 from localization import Holidays
 
-URL_Hol = 'http://db.ou.org/zmanim/getHolidayCalData.php'
-URL_Cal = 'http://db.ou.org/zmanim/getCalendarData.php'
 
-sess = requests.Session()
-sess.mount(URL_Cal, HTTPAdapter(max_retries=5))
+URL_ZMANIM = 'http://db.ou.org/zmanim/getCalendarData.php'
 
 
-def send_request(param, url=URL_Cal):
-    response = sess.get(url, params=param)
+# Получение текущих данных о пользователе (дата, локация, тайм-зона)
+def get_current_year_month_day_tz(user_id: int) -> dict:
+    location = db_operations.get_location_by_id(user_id)
+    tz = db_operations.get_tz_by_id(user_id)
+    tz_time = pytz.timezone(tz)
+    now = datetime.now(tz_time)
+    year = now.year
+    month = now.month
+    day = now.day
+
+    response = {
+        'current_year': year,
+        'current_month': month,
+        'current_day': day,
+        'current_time_zone': tz,
+        'current_location': location
+    }
     return response
 
 
-# Получаем словарь , index - индекс в общем json'е
-def get_holidays_dict(holi_index, holi_id):
-    tz = db_operations.get_tz_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
+# Получение данных о празднике (название, дата)
+def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
+    begin_date = dates.HebrewDate(year=year, month=7, day=1).to_pydate()
+    holiday_dict = {}
+    diaspora = db_operations.get_diaspora_status(user_id)
+    number_days_of_hebrew_year = 365
+    for days in hebrewcal.Year(year).iterdays():
+        number_days_of_hebrew_year = days
 
-    if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
-        params = {'year': year,
-                  'israelHolidays': 'true'
-                  }
-    else:
-        params = {'year': year}
+    def date_range(start_date, number_days):
+        for n in range(number_days + 1):
+            yield start_date + timedelta(n)
 
-    holidays = send_request(params, URL_Hol)
+    for single_date in date_range(begin_date, number_days_of_hebrew_year):
+        date_item = single_date.strftime("%Y/%m/%d").split('/')
+        date = {
+            'year': [date_item[0], ],
+            'month': [date_item[1], ],
+            'day': [date_item[2], ],
+            'day_of_week': [str(single_date.weekday() + 1), ]
+        }
 
-    holidays_dicts = holidays.json()
-    holidays_dict = holidays_dicts[holi_index]
-    if month == 1 and holidays_dict['name'] == 'AsarahBTevet' \
-            or holidays_dict['name'] == 'Chanukah':
-        params = {'year': year - 1}
-        holidays = send_request(params, URL_Hol)
-        holidays_dicts = holidays.json()
-        holidays_dict = holidays_dicts[holi_index]
-        h_numbers = re.findall(r'\d+', holidays_dict['dateYear1'])
-        brackets = re.findall(r'[(){}[\]]+', holidays_dict['dateYear1'])
-        if brackets and int(h_numbers[1]) > int(day) \
-                and holidays_dict['name'] == 'Chanukah' \
-                or brackets and holidays_dict['name'] == 'AsarahBTevet' \
-                and int(h_numbers[0]) > int(day):
-            params = {'year': year - 1}
-            holidays = send_request(params, URL_Hol)
-            holidays_dicts = holidays.json()
-            holidays_dict = holidays_dicts[holi_index]
+        single_hebrew_date = dates.GregorianDate(
+            year=int(date['year'][0]),
+            month=int(date['month'][0]),
+            day=int(date['day'][0])).to_heb()
+
+        holidays_name = hebrewcal.holiday(
+            single_hebrew_date, israel=not diaspora)
+
+        if holidays_name is None:
+            pass
         else:
-            params = {'year': year}
-            holidays = send_request(params, URL_Hol)
-            holidays_dicts = holidays.json()
-            holidays_dict = holidays_dicts[holi_index]
-
-    return holidays_dict
-
-
-# Парсим название праздника/поста, чтобы перевести его
-def get_holiday_name(holidays_dict, lang):
-    holiday = re.findall(r'[a-zA-z]+', holidays_dict['name'])
-    name = ''
-    if lang == 'Russian':
-        name = str(data.holidays_name[str(holiday[0])])
-    elif lang == 'English':
-        name = str(data.holidays_name_en[str(holiday[0])])
-
-    return name
-
-
-# Получаем данные по празднику
-def get_holiday_data(holidays_dict, holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
-
-    h_numbers = re.findall(r'\d+', holidays_dict['dateYear1'])
-    d_m = re.findall(r'[a-zA-z]+', holidays_dict['dateYear1'])
-    h_numbers_2 = re.findall(r'\d+', holidays_dict['dateYear2'])
-    d_m_2 = re.findall(r'[a-zA-z]+', holidays_dict['dateYear2'])
-    brackets = re.findall(r'[(){}[\]]+', holidays_dict['dateYear1'])
-    if len(d_m) == 4 or len(d_m_2) == 4:
-        day2 = h_numbers[1]
-        month2 = data.holi_month_index[d_m[3]]
-        if brackets:
-            month2 = 13
-        if holidays_dict['name'] in ['Pesach', 'Chanukah']:
-            if d_m[1] == d_m[3]:
-                if int(month2) == int(month) and int(day2) < int(day) \
-                        or int(month2) < int(month):
-                    holiday_number = Holidays.long_holiday(
-                        lang, h_numbers_2[0], h_numbers_2[1], d_m_2[3],
-                        year + 1, d_m_2[0], d_m_2[2])
-                elif month2 == 13:
-                    holiday_number = Holidays.long_holiday(
-                        lang, h_numbers[0], h_numbers[1], d_m[3], year + 1,
-                        d_m[0], d_m[2])
-                else:
-                    holiday_number = Holidays.long_holiday(
-                        lang, h_numbers[0], h_numbers[1], d_m[3], year, d_m[0],
-                        d_m[2])
+            if holiday_dict.get(holidays_name):
+                holiday_dict[holidays_name]['day'].append(date['day'][0])
+                holiday_dict[holidays_name]['month'].append(date['month'][0])
+                holiday_dict[holidays_name]['year'].append(date['year'][0])
+                holiday_dict[holidays_name]['day_of_week'].append(
+                    str(single_date.weekday() + 1))
             else:
-                if int(month2) == int(month) and int(day2) < int(day) \
-                        or int(month2) < int(month):
-                    holiday_number = Holidays.long_holiday_jump(
-                        lang, h_numbers_2[0], d_m_2[1], h_numbers_2[1],
-                        d_m_2[3], year + 1, d_m_2[0], d_m_2[2])
-                elif month == 1 and holidays_dict['name'] == 'AsarahBTevet' \
-                        or month == 1 and holidays_dict['name'] == 'Chanukah':
-                    holiday_number = Holidays.long_holiday_jump(
-                        lang, h_numbers_2[0],  d_m_2[1], h_numbers_2[1],
-                        d_m_2[3], year, d_m_2[0], d_m_2[2])
-                elif month2 == 13:
-                    holiday_number = Holidays.long_holiday_jump(
-                        lang, h_numbers[0], d_m_2[1], h_numbers[1], d_m[3],
-                        year + 1, d_m[0], d_m[2])
-                else:
-                    holiday_number = Holidays.long_holiday_jump(
-                        lang, h_numbers[0], d_m[1], h_numbers[1], d_m[3],
-                        year, d_m[0], d_m[2])
+                holiday_dict[holidays_name] = date
+
+    for key, values in holiday_dict.items():
+        holiday_month = sorted(list(set(values['month'])))
+        holiday_year = sorted(list(set(values['year'])))
+
+        date = {'year': holiday_year,
+                'month': holiday_month,
+                'day': values['day'],
+                'day_of_week': values['day_of_week']
+                }
+
+        holiday_dict[key] = date
+
+    if holiday_name in ['YomHaShoah', 'YomHaZikaron', 'YomHaAtzmaut',
+                        'YomYerushalayim', 'HoshanaRabba']:
+        def get_add_holidays(month: int, day: int) -> dict:
+            add_holiday = dates.HebrewDate(
+                year=year, month=month, day=day).to_pydate()
+            day_of_week = str(add_holiday.weekday())
+            add_holiday = str(add_holiday).split('-')
+            values_add_holiday = {
+                'name': holiday_name,
+                'day': [add_holiday[2], ],
+                'day_of_week': day_of_week,
+                'month': [add_holiday[1], ],
+                'year': [add_holiday[0], ]
+            }
+            return values_add_holiday
+
+        if holiday_name == 'YomHaShoah':
+            return get_add_holidays(1, 27)
+        elif holiday_name == 'YomHaZikaron':
+            return get_add_holidays(2, 3)
+        elif holiday_name == 'YomHaAtzmaut':
+            return get_add_holidays(2, 4)
+        elif holiday_name == 'YomYerushalayim':
+            return get_add_holidays(2, 28)
+        elif holiday_name == 'HoshanaRabba':
+            return get_add_holidays(7, 21)
+    values_from_dict = holiday_dict[holiday_name]
+    values_from_dict = {
+        'name': holiday_name,
+        'day': values_from_dict['day'],
+        'day_of_week': values_from_dict['day_of_week'],
+        'month': values_from_dict['month'],
+        'year': values_from_dict['year']
+    }
+    if len(values_from_dict['day']) == 2:
+        values_from_dict['day'] = [
+            values_from_dict['day'][0], values_from_dict['day'][1]
+        ]
+        values_from_dict['day_of_week'] = [
+            values_from_dict['day_of_week'][0],
+            values_from_dict['day_of_week'][1]
+        ]
+    elif len(values_from_dict['day']) == 7:
+        values_from_dict['day'] = [
+            values_from_dict['day'][0], values_from_dict['day'][6]
+        ]
+        values_from_dict['day_of_week'] = [
+            values_from_dict['day_of_week'][0],
+            values_from_dict['day_of_week'][6]
+        ]
+    elif len(values_from_dict['day']) == 8:
+        values_from_dict['day'] = [
+            values_from_dict['day'][0], values_from_dict['day'][7]
+        ]
+        values_from_dict['day_of_week'] = [
+            values_from_dict['day_of_week'][0],
+            values_from_dict['day_of_week'][7]
+        ]
+    return values_from_dict
+
+
+# Преобразование данных о празднике (название, дата)
+def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
+    year = get_current_year_month_day_tz(user_id)['current_year']
+    month = get_current_year_month_day_tz(user_id)['current_month']
+    day = get_current_year_month_day_tz(user_id)['current_day']
+
+    hebrew_year = dates.GregorianDate(year=year, month=month, day=day).to_heb()
+    hebrew_year = str(hebrew_year).split('-')
+    holiday_dict = get_holiday_dict(holiday_name, int(hebrew_year[0]), user_id)
+    if holiday_dict['name'] == '10 of Teves' and \
+            holiday_dict['month'][0] == '01':
+        if holiday_dict['month'][0] == '01' and \
+                int(holiday_dict['day'][0]) < day and \
+                year == int(holiday_dict['year'][0]) or \
+                year > int(holiday_dict['year'][0]):
+
+            holiday_dict = get_holiday_dict(
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
+
+    elif holiday_dict['name'] == 'Chanuka' and \
+            holiday_dict['month'][0] == '01':
+
+        if holiday_dict['month'][0] == '01' and \
+                int(holiday_dict['day'][1]) < day and \
+                year == int(holiday_dict['year'][1]) or \
+                year > int(holiday_dict['year'][1]):
+
+            holiday_dict = get_holiday_dict(
+                holiday_name,
+                int(hebrew_year[0]) + 1,
+                user_id
+            )
+
+    elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) != 2:
+        if month > int(holiday_dict['month'][0]) and \
+                year == int(holiday_dict['year'][0]) or \
+                month == int(holiday_dict['month'][0]) and \
+                int(holiday_dict['day'][1]) < day and \
+                year == int(holiday_dict['year'][0]) or \
+                year > int(holiday_dict['year'][0]):
+
+            holiday_dict = get_holiday_dict(
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
+
+    elif len(holiday_dict['day']) == 2 and len(holiday_dict['month']) == 2:
+
+        if month > int(holiday_dict['month'][1]) and \
+                year == int(holiday_dict['year'][0]) or \
+                month == int(holiday_dict['month'][1]) and \
+                int(holiday_dict['day'][1]) < day and \
+                year == int(holiday_dict['year'][0])\
+                or year > int(holiday_dict['year'][0]):
+
+            holiday_dict = get_holiday_dict(
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
+    else:
+
+        if month > int(holiday_dict['month'][0]) and \
+                year == int(holiday_dict['year'][0]) or \
+                month == int(holiday_dict['month'][0]) and \
+                int(holiday_dict['day'][0]) < day and \
+                year == int(holiday_dict['year'][0]) or \
+                year > int(holiday_dict['year'][0]):
+
+            holiday_dict = get_holiday_dict(
+                holiday_name, int(hebrew_year[0]) + 1, user_id)
+
+    return holiday_dict
+
+
+# Перевод названия праздника
+def get_holiday_name(holiday_info: dict, lang: str) -> str:
+    holiday_names = {
+        'Russian': data.holidays_name[holiday_info['name']],
+        'English': data.holidays_name_en[holiday_info['name']],
+        'Hebrew': data.holidays_name_he[holiday_info['name']]
+    }
+    holiday_name = holiday_names.get(lang, '')
+    return holiday_name
+
+
+# Получение даты праздника
+def get_holiday_date(holiday_info: dict, lang: str) -> str:
+    # Проверка на длину праздника
+    if len(holiday_info['day']) >= 2:
+        if len(holiday_info['month']) == 2:
+            date = {
+                'day_begin': holiday_info['day'][0],
+                'day_end': holiday_info['day'][1],
+                'day_of_week_begin': holiday_info['day_of_week'][0],
+                'day_of_week_end': holiday_info['day_of_week'][1],
+                'month_begin': holiday_info['month'][0],
+                'month_end': holiday_info['month'][1],
+                'year': holiday_info['year'][0]
+            }
         else:
-            if d_m_2[1] == d_m_2[3]:
-                if int(month2) == int(month) and int(day2) < int(day) \
-                        or int(month2) < int(month):
-                    holiday_number = Holidays.long_holiday_and(
-                        lang, h_numbers_2[0], h_numbers_2[1], d_m_2[3],
-                        year + 1, d_m_2[0], d_m_2[2])
-                elif month == 1 and holidays_dict['name'] == 'AsarahBTevet':
-                    holiday_number = Holidays.long_holiday_and(
-                        lang, h_numbers_2[0], h_numbers_2[1], d_m_2[3], year,
-                        d_m_2[0], d_m_2[2])
-                elif month2 == 13:
-                    holiday_number = Holidays.long_holiday_and(
-                        lang, h_numbers[0], h_numbers[1], d_m[3], year + 1,
-                        d_m[0], d_m[2])
-                else:
-                    holiday_number = Holidays.long_holiday_and(
-                        lang, h_numbers[0], h_numbers[1], d_m[3], year, d_m[0],
-                        d_m[2])
+            date = {
+                'day_begin': holiday_info['day'][0],
+                'day_end': holiday_info['day'][1],
+                'day_of_week_begin': holiday_info['day_of_week'][0],
+                'day_of_week_end': holiday_info['day_of_week'][1],
+                'month_begin': holiday_info['month'][0],
+                'month_end': holiday_info['month'][0],
+                'year': holiday_info['year'][0]
+            }
+
+        # Длинные праздники (Пейсах, Ханука; Суккот),
+        # даты которых приходят на 1 григорианский месяц
+        if holiday_info['name'] == 'Chanuka' and\
+                len(holiday_info['year']) == 2:
+            holiday_date = Holidays.long_holiday_two_months_two_years(
+                lang, date['day_begin'], date['month_begin'],
+                holiday_info['year'][0], date['day_end'], date['month_end'],
+                holiday_info['year'][1], date['day_of_week_begin'],
+                date['day_of_week_end']
+            )
+        elif holiday_info['name'] in ['Pesach', 'Chanuka', 'Succos'] and \
+                len(holiday_info['month']) == 2:
+            holiday_date = Holidays.long_holiday_two_months(
+                lang, date['day_begin'], date['month_begin'],
+                date['day_end'], date['month_end'], date['year'],
+                date['day_of_week_begin'], date['day_of_week_end']
+            )
+        elif holiday_info['name'] in ['Pesach', 'Chanuka', 'Succos'] and \
+                len(holiday_info['month']) == 1:
+            holiday_date = Holidays.long_holiday_one_month(
+                lang, date['day_begin'], date['day_end'], date['month_begin'],
+                date['year'], date['day_of_week_begin'],
+                date['day_of_week_end']
+            )
+        else:
+            # Двухдневные праздники, даты которых
+            #  приходят на 1 григорианский месяц
+            if date['month_begin'] == date['month_end']:
+                holiday_date = Holidays.two_days_holiday_one_month(
+                    lang, date['day_begin'], date['day_end'],
+                    date['month_begin'], date['year'],
+                    date['day_of_week_begin'], date['day_of_week_end']
+                )
+            # Двухдневные праздники, даты которых
+            #  приходят на 2 григорианских месяца
             else:
-                if int(month2) == int(month) and int(day2) < int(day) \
-                        or int(month2) < int(month):
-                    holiday_number = Holidays.long_holiday_jump_and(
-                        lang, h_numbers_2[0], d_m_2[1], h_numbers_2[1],
-                        d_m_2[3], year + 1, d_m_2[0], d_m_2[2])
-                elif month == 1 and holidays_dict['name'] == 'AsarahBTevet':
-                    holiday_number = Holidays.long_holiday_jump_and(
-                        lang, h_numbers_2[0], d_m_2[1], h_numbers_2[1],
-                        d_m_2[3], year, d_m_2[0], d_m_2[2])
-                elif month2 == 13:
-                    holiday_number = Holidays.long_holiday_jump_and(
-                        lang, h_numbers[0], d_m_2[1], h_numbers[1], d_m[3],
-                        year + 1, d_m[0], d_m[2])
-                else:
-                    holiday_number = Holidays.long_holiday_jump_and(
-                        lang, h_numbers[0], d_m_2[1], h_numbers[1], d_m[3],
-                        year, d_m[0], d_m[2])
+                holiday_date = Holidays.two_days_holiday_two_months(
+                    lang, date['day_begin'], date['month_begin'],
+                    date['day_end'], date['month_end'], date['year'],
+                    date['day_of_week_begin'], date['day_of_week_end']
+                )
     else:
-        day1 = h_numbers[0]
-        month1 = data.holi_month_index[d_m[1]]
-        if brackets:
-            month1 = 13
-        if int(month1) < int(month) or int(month1) == int(month) \
-                and int(day) > int(day1):
-            holiday_number = Holidays.short_holiday(lang, h_numbers_2[0],
-                                                    d_m_2[1], year + 1,
-                                                    d_m_2[0])
-        elif month1 == 13:
-            holiday_number = Holidays.short_holiday(lang, h_numbers[0],
-                                                    d_m[1], year + 1, d_m[0])
-        else:
-            holiday_number = Holidays.short_holiday(lang, h_numbers[0],
-                                                    d_m[1], year, d_m[0])
+        # Однодневные праздники
+        date = {
+            'day_of_week': holiday_info['day_of_week'][0],
+            'month': holiday_info['month'][0],
+            'day': holiday_info['day'][0],
+            'year': holiday_info['year'][0]
+        }
+        holiday_date = Holidays.one_day_holiday(
+            lang, date['day'], date['month'], date['year'], date['day_of_week']
+        )
+        if holiday_info['name'] == 'HoshanaRabba':
+            holiday_date = Holidays.one_day_holiday_hoshana_rabba(
+                lang, date['day'], date['month'], date['year'],
+                date['day_of_week']
+            )
 
-    return holiday_number
+    return holiday_date
 
 
-# Начало и конец поста
-def fast(get_dict, holi_id, lang):
-    loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
+# Получение зманим для поста
+def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
+    location = get_current_year_month_day_tz(user_id)['current_location']
+    tz = get_current_year_month_day_tz(user_id)['current_time_zone']
 
-    h_numbers = re.findall(r'\d+', get_dict['dateYear1'])
-    d_m = re.findall(r'[a-zA-z]+', get_dict['dateYear1'])
-    h_numbers_2 = re.findall(r'\d+', get_dict['dateYear2'])
-    d_m_2 = re.findall(r'[a-zA-z]+', get_dict['dateYear2'])
-    brackets = re.findall(r'[(){}[\]]+', get_dict['dateYear1'])
+    date = {
+        'month': holiday_info['month'][0],
+        'day': holiday_info['day'][0],
+        'year': holiday_info['year'][0]
+    }
+    # Парсим зманим на текущий день
+    params = {
+        'mode': 'day',
+        'timezone': tz,
+        'dateBegin': date['month'] + '/' + date['day'] + '/' + date['year'],
+        'lat': location[0],
+        'lng': location[1],
+    }
+    fast_time = requests.get(URL_ZMANIM, params=params).json()['zmanim']
 
-    month_time = data.holi_month_index[d_m[1]]
-    if brackets:
-        month_time = 13
-    if int(month_time) < int(month) or int(month_time) == int(month) \
-            and int(h_numbers[0]) < int(day):
-        month_time = data.holi_month_index[d_m_2[1]]
-        day_time = h_numbers_2[0]
-    else:
-        day_time = h_numbers[0]
-        month_time = data.holi_month_index[d_m[1]]
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{month_time}/{day_time}/{year}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'
-              }
-    holiday_time = send_request(params)
-
-    holi_time_dict = holiday_time.json()
-    fast_time = ''
-    if holi_time_dict['zmanim']['chatzos'] == 'X:XX:XX':
+    # Обработка мест, где невозможно определить зманим
+    if fast_time['chatzos'] == 'X:XX:XX':
         return Holidays.polar_area(lang)
-    earlier_time = datetime.strptime(holi_time_dict['zmanim']['sunset'],
-                                     "%H:%M:%S")
-    earlier_delta = timedelta(minutes=31)
-    earlier_delta2 = timedelta(minutes=28)
-    earlier_delta3 = timedelta(minutes=25)
-    sefer_ben_ashmashot = str(datetime.time(earlier_time + earlier_delta))
-    nevareshet = str(datetime.time(earlier_time + earlier_delta2))
-    shmirat_shabat = str(datetime.time(earlier_time + earlier_delta3))
-    if holi_time_dict['zmanim']['alos_ma'] == 'X:XX:XX':
-        chazot_time = datetime.strptime(holi_time_dict['zmanim']['chatzos'],
-                                        "%H:%M:%S")
-        chazot_delta = timedelta(hours=12)
-        alot_delta = chazot_time - chazot_delta
-        alot_chazot_time = str(datetime.time(alot_delta))
-        holi_time_dict['zmanim']['alos_ma'] = alot_chazot_time
-    if get_dict['name'] == 'TishaBAv':
-        delta = timedelta(days=1)
-        date1 = datetime.strptime(f'{month_time}/{day_time}/{year}',
-                                  '%m/%d/%Y')
-        d1 = (date1 - delta).strftime('%Y-%m-%d').lstrip("0").replace("-0",
-                                                                      "-")
-        spec_date = re.findall(r'\d+', str(d1))
-        params = {'mode': 'day',
-                  'timezone': tz,
-                  'dateBegin': f'{spec_date[1]}/{spec_date[2]}/{spec_date[0]}',
-                  'lat': loc[0],
-                  'lng': loc[1],
-                  'havdala_offset': '72'}
-        holiday_time_av = send_request(params)
-        holi_time_dict_av = holiday_time_av.json()
-        if lang == 'Russian':
-            fast_time = 'Начало поста {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\nХацот: *{:.5s}*\n' \
-                        'Конец поста {}' \
-                        ' {}\n' \
-                        '✨ Выход звезд:' \
-                        ' *{:.5s}*\n' \
-                        '🕖 Сефер бен Ашмашот: *{:.5s}*\n' \
-                        '🕘 Неварешет: *{:.5s}*\n' \
-                        '🕑 Шмират шаббат килхата: *{:.5s}*' \
-                .format(spec_date[2],
-                        data.gr_months_index[str(spec_date[1])],
-                        holi_time_dict_av["zmanim"]["sunset"],
-                        holi_time_dict_av["zmanim"]["chatzos"],
-                        day_time, data.gr_months_index[month_time],
-                        holi_time_dict["zmanim"]["tzeis_595_degrees"],
-                        sefer_ben_ashmashot, nevareshet, shmirat_shabat)
-        elif lang == 'English':
-            fast_time = 'Fast begins {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\nChatzot: *{:.5s}*\n' \
-                        'The fast ends {}' \
-                        ' {}\n' \
-                        '✨ Tzeit akohavim:' \
-                        ' *{:.5s}*\n' \
-                        '🕖 Sefer ben Ashmashot: *{:.5s}*\n' \
-                        '🕘 Nevareshet: *{:.5s}*\n' \
-                        '🕑 Shmirat shabbat kelhata: *{:.5s}*' \
-                .format(spec_date[2],
-                        data.gr_months_index_en[str(spec_date[1])],
-                        holi_time_dict_av["zmanim"]["sunset"],
-                        holi_time_dict_av["zmanim"]["chatzos"],
-                        day_time, data.gr_months_index_en[month_time],
-                        holi_time_dict["zmanim"]["tzeis_595_degrees"],
-                        sefer_ben_ashmashot, nevareshet, shmirat_shabat)
+
+    # Расчет дополнительных мнений выхода поста
+    sunset = datetime.strptime(fast_time['sunset'], "%H:%M:%S")
+    ben_ashmashot = (sunset + timedelta(minutes=31)).strftime("%H:%M:%S")
+    nevareshet = (sunset + timedelta(minutes=28)).strftime("%H:%M:%S")
+    shmirat_shabat = (sunset + timedelta(minutes=25)).strftime("%H:%M:%S")
+
+    # Обработчик для летних зманим
+    if fast_time['alos_ma'] == 'X:XX:XX':
+        chazot = datetime.strptime(fast_time['chatzos'], "%H:%M:%S")
+        renew_alos_ma = str(datetime.time(chazot - timedelta(hours=12)))
+        fast_time['alos_ma'] = renew_alos_ma
+
+    # Обработчик для 9 Ава
+    if holiday_info['name'] in ['9 of Av', 'Yom Kippur']:
+        current_date = datetime.strptime(params['dateBegin'], '%m/%d/%Y')
+
+        one_day_before = str(
+            datetime.date(current_date - timedelta(days=1))).split('-')
+
+        date_day_before = {
+            'month': one_day_before[1],
+            'day': one_day_before[2],
+            'year': one_day_before[0]
+        }
+        # Парсим зманим на предыдущий день
+        params = {
+            'mode': 'day',
+            'timezone': tz,
+            'dateBegin': date_day_before['month'] + '/'
+                    + date_day_before['day'] + '/' + date_day_before['year'],
+            'lat': location[0],
+            'lng': location[1],
+        }
+
+        fast_time = requests.get(URL_ZMANIM, params=params).json()["zmanim"]
+
+        # Время начала и окончания поста 9 Ава
+        if holiday_info['name'] == '9 of Av':
+            fast_time = Holidays.tisha_av_fast(
+                lang, date_day_before['day'], date_day_before['month'],
+                fast_time["sunset"], fast_time["chatzos"], date['day'],
+                date['month'], fast_time["tzeis_595_degrees"],
+                ben_ashmashot, nevareshet, shmirat_shabat
+            )
+        # Время зажигания и Авдолы Йом-Кипура
+        elif holiday_info['name'] == 'Yom Kippur':
+            sunset = datetime.strptime(fast_time['sunset'], "%H:%M:%S")
+            delta_18_minutes = timedelta(minutes=18)
+            fast_time = Holidays.fast_yom_kippur(
+                lang, date_day_before['day'], date_day_before['month'],
+                str(datetime.time(sunset - delta_18_minutes)),
+                date['day'], date['month'], fast_time["tzeis_850_degrees"])
     else:
-        if lang == 'Russian':
-            fast_time = 'Начало поста {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\n' \
-                        'Конец поста {}' \
-                        ' {}\n' \
-                        '✨ Выход звезд:' \
-                        ' *{:.5s}*\n' \
-                        '🕖 Сефер бен Ашмашот: *{:.5s}*\n' \
-                        '🕘 Неварешет: *{:.5s}*\n' \
-                        '🕑 Шмират шаббат килхата: *{:.5s}*' \
-                .format(day_time,
-                        data.gr_months_index[month_time],
-                        holi_time_dict["zmanim"]["alos_ma"],
-                        day_time, data.gr_months_index[month_time],
-                        holi_time_dict["zmanim"]["tzeis_595_degrees"],
-                        sefer_ben_ashmashot, nevareshet, shmirat_shabat)
-        elif lang == 'English':
-            fast_time = 'The fast begins {}' \
-                        ' {}:' \
-                        ' *{:.5s}*\n' \
-                        'Fast ends {}' \
-                        ' {}\n' \
-                        '✨ Tzeit akohavim:' \
-                        ' *{:.5s}*\n' \
-                        '🕖 Sefer ben Ashmashot: *{:.5s}*\n' \
-                        '🕘 Nevareshet: *{:.5s}*\n' \
-                        '🕑 Shmirat shabbat kelhata: *{:.5s}*' \
-                .format(day_time,
-                        data.gr_months_index_en[month_time],
-                        holi_time_dict["zmanim"]["alos_ma"],
-                        day_time, data.gr_months_index_en[month_time],
-                        holi_time_dict["zmanim"]["tzeis_595_degrees"],
-                        sefer_ben_ashmashot, nevareshet, shmirat_shabat)
-    return fast_time
-
-
-# Время зажигания и Авдолы Рош-Ашана, Шавуота
-def rosh_ash(get_dict, holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
-    loc = db_operations.get_location_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
-
-    h_numbers = re.findall(r'\d+', get_dict['dateYear1'])
-    d_m = re.findall(r'[a-zA-z]+', get_dict['dateYear1'])
-    h_numbers_2 = re.findall(r'\d+', get_dict['dateYear2'])
-    d_m_2 = re.findall(r'[a-zA-z]+', get_dict['dateYear2'])
-
-    month_time = data.holi_month_index[d_m[1]]
-    if month_time < month or month_time == month \
-            and int(h_numbers[0]) < int(day):
-        month_time = data.holi_month_index[d_m_2[1]]
-        day_time = h_numbers_2[0]
-    else:
-        day_time = h_numbers[0]
-        month_time = data.holi_month_index[d_m[1]]
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{month_time}/{day_time}/{year}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time = send_request(params)
-
-    holi_time_dict = holiday_time.json()
-    if holi_time_dict['zmanim']['chatzos'] == 'X:XX:XX':
-        return Holidays.polar_area(lang)
-    date1 = datetime.strptime(f'{month_time}/{day_time}/{year}', '%m/%d/%Y')
-    delta1 = timedelta(days=1)
-    delta2 = timedelta(days=2)
-    d1 = (date1 - delta1).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    d2 = (date1 + delta1).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    d3 = (date1 + delta2).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    spec_date1 = re.findall(r'\d+', str(d1))
-    spec_date2 = re.findall(r'\d+', str(d2))
-    spec_date3 = re.findall(r'\d+', str(d3))
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date1[1]}/{spec_date1[2]}/{spec_date1[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra1 = send_request(params)
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date2[1]}/{spec_date2[2]}/{spec_date2[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra2 = send_request(params)
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date3[1]}/{spec_date3[2]}/{spec_date3[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra3 = send_request(params)
-
-    holi_time_dict_ra1 = holiday_time_ra1.json()
-    holi_time_dict_ra2 = holiday_time_ra2.json()
-    holi_time_dict_ra3 = holiday_time_ra3.json()
-    if holi_time_dict_ra1['zmanim']['chatzos'] == 'X:XX:XX'\
-            or holi_time_dict_ra2['zmanim']['chatzos'] == 'X:XX:XX'\
-            or holi_time_dict_ra3['zmanim']['chatzos'] == 'X:XX:XX':
-        return Holidays.polar_area(lang)
-    d_candle = datetime.strptime(holi_time_dict_ra1['zmanim']['sunset'],
-                                 "%H:%M:%S")
-    d_candle2 = datetime.strptime(holi_time_dict_ra2['zmanim']['sunset'],
-                                  "%H:%M:%S")
-    d_delta = timedelta(minutes=18)
-    if holi_time_dict['dayOfWeek'] == '4':
-        holiday_string = Holidays.lighting_double_shabbat(
-            lang, spec_date1[2], str(spec_date1[1]),
-            str(datetime.time(d_candle - d_delta)), day_time, month_time,
-            holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
-            str(spec_date2[1]), str(datetime.time(d_candle2 - d_delta)),
-            spec_date3[2], str(spec_date3[1]),
-            holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
-    else:
-        holiday_string = Holidays.lighting_double(
-            lang, spec_date1[2], str(spec_date1[1]),
-            str(datetime.time(d_candle - d_delta)), day_time, month_time,
-            holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
-            str(spec_date2[1]),
-            holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
-
-    return holiday_string
-
-
-# Время зажигания и Авдолы Йом-Кипура
-def yom_kippurim(get_dict, holi_id, lang):
-    loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
-
-    h_numbers = re.findall(r'\d+', get_dict['dateYear1'])
-    d_m = re.findall(r'[a-zA-z]+', get_dict['dateYear1'])
-    h_numbers_2 = re.findall(r'\d+', get_dict['dateYear2'])
-    d_m_2 = re.findall(r'[a-zA-z]+', get_dict['dateYear2'])
-
-    month_time = data.holi_month_index[d_m[1]]
-    if month_time < month or month_time == month \
-            and int(h_numbers[0]) < int(day):
-        month_time = data.holi_month_index[d_m_2[1]]
-        day_time = h_numbers_2[0]
-    else:
-        day_time = h_numbers[0]
-        month_time = data.holi_month_index[d_m[1]]
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{month_time}/{day_time}/{year}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time = send_request(params)
-    holi_time_dict = holiday_time.json()
-    if holi_time_dict['zmanim']['chatzos'] == 'X:XX:XX':
-        return Holidays.polar_area(lang)
-    delta = timedelta(days=1)
-    date1 = datetime.strptime(f'{month_time}/{day_time}/{year}', '%m/%d/%Y')
-    d1 = (date1 - delta).strftime('%Y-%m-%d').lstrip("0").replace("-0", "-")
-    spec_date = re.findall(r'\d+', str(d1))
-
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date[1]}/{spec_date[2]}/{spec_date[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_candle = send_request(params)
-    holi_time_dict_candle = holiday_time_candle.json()
-
-    d1 = datetime.strptime(holi_time_dict_candle['zmanim']['sunset'],
-                           "%H:%M:%S")
-    d_delta = timedelta(minutes=18)
-    fast_time = Holidays.lighting_fast(
-        lang, spec_date[2], str(spec_date[1]),
-        str(datetime.time(d1 - d_delta)), day_time, month_time,
-        holi_time_dict["zmanim"]["tzeis_850_degrees"])
+        fast_time = Holidays.single_fast(
+            lang, date['day'], date['month'], fast_time["alos_ma"],
+            fast_time["tzeis_595_degrees"], ben_ashmashot, nevareshet,
+            shmirat_shabat
+        )
 
     return fast_time
 
 
-# Время зажигания и Авдолы Пейсаха и Суккота
-def sukkot_pesach_shavout(get_dict, number, holi_id, lang):
-    loc = db_operations.get_location_by_id(holi_id)
-    tz = db_operations.get_tz_by_id(holi_id)
-    tz_time = pytz.timezone(tz)
-    now = datetime.now(tz_time)
-    year = now.year
-    month = now.month
-    day = now.day
+# Получение зманим для праздников
+def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
+                     last_days_pesach: bool) -> str:
+    location = get_current_year_month_day_tz(user_id)['current_location']
+    tz = get_current_year_month_day_tz(user_id)['current_time_zone']
+    diaspora = db_operations.get_diaspora_status(user_id)
 
-    israel = False
-    if tz == 'Asia/Jerusalem' or tz == 'Asia/Tel_Aviv' or tz == 'Asia/Hebron':
-        israel = True
-    h_numbers = re.findall(r'\d+', get_dict['dateYear1'])
-    d_m = re.findall(r'[a-zA-z]+', get_dict['dateYear1'])
-    h_numbers_2 = re.findall(r'\d+', get_dict['dateYear2'])
-    d_m_2 = re.findall(r'[a-zA-z]+', get_dict['dateYear2'])
-    if get_dict['name'] == 'Pesach':
-        month_time = data.holi_month_index[d_m[3]]
-    else:
-        month_time = data.holi_month_index[d_m[1]]
-    day_time = ''
-    if number == 1:
-        if month_time < month or month_time == month \
-                and int(h_numbers[0]) < int(day):
-            month_time = data.holi_month_index[d_m_2[1]]
-            day_time = h_numbers_2[0]
-        else:
-            day_time = h_numbers[0]
-            month_time = data.holi_month_index[d_m[1]]
-    elif number == 2:
-        if month_time < month or month_time == month \
-                and int(h_numbers[1]) < int(day):
-            month_time = data.holi_month_index[d_m_2[3]]
-            day_time = h_numbers_2[1]
-        else:
-            day_time = h_numbers[1]
-            month_time = data.holi_month_index[d_m[3]]
+    date = {
+        'day_of_week': holiday_info['day_of_week'][0],
+        'month': holiday_info['month'][0],
+        'day': holiday_info['day'][0],
+        'year': holiday_info['year'][0]
+    }
+    if last_days_pesach and len(holiday_info['month']) != 2:
+        date['day'] = holiday_info['day'][1]
+    elif last_days_pesach and len(holiday_info['month']) == 2:
+        date['day'] = holiday_info['day'][1]
+        date['month'] = holiday_info['month'][1]
 
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{month_time}/{day_time}/{year}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time = send_request(params)
+    # Парсим зманим на текущий день
+    params = {
+        'mode': 'day',
+        'timezone': tz,
+        'dateBegin': date['month'] + '/' + date['day'] + '/' + date['year'],
+        'lat': location[0],
+        'lng': location[1],
+        'havdala_offset': '72'
+    }
 
-    holi_time_dict = holiday_time.json()
-    if holi_time_dict['zmanim']['chatzos'] == 'X:XX:XX':
+    current_time = requests.get(URL_ZMANIM, params=params).json()['zmanim']
+
+    # Обработка мест, где невозможно определить зманим
+    if current_time['chatzos'] == 'X:XX:XX':
         return Holidays.polar_area(lang)
-    date1 = datetime.strptime(f'{month_time}/{day_time}/{year}', '%m/%d/%Y')
-    delta1 = timedelta(days=1)
-    delta2 = timedelta(days=2)
-    d1 = (date1 - delta1).strftime('%Y/%m/%d')
-    d2 = (date1 + delta1).strftime('%Y/%m/%d')
-    d3 = (date1 + delta2).strftime('%Y/%m/%d')
-    d4 = (date1 - delta2).strftime('%Y/%m/%d')
-    spec_date1 = re.findall(r'\d+', str(d1))
-    spec_date2 = re.findall(r'\d+', str(d2))
-    spec_date3 = re.findall(r'\d+', str(d3))
-    spec_date4 = re.findall(r'\d+', str(d4))
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date1[1]}/{spec_date1[2]}/{spec_date1[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra1 = send_request(params)
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date2[1]}/{spec_date2[2]}/{spec_date2[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra2 = send_request(params)
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date3[1]}/{spec_date3[2]}/{spec_date3[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra3 = send_request(params)
-    params = {'mode': 'day',
-              'timezone': tz,
-              'dateBegin': f'{spec_date4[1]}/{spec_date4[2]}/{spec_date4[0]}',
-              'lat': loc[0],
-              'lng': loc[1],
-              'havdala_offset': '72'}
-    holiday_time_ra4 = send_request(params)
-    holi_time_dict_ra1 = holiday_time_ra1.json()
-    holi_time_dict_ra2 = holiday_time_ra2.json()
-    holi_time_dict_ra3 = holiday_time_ra3.json()
-    holi_time_dict_ra4 = holiday_time_ra4.json()
-    if holi_time_dict_ra1['zmanim']['chatzos'] == 'X:XX:XX'\
-            or holi_time_dict_ra2['zmanim']['chatzos'] == 'X:XX:XX'\
-            or holi_time_dict_ra3['zmanim']['chatzos'] == 'X:XX:XX':
+
+    delta_18_minutes = timedelta(minutes=18)
+    delta_one_day = timedelta(days=1)
+    delta_two_days = timedelta(days=2)
+
+    # Расчет соседних дней праздника
+    current_date = datetime.strptime(params['dateBegin'], '%m/%d/%Y')
+    date_plus_1_day = (current_date + delta_one_day).strftime('%m/%d/%Y')
+    date_minus_1_day = (current_date - delta_one_day).strftime('%m/%d/%Y')
+    date_plus_2_day = (current_date + delta_two_days).strftime('%m/%d/%Y')
+    date_minus_2_day = (current_date - delta_two_days).strftime('%m/%d/%Y')
+
+    params = {
+        'mode': 'day', 'timezone': tz, 'dateBegin': date_plus_1_day,
+        'lat': location[0], 'lng': location[1], 'havdala_offset': '72'
+    }
+    time_plus_1_day = requests.get(URL_ZMANIM, params=params).json()['zmanim']
+
+    params = {
+        'mode': 'day', 'timezone': tz, 'dateBegin': date_minus_1_day,
+        'lat': location[0], 'lng': location[1], 'havdala_offset': '72'
+    }
+    time_minus_1_day = requests.get(URL_ZMANIM, params=params).json()['zmanim']
+
+    params = {
+        'mode': 'day', 'timezone': tz, 'dateBegin': date_plus_2_day,
+        'lat': location[0], 'lng': location[1], 'havdala_offset': '72'
+    }
+    time_plus_2_day = requests.get(URL_ZMANIM, params=params).json()['zmanim']
+
+    params = {
+        'mode': 'day', 'timezone': tz, 'dateBegin': date_minus_2_day,
+        'lat': location[0], 'lng': location[1], 'havdala_offset': '72'
+    }
+    time_minus_2_day = requests.get(URL_ZMANIM, params=params).json()['zmanim']
+
+    if 'X:XX:XX' in [time_plus_1_day['chatzos'], time_minus_1_day['chatzos'],
+                     time_plus_2_day['chatzos']]:
         return Holidays.polar_area(lang)
-    d_candle = datetime.strptime(holi_time_dict_ra1['zmanim']['sunset'],
-                                 "%H:%M:%S")
-    d_candle2 = datetime.strptime(holi_time_dict_ra2['zmanim']['sunset'],
-                                  "%H:%M:%S")
-    d_candle3 = datetime.strptime(holi_time_dict_ra4['zmanim']['sunset'],
-                                  "%H:%M:%S")
-    d_delta = timedelta(minutes=18)
-    holiday_string = ''
-    # проверка на израиль
-    if not israel:
-        if holi_time_dict['dayOfWeek'] == '4':
+
+    sunset_current_date = datetime.strptime(
+        current_time['sunset'], "%H:%M:%S"
+    )
+    sunset_plus_1_day = datetime.strptime(
+        time_plus_1_day['sunset'], "%H:%M:%S"
+    )
+    sunset_minus_1_day = datetime.strptime(
+        time_minus_1_day['sunset'], "%H:%M:%S"
+    )
+    sunset_minus_2_days = datetime.strptime(
+        time_minus_2_day['sunset'],  "%H:%M:%S"
+    )
+
+    # Создание словарей для обозначения разных дней/месяцев
+    date_plus_1_day = date_plus_1_day.split('/')
+    date_minus_1_day = date_minus_1_day.split('/')
+    date_plus_2_day = date_plus_2_day.split('/')
+    date_minus_2_day = date_minus_2_day.split('/')
+    current_date = current_date.strftime('%m/%d/%Y').split('/')
+
+    current_date = {
+        'day': current_date[1], 'month': current_date[0]
+    }
+    date_plus_1_day = {
+        'day': date_plus_1_day[1], 'month': date_plus_1_day[0]
+    }
+    date_minus_1_day = {
+        'day': date_minus_1_day[1], 'month': date_minus_1_day[0],
+    }
+    date_plus_2_days = {
+        'day': date_plus_2_day[1], 'month': date_plus_2_day[0]
+    }
+    date_minus_2_days = {
+        'day': date_minus_2_day[1], 'month': date_minus_2_day[0]
+    }
+
+    # Проверка на диаспору
+    if diaspora:
+        if date['day_of_week'][0] == '4':
             holiday_string = Holidays.lighting_double_shabbat(
-                lang, spec_date1[2], str(spec_date1[1]),
-                str(datetime.time(d_candle - d_delta)), day_time,
-                month_time, holi_time_dict["zmanim"]["tzeis_850_degrees"],
-                spec_date2[2], str(spec_date2[1]),
-                str(datetime.time(d_candle2 - d_delta)), spec_date3[2],
-                str(spec_date3[1]),
-                holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
-        elif holi_time_dict['dayOfWeek'] == '7':
+                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                current_time["tzeis_850_degrees"], date_plus_1_day['day'],
+                date_plus_1_day['month'],
+                (sunset_plus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                date_plus_2_days['day'], date_plus_2_days['month'],
+                time_plus_2_day["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'][0] == '7' or \
+                date['day_of_week'] == '7' and last_days_pesach:
             holiday_string = Holidays.shabbat_before_holiday_diaspora(
-                lang, spec_date4[2], str(spec_date4[1]),
-                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
-                spec_date1[1],
-                holi_time_dict_ra1["zmanim"]["tzeis_850_degrees"],
-                day_time, month_time,
-                holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
-                str(spec_date2[1]),
-                holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
-        elif holi_time_dict['dayOfWeek'] == '6' and number is 2:
+                lang, date_minus_2_days['day'], date_minus_2_days['month'],
+                (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_1_day['day'], date_minus_1_day['month'],
+                time_minus_1_day["tzeis_850_degrees"], current_date['day'],
+                current_date['month'], current_time["tzeis_850_degrees"],
+                date_plus_1_day['day'], date_plus_1_day['month'],
+                time_plus_1_day["tzeis_850_degrees"]
+            )
+        elif last_days_pesach:
             holiday_string = Holidays.lighting_shabbat(
-                lang, spec_date4[2], str(spec_date4[1]),
-                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
-                str(spec_date1[1]),
-                str(datetime.time(d_candle - d_delta)), day_time,
-                month_time,
-                holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
+                lang, date_minus_2_days['day'], date_minus_2_days['month'],
+                (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                current_time["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'][0] == '6':
+            holiday_string = Holidays.shabbat_include(
+                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                current_time["tzeis_850_degrees"], date_plus_1_day['day'],
+                date_plus_1_day['month'],
+                time_plus_1_day["tzeis_850_degrees"]
+            )
         else:
             holiday_string = Holidays.lighting_double(
-                lang, spec_date1[2], str(spec_date1[1]),
-                str(datetime.time(d_candle - d_delta)), day_time, month_time,
-                holi_time_dict["zmanim"]["tzeis_850_degrees"], spec_date2[2],
-                str(spec_date2[1]),
-                holi_time_dict_ra2["zmanim"]["tzeis_850_degrees"])
-    else:
-        if holi_time_dict['dayOfWeek'] == '5' and number is 2:
-            holiday_string = Holidays.lighting(
-                lang, day_time, month_time,
-                str(datetime.time(d_candle - d_delta)),
-                spec_date2[2], str(spec_date2[1]),
-                holi_time_dict["zmanim"]["tzeis_850_degrees"])
-        elif holi_time_dict['dayOfWeek'] == '7':
-            holiday_string = Holidays.shabbat_before_holiday_israel(
-                lang, spec_date4[2], str(spec_date4[1]),
-                str(datetime.time(d_candle3 - d_delta)), spec_date1[2],
-                spec_date1[1],
-                holi_time_dict_ra1["zmanim"]["tzeis_850_degrees"],
-                day_time, month_time,
-                holi_time_dict["zmanim"]["tzeis_850_degrees"]
+                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                current_time["tzeis_850_degrees"], date_plus_1_day['day'],
+                date_plus_1_day['month'],
+                time_plus_1_day["tzeis_850_degrees"]
             )
-        elif holi_time_dict['dayOfWeek'] == '5':
+    else:
+        if last_days_pesach:
+            holiday_string = Holidays.lighting(
+                lang, current_date['day'], current_date['month'],
+                (sunset_current_date - delta_18_minutes).strftime(
+                    "%H:%M:%S"),  date_plus_1_day['day'],
+                date_plus_1_day['month'],  time_plus_1_day["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'] == '7':
+            holiday_string = Holidays.one_day_shabbat_before(
+                lang, date_minus_2_days['day'], date_minus_2_days['month'],
+                (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_1_day['day'], date_minus_1_day['month'],
+                time_plus_1_day["tzeis_850_degrees"], current_date['day'],
+                current_date['month'], current_time["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'] == '5':
             holiday_string = Holidays.lighting_shabbat(
-                lang, spec_date1[2], str(spec_date1[1]),
-                str(datetime.time(d_candle - d_delta)), day_time, month_time,
-                str(datetime.time(d_candle2 - d_delta)), spec_date2[2],
-                str(spec_date2[1]),
-                holi_time_dict_ra3["zmanim"]["tzeis_850_degrees"])
+                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                (sunset_current_date - delta_18_minutes).strftime(
+                    "%H:%M:%S"), date_plus_1_day['day'],
+                date_plus_1_day['month'], time_plus_1_day["tzeis_850_degrees"]
+            )
         else:
             holiday_string = Holidays.lighting(
-                lang, spec_date1[2], str(spec_date1[1]),
-                str(datetime.time(d_candle - d_delta)), day_time, month_time,
-                holi_time_dict["zmanim"]["tzeis_850_degrees"])
+                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                current_date['day'], current_date['month'],
+                current_time["tzeis_850_degrees"]
+            )
 
     return holiday_string
 
 
-index = get_holidays_dict
+# Собираем строку для праздника
+def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
+    diaspora = db_operations.get_diaspora_status(user_id)
+    holiday_string = ''
+
+    if holiday_name in 'israel_holidays':
+        for israel_name in ['YomHaShoah', 'YomHaZikaron', 'YomHaAtzmaut',
+                            'YomYerushalayim']:
+            holiday_dict = transform_holiday_dict(israel_name, user_id)
+            holiday_name = get_holiday_name(holiday_dict, lang)
+            holiday_date = get_holiday_date(holiday_dict, lang)
+            if israel_name == 'YomYerushalayim':
+                holiday = f'{holiday_name}%{holiday_date}'
+            else:
+                holiday = f'{holiday_name}%{holiday_date}\n'
+            holiday_string += holiday
+        return holiday_string
+
+    holiday_dict = transform_holiday_dict(holiday_name, user_id)
+    holiday_name = get_holiday_name(holiday_dict, lang)
+    holiday_date = get_holiday_date(holiday_dict, lang)
+
+    holiday_string = holiday_date
+
+    if holiday_dict['name'] in ['Taanis Esther', '17 of Tamuz', 'Yom Kippur',
+                                '9 of Av', 'Tzom Gedalia', '10 of Teves']:
+        fast_time = get_fast_time(holiday_dict, user_id, lang)
+        holiday_string = f'{holiday_name}\n\n{holiday_date}\n{fast_time}'
+
+    holiday_time = get_holiday_time(holiday_dict, user_id, lang, False)
+
+    if holiday_dict['name'] in ['Rosh Hashana', 'Shavuos']:
+        holiday_string = f'{holiday_date}\n{holiday_time}'
+
+    if holiday_dict['name'] == 'Succos':
+        hoshana_rabba_dict = transform_holiday_dict('HoshanaRabba', user_id)
+        hoshana_rabba_name = get_holiday_name(hoshana_rabba_dict, lang)
+        hoshana_rabba_date = get_holiday_date(hoshana_rabba_dict, lang)
+        holiday_string = f'{holiday_date}\n{holiday_time}\n' \
+                         f'{hoshana_rabba_name}: |{hoshana_rabba_date}'
+
+    elif holiday_dict['name'] == 'Pesach':
+        holiday_time_last_days = get_holiday_time(
+            holiday_dict, user_id, lang, True)
+        holiday_string = f'{holiday_date}\n' \
+                         f'{holiday_time}\n' \
+                         f'!{holiday_time_last_days}'
+
+    elif holiday_dict['name'] == 'Shmini Atzeres':
+        if diaspora:
+            holiday_dates = {
+                'Russian': 'Дата: |21-22 Октября 2019,^Понедельник-Вторник',
+                'English': 'Date: |21-22 October 2019,^Monday-Tuesday',
+                # TODO hebrew
+            }
+            holiday_date = holiday_dates.get(lang, '')
+        holiday_string = f'{holiday_date}\n{holiday_time}'
+
+    return holiday_string
 
 
-def tu_bshevat(holi_id, lang):
-    ind = index(0, holi_id)
-    tu_bshevat_name = get_holiday_name(ind, lang)
-    tu_bshevat_date = get_holiday_data(ind, holi_id, lang)
-    tu_bshevat_str = f'*{tu_bshevat_name}* 🌳\n' \
-                     f'{tu_bshevat_date}'
-    return tu_bshevat_str
-
-
-def taanit_esther(holi_id, lang):
-    ind = index(1, holi_id)
-    taanit_esther_name = get_holiday_name(ind, lang)
-    taanit_esther_date = get_holiday_data(ind, holi_id, lang)
-    taanit_esther_time = fast(ind, holi_id, lang)
-    taanit_esther_str = f'*{taanit_esther_name}*\n\n' \
-                        f'{taanit_esther_date}\n' \
-                        f'{taanit_esther_time}'
-    return taanit_esther_str
-
-
-def purim(holi_id, lang):
-    ind_0 = index(2, holi_id)
-    ind_1 = index(3, holi_id)
-    purim_name = get_holiday_name(ind_0, lang)
-    purim_date = get_holiday_data(ind_0, holi_id, lang)
-    shushan_purim_name = get_holiday_name(ind_1, lang)
-    shushan_purim_date = get_holiday_data(ind_1, holi_id, lang)
-    purim_str = f'*{purim_name}* 🎭\n' \
-                f'{purim_date}\n\n' \
-                f'*{shushan_purim_name}*\n' \
-                f'{shushan_purim_date}'
-    return purim_str
-
-
-def pesach(holi_id, lang):
-    ind = index(4, holi_id)
-    pesach_name = get_holiday_name(ind, lang)
-    pesach_date = get_holiday_data(ind, holi_id, lang)
-    pesach_time = sukkot_pesach_shavout(ind, 1, holi_id, lang)
-    pesach_time2 = sukkot_pesach_shavout(ind, 2, holi_id, lang)
-    pesach_str = f'*{pesach_name}* 🍷🍷🍷🍷\n\n' \
-                 f'{pesach_date}\n' \
-                 f'{pesach_time}\n\n' \
-                 f'{pesach_time2}'
-    return pesach_str
-
-
-def get_israel(holi_id, lang):
-    ind_0 = index(5, holi_id)
-    ind_1 = index(6, holi_id)
-    ind_2 = index(7, holi_id)
-    ind_3 = index(9, holi_id)
-    yom_hashoah_name = get_holiday_name(ind_0, lang)
-    yom_hashoah_date = get_holiday_data(ind_0, holi_id, lang)
-    yom_hazikaron_name = get_holiday_name(ind_1, lang)
-    yom_hazikaron_date = get_holiday_data(ind_1, holi_id, lang)
-    yom_haatzmaut_name = get_holiday_name(ind_2, lang)
-    yom_haatzmaut_date = get_holiday_data(ind_2, holi_id, lang)
-    yom_yerushalayim_name = get_holiday_name(ind_3, lang)
-    yom_yerushalayim_date = get_holiday_data(ind_3, holi_id, lang)
-    israel_str = f'🇮🇱🇮🇱🇮🇱\n' \
-                 f'*{yom_hashoah_name}*\n' \
-                 f'{yom_hashoah_date}\n\n' \
-                 f'*{yom_hazikaron_name}*\n' \
-                 f'{yom_hazikaron_date}\n\n' \
-                 f'*{yom_haatzmaut_name}*\n' \
-                 f'{yom_haatzmaut_date}\n\n' \
-                 f'*{yom_yerushalayim_name}*\n' \
-                 f'{yom_yerushalayim_date}'
-    return israel_str
-
-
-def lag_baomer(holi_id, lang):
-    ind = index(8, holi_id)
-    lag_baomer_name = get_holiday_name(ind, lang)
-    lag_baomer_date = get_holiday_data(ind, holi_id, lang)
-    lag_baomer_str = f'*{lag_baomer_name}* 🔥🏹\n' \
-                     f'{lag_baomer_date}'
-    return lag_baomer_str
-
-
-def shavuot(holi_id, lang):
-    ind = index(10, holi_id)
-    shavuot_name = get_holiday_name(ind, lang)
-    shavuot_date = get_holiday_data(ind, holi_id, lang)
-    shavuot_time = sukkot_pesach_shavout(ind, 1, holi_id, lang)
-    shavuot_str = f'*{shavuot_name}* 🌄🍶\n\n' \
-                  f'{shavuot_date}\n' \
-                  f'{shavuot_time}'
-    return shavuot_str
-
-
-def shiva_asar_tammuz(holi_id, lang):
-    ind = index(11, holi_id)
-    shiva_asar_tammuz_name = get_holiday_name(ind, lang)
-    shiva_asar_tammuz_date = get_holiday_data(ind, holi_id, lang)
-    shiva_asar_tammuz_time = fast(ind, holi_id, lang)
-    shiva_asar_tammuz_str = f'*{shiva_asar_tammuz_name}*\n\n' \
-                            f'{shiva_asar_tammuz_date}\n' \
-                            f'{shiva_asar_tammuz_time}'
-    return shiva_asar_tammuz_str
-
-
-def tisha_bav(holi_id, lang):
-    ind = index(12, holi_id)
-    tisha_bav_name = get_holiday_name(ind, lang)
-    tisha_bav_date = get_holiday_data(ind, holi_id, lang)
-    tisha_bav_time = fast(ind, holi_id, lang)
-    tisha_bav_str = f'*{tisha_bav_name}*\n\n' \
-                    f'{tisha_bav_date}\n' \
-                    f'{tisha_bav_time}'
-    return tisha_bav_str
-
-
-def tu_bav(holi_id, lang):
-    ind = index(13, holi_id)
-    tu_bav_name = get_holiday_name(ind, lang)
-    tu_bav_date = get_holiday_data(ind, holi_id, lang)
-    tu_bav_str = f'*{tu_bav_name}* 💑\n' \
-                 f'{tu_bav_date}'
-    return tu_bav_str
-
-
-def rosh_hashanah(holi_id, lang):
-    ind = index(14, holi_id)
-    rosh_hashanah_name = get_holiday_name(ind, lang)
-    rosh_date = get_holiday_data(ind, holi_id, lang)
-    rosh_time = rosh_ash(ind, holi_id, lang)
-    rosh_hashanah_str = f'*{rosh_hashanah_name}* 🍯🍎\n\n' \
-                        f'{rosh_date}\n' \
-                        f'{rosh_time}'
-    return rosh_hashanah_str
-
-
-def tzom_gedaliah(holi_id, lang):
-    ind = index(15, holi_id)
-    tzom_gedaliah_name = get_holiday_name(ind, lang)
-    tzom_gedaliah_date = get_holiday_data(ind, holi_id, lang)
-    tzom_gedaliah_time = fast(ind, holi_id, lang)
-    tzom_gedaliah_str = f'*{tzom_gedaliah_name}*\n\n' \
-                        f'{tzom_gedaliah_date}\n' \
-                        f'{tzom_gedaliah_time}'
-    return tzom_gedaliah_str
-
-
-def yom_kipur(holi_id, lang):
-    ind = index(16, holi_id)
-    yom_kippur_name = get_holiday_name(ind, lang)
-    yom_kippur_date = get_holiday_data(ind, holi_id, lang)
-    yom_kippur_time = yom_kippurim(ind, holi_id, lang)
-    yom_kippur_str = f'*{yom_kippur_name}* 🕍\n\n' \
-                     f'{yom_kippur_date}\n' \
-                     f'{yom_kippur_time}'
-    return yom_kippur_str
-
-
-def succos(holi_id, lang):
-    ind_0 = index(17, holi_id)
-    ind_1 = index(21, holi_id)
-    ind_2 = index(18, holi_id)
-    succos_name = get_holiday_name(ind_0, lang)
-    succos_date = get_holiday_data(ind_0, holi_id, lang)
-    succos_time = sukkot_pesach_shavout(ind_1, 1, holi_id, lang)
-    hoshana_rabba_name = get_holiday_name(ind_2, lang)
-    hoshana_rabba_date = get_holiday_data(ind_2, holi_id, lang)
-    if hoshana_rabba_name == 'HoshanaRabba':
-        succos_str = f'*{succos_name}* 🌿🌴🍋\n\n' \
-                     f'{succos_date}\n' \
-                     f'{succos_time}\n\n' \
-                     f'*Hoshana Rabba*\n' \
-                     f'{hoshana_rabba_date}'
-    else:
-        succos_str = f'*{succos_name}* 🌿🌴🍋\n\n' \
-                     f'{succos_date}\n' \
-                     f'{succos_time}\n\n' \
-                     f'*{hoshana_rabba_name}*\n' \
-                     f'{hoshana_rabba_date}'
-    return succos_str
-
-
-def shmini_atzeres_simhat(holi_id, lang):
-    tz = db_operations.get_tz_by_id(holi_id)
-    ind_0 = index(19, holi_id)
-    ind_1 = index(20, holi_id)
-    shmini_atzeres_simhat_name = get_holiday_name(ind_0, lang)
-    shmini_atzeres_simhat_date = get_holiday_data(ind_0, holi_id, lang)
-    simhat_torah_name = get_holiday_name(ind_1, lang)
-    simhat_torah_date = get_holiday_data(ind_1, holi_id, lang)
-    shmini_simhat_time = sukkot_pesach_shavout(ind_0, 1, holi_id, lang)
-    shmini_simhat_str = ''
-    if tz in ['Asia/Jerusalem', 'Asia/Tel_Aviv', 'Asia/Hebron']:
-        if lang == 'Russian':
-            shmini_simhat_str = f'*{shmini_atzeres_simhat_name}' \
-                                f' и Симхат Тора* \n' \
-                                f'{shmini_atzeres_simhat_date}\n\n' \
-                                f'{shmini_simhat_time}'
-        if lang == 'English':
-            shmini_simhat_str = f'*{shmini_atzeres_simhat_name}' \
-                                f' и Simhat Torah* \n' \
-                                f'{shmini_atzeres_simhat_date}\n\n' \
-                                f'{shmini_simhat_time}'
-    else:
-        shmini_simhat_str = f'*{shmini_atzeres_simhat_name},' \
-                            f' {simhat_torah_name}*\n\n' \
-                            f'{shmini_atzeres_simhat_date}\n' \
-                            f'{simhat_torah_date}\n\n' \
-                            f'{shmini_simhat_time}'
-
-    return shmini_simhat_str
-
-
-def chanukah(holi_id, lang):
-    ind = index(22, holi_id)
-    chanukah_name = get_holiday_name(ind, lang)
-    chanukah_date = get_holiday_data(ind, holi_id, lang)
-    chanukah_str = f'*{chanukah_name}* 🕎\n' \
-                   f'{chanukah_date}'
-    return chanukah_str
-
-
-def asarah_btevet(holi_id, lang):
-    ind = index(23, holi_id)
-    asarah_btevet_name = get_holiday_name(ind, lang)
-    asarah_btevet_date = get_holiday_data(ind, holi_id, lang)
-    asarah_btevet_time = fast(ind, holi_id, lang)
-    asarah_btevet_str = f'*{asarah_btevet_name}*\n\n' \
-                        f'{asarah_btevet_date}\n' \
-                        f'{asarah_btevet_time}'
-    return asarah_btevet_str
+def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
+    text = get_holiday_str(holiday_name, user_id, lang)
+    pic_renders = {
+        'Taanis Esther': picture_maker.FastSender,
+        '17 of Tamuz': picture_maker.FastSender,
+        '9 of Av': picture_maker.FastSender,
+        'Tzom Gedalia': picture_maker.FastSender,
+        '10 of Teves': picture_maker.FastSender,
+        'Tu B\'shvat': picture_maker.TuBiShvatSender,
+        'Lag Ba\'omer': picture_maker.LagBaomerSender,
+        'israel_holidays': picture_maker.IsraelHolidaysSender,
+        'Purim': picture_maker.PurimSender,
+        'Yom Kippur': picture_maker.YomKippurSender,
+        'Chanuka': picture_maker.ChanukaSender,
+        'Succos': picture_maker.SucosSender,
+        'Pesach': picture_maker.PesahSender,
+        'Rosh Hashana': picture_maker.RoshHashanaSender,
+        'Shavuos': picture_maker.ShavuotSender,
+        'Shmini Atzeres': picture_maker.ShminiAtzeretSender
+    }
+    pic = pic_renders.get(holiday_name)(lang).get_image(text)
+    return pic
