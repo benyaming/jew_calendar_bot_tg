@@ -9,8 +9,6 @@ TIMEZONE_DB_API_KEY = environ.get('TIMEZONE_DB_API_KEY')
 BOT_HOST = environ.get('BOT_HOST')  # sever's ip (not localhost!)
 BOT_PORT = environ.get('BOT_PORT')  # server's port
 
-CHATBASE_TOKEN = environ.get('CHATBASE_TOKEN')
-
 # db settings
 dbname = environ.get('dbname')
 user = environ.get('user')
