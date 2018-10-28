@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
+from datetime import datetime, timedelta
+
 import requests
 import pytz
-
-from datetime import datetime, timedelta
 from pyluach import dates, hebrewcal
 
 import data
@@ -661,7 +661,7 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
     return holiday_string
 
 
-def get_holiday_pic(holiday_name: str, user_id: int, lang: str):
+def get_holiday_pic(holiday_name: str, user_id: int, lang: str) -> BytesIO:
     text = get_holiday_str(holiday_name, user_id, lang)
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,

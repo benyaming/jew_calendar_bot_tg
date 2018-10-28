@@ -1,9 +1,10 @@
 import psycopg2
 import redis
+from telebot import TeleBot
+from telebot.types import ReplyKeyboardMarkup
 
 import localization
 import settings
-import text_handler
 
 from utils import get_tz_by_location
 
@@ -156,9 +157,13 @@ def get_lang_by_id(user):
         lang_in_bd = cur.fetchone()
         if lang_in_bd:
             response = lang_in_bd[0]
+            return response
         else:
-            response = text_handler.change_lang()
-        return response
+            with TeleBot(settings.TOKEN) as bot:
+                keyboard = ReplyKeyboardMarkup(True, False)
+                keyboard.row('Русский', 'English')
+                response = 'Выберите язык/Choose the language'
+                bot.send_message(user, response, reply_markup=keyboard)
 
 
 def get_lang_from_redis(user):

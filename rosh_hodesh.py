@@ -1,14 +1,16 @@
-import requests, pytz
-import calendar, re
+import calendar
+import re
+from io import BytesIO
+from datetime import datetime
+
+import requests
+import pytz
+from pyluach import dates
 
 import localization as locale
 import db_operations
-
 from utils import get_tz_by_location
-from io import BytesIO
 from picture_maker import RoshHodeshSender
-from datetime import datetime
-from pyluach import dates
 
 
 URL = 'http://db.ou.org/zmanim/getHolidayCalData.php'

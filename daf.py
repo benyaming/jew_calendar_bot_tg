@@ -1,12 +1,13 @@
-import requests, pytz
-import localization
-
-import utils as f
-import db_operations
-
-from datetime import datetime
-from picture_maker import DafYomiSender
 from io import BytesIO
+from datetime import datetime
+
+import requests
+import pytz
+
+import utils
+import db_operations
+import localization
+from picture_maker import DafYomiSender
 
 
 URL = 'http://db.ou.org/zmanim/getCalendarData.php'
@@ -14,7 +15,7 @@ URL = 'http://db.ou.org/zmanim/getCalendarData.php'
 
 def get_daf(user_id: int, lang: str) -> BytesIO:
     loc = db_operations.get_location_by_id(user_id)
-    tz = f.get_tz_by_location(loc)
+    tz = utils.get_tz_by_location(loc)
     tz_time = pytz.timezone(tz)
     now = datetime.now(tz_time)
     params = {

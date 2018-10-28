@@ -10,7 +10,8 @@ from data import help_menu_buttons
 from localization import Zmanim
 from zmanim import ZmanimList
 
-import db_operations, data
+import db_operations
+import data
 
 
 def get_main_menu(lang):
@@ -570,7 +571,7 @@ def get_zmanim_for_converter_button(
     return keyboard
 
 
-def get_zmanim_for_converter_button_adars(
+def get_zmanim_for_two_addars(
         date: list,
         lang: str
 ) -> InlineKeyboardMarkup:

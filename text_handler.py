@@ -29,7 +29,7 @@ def check_auth(func):
             return func(instanse, *args)
     return wrapper
 
-
+ 
 class TextHandler(object):
 
     def __init__(self, user_id: int, text: str):
@@ -451,7 +451,9 @@ class TextHandler(object):
                         )
                     except KeyError:
                         self._chatbase('incorrect heb date month')
-                        return self._incorrect_date('incorrect_heb_date_format')
+                        return self._incorrect_date(
+                            'incorrect_heb_date_format'
+                        )
             elif len(input_data) == 4 \
                     and input_data[1].lower() in ['adar', 'адар'] \
                     and input_data[2] in ['1', '2']:
@@ -476,7 +478,7 @@ class TextHandler(object):
                     if response:
                         message_text = response['response']
                         if type(response['date']) == list:
-                            keyboard = kbrd.get_zmanim_for_converter_button_adars(
+                            keyboard = kbrd.get_zmanim_for_two_addars(
                                 response['date'],
                                 self._lang
                             )

@@ -772,7 +772,7 @@ zmanim_en = {
     'astronomical_hour_gra': 'Astronomical Hour [GR"A]'
 }
 
-zmanim_he = { #TODO перевод
+zmanim_he = {  # TODO перевод
     'sunrise': 'Hanetz Hachama',
     'sof_zman_tefila_gra': 'Sof Zman Tefilah [GR"A]',
     'sof_zman_tefila_ma': 'Sof Zman Tefilah [M"A]',
@@ -1068,57 +1068,57 @@ holiday_menu_buttons = {
                    },
     'Israel holidays': {'Russian': 'Израильские праздники',
                         'English': 'Israel holidays',
-                        'Hebrew': 'Israel holidays' # TODO
+                        'Hebrew': 'Israel holidays'  # TODO
                         },
     'Main holidays': {'Russian': 'Основные праздники',
                       'English': 'Main holidays',
-                      'Hebrew': 'Main holidays'# TODO
+                      'Hebrew': 'Main holidays'  # TODO
                       },
     'Main menu': {'Russian': 'Главное меню',
                   'English': 'Main menu',
-                  'Hebrew': 'Main menu'# TODO
+                  'Hebrew': 'Main menu'  # TODO
                   },
     'More': {'Russian': 'Ещё...',
              'English': 'More...',
-             'Hebrew': 'More...'# TODO
+             'Hebrew': 'More...'  # TODO
              },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'# TODO
+             'Hebrew': 'Back'  # TODO
              }
 }
 
 settings_menu_buttons = {
     'Select zmanim': {'Russian': 'Выбрать зманим',
                       'English': 'Select zmanim',
-                      'Hebrew': 'Select zmanim'# TODO
+                      'Hebrew': 'Select zmanim'  # TODO
                       },
     'Candle lighting': {'Russian': 'Зажигание свечей',
                         'English': 'Candle lighting',
-                        'Hebrew': 'Candle lighting'# TODO
+                        'Hebrew': 'Candle lighting'  # TODO
                         },
     'Language': {'Russian': 'Язык',
                  'English': 'Language',
-                 'Hebrew': 'Language'# TODO
+                 'Hebrew': 'Language'  # TODO
                  },
     'Diaspora': {'Russian': 'Диаспора',
                  'English': 'Diaspora',
-                 'Hebrew': 'Diaspora'# TODO
+                 'Hebrew': 'Diaspora'  # TODO
                  },
     'Location': {'Russian': 'Локация',
                  'English': 'Location',
-                 'Hebrew': 'Location'# TODO
+                 'Hebrew': 'Location'  # TODO
                  },
     'Back': {'Russian': 'Назад',
              'English': 'Back',
-             'Hebrew': 'Back'# TODO
+             'Hebrew': 'Back'  # TODO
              }
 }
 
 fast_menu_buttons = {
     'Tzom Gedaliah': {'Russian': 'Пост Гедалии',
                       'English': 'Fast of Gedaliah',
-                      'Hebrew': 'Tzom Gedaliah'# TODO
+                      'Hebrew': 'Tzom Gedaliah'  # TODO
                       },
     'Asarah BTevet': {'Russian': '10 Тевета',
                       'English': '10 of Tevet',

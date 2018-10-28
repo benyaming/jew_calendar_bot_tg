@@ -2,13 +2,12 @@ from telebot import TeleBot
 from telebot.types import CallbackQuery
 
 import jcb_chatbase
-
 import settings
 import data
-import keyboards as kbrd
 import db_operations
 import localization
 import zmanim
+import keyboards as kbrd
 
 
 class CallbackHandler(object):

@@ -316,7 +316,7 @@ class ZmanimSender(PictureSender):
     def _get_font_properties(self, number_of_lines: int) -> dict:
         p = {
             # [font_size, y_offset, start_y_offset, start_x_offset
-            1: [58, 68,300],
+            1: [58, 68, 300],
             2: [58, 68, 270],
             3: [58, 68, 220],
             4: [58, 68, 180],
@@ -785,7 +785,7 @@ class YomKippurSender(PictureSender):
                         header.split('?')[1]
                     ]
                 else:
-                    headers = [header,]
+                    headers = [header, ]
 
                 for header in headers:
                     # draw headers

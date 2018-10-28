@@ -303,7 +303,7 @@ class Shabos(object):
                        f'Tzeit hakochavim: |{th}',
             'Hebrew': f'פרשת השבוע: |{data.parashat_he[parasha]}\n'
                       f'הדלקת נרות: |{cl}\n'
-                      #TODO
+                      # TODO
                       f'צאת הכוכבים: |{th}'
         }
         shabos_str = responses.get(lang, '')
@@ -364,7 +364,7 @@ class Zmanim(object):
                        'получать:',
             'English': 'Nothing to show. Select zmanim that you want to '
                        'receive:',
-            'Hebrew': '' #TODO перевод
+            'Hebrew': ''  # TODO перевод
         }
         error_message = responses.get(lang, '')
         return error_message
@@ -412,7 +412,7 @@ class Utils(object):
         responses = {
             'Russian': 'Выберите:',
             'English': 'Choose:',
-            'Hebrew': 'празднички' #TODO перевод
+            'Hebrew': 'празднички'  # TODO перевод
         }
         response = responses.get(lang, '')
         return response
@@ -1360,8 +1360,8 @@ class Holidays(object):
                        f'Sefer ben Ashmashot:| {ben_ashmashot[:-3:]}\n'
                        f'Nevareshet:| {nevareshet[:-3:]}\n'
                        f'Shmirat shabbat kelhata:| {shmirat_shabat[:-3:]}',
-        'Hebrew': f'{day_begin} תחילת הצום'
-                  f' {data.gr_months_index_en[month_begin]}:'
+            'Hebrew': f'{day_begin} תחילת הצום'
+                       f' {data.gr_months_index_en[month_begin]}:'
                        f' *{time_begin[:-3:]}*:חצות\n*{chatzot[:-3:]}*\n'
                        f'יציאת הצום {day_end}'
                        f' {data.gr_months_index_en[month_end]}\n'
@@ -1512,8 +1512,7 @@ class Converter(object):
                        f'{greg_date_1[0]}*, {data.days_en[day_of_week_1]}\n'
                        f'Gregorian date (Adar II): *{greg_date_2[2]} '
                        f'{data.gr_months_index_en[greg_date_2[1]]} '
-                       f'{greg_date_2[0]}*, {data.days_en[day_of_week_2]}'
-            ,
+                       f'{greg_date_2[0]}*, {data.days_en[day_of_week_2]}',
             'Hebrew': f''  # TODO перевод
         }
         response = responses.get(lang, '')
