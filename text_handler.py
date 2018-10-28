@@ -38,6 +38,8 @@ class TextHandler(object):
         self._text = text
         if self._text in ['Русский', 'English']:
             self._lang = self._langs.get(self._text, '')
+        elif self._text == 'Language':
+            self._lang = None
         else:
             self._lang = db_operations.get_lang_from_redis(self._user_id)
 
@@ -53,20 +55,23 @@ class TextHandler(object):
             jcb_chatbase.chatbase_bot_handler(self._user_id, intent)
 
     def handle_text(self):
-        user_has_state = states.check_state(self._user_id)
-        if user_has_state['ok']:
-            if self._text in ['Отмена', 'Cancel']:
-                states.delete_state(self._user_id)
-                self._main_menu()
+        if self._lang:
+            user_has_state = states.check_state(self._user_id)
+            if user_has_state['ok']:
+                if self._text in ['Отмена', 'Cancel']:
+                    states.delete_state(self._user_id)
+                    self._main_menu()
+                else:
+                    func = self._user_states.get(user_has_state['state'])
+                    return func(self)
             else:
-                func = self._user_states.get(user_has_state['state'])
-                return func(self)
+                func = self._handlers.get(self._text)
+                if func:
+                    func(self)
+                else:
+                    self._incorrect_text()
         else:
-            func = self._handlers.get(self._text)
-            if func:
-                func(self)
-            else:
-                self._incorrect_text()
+            self._change_lang()
 
 ###############################################################################
 #                      MENU, LANGUAGE, LOCATION, HELP                         #

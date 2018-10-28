@@ -1,7 +1,5 @@
 import psycopg2
 import redis
-from telebot import TeleBot
-from telebot.types import ReplyKeyboardMarkup
 
 import localization
 import settings
@@ -136,6 +134,13 @@ def set_lang(user, lang):
             query = f'INSERT INTO lang VALUES ({user}, \'{lang}\')'
             cur.execute(query)
             conn.commit()
+            if settings.IS_SERVER:
+                r = redis.StrictRedis(
+                    host=settings.r_host,
+                    port=settings.r_port
+                )
+                r.set(f'{user}', lang)
+                r.expire(f'{user}', 31536000)
         elif lang_in_db[0] != lang:
             query = f'UPDATE lang SET lang = \'{lang}\' WHERE id = {user}'
             cur.execute(query)
@@ -157,14 +162,9 @@ def get_lang_by_id(user):
         lang_in_bd = cur.fetchone()
         if lang_in_bd:
             response = lang_in_bd[0]
-            return response
         else:
-            bot = TeleBot(settings.TOKEN)
-            keyboard = ReplyKeyboardMarkup(True, False)
-            keyboard.row('Русский', 'English')
-            response = 'Выберите язык/Choose the language'
-            bot.send_message(user, response, reply_markup=keyboard)
-            return
+            response = None
+        return response
 
 
 def get_lang_from_redis(user):
