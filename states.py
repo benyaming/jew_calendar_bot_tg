@@ -2,7 +2,7 @@ import psycopg2
 
 import settings
 
-
+ 
 def check_state(user: int) -> dict:
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
