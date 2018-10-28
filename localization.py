@@ -535,7 +535,7 @@ class Utils(object):
     def report(lang: str) -> str:
         responses = {
             'Russian': 'Чтобы сообщить об ошибке, пожалуйста, напишите одному '
-                       'из разработчиков: \nt.me/benyomin \nt.me/Meir_Yartzev'
+                       'из разработчиков: \nt.me/benyomin \nt.me/Meir_Y'
                        '\nt.me/APJIAC \n'
                        'Пожалуйста, убедитесь, что вы ознакомились с часто '
                        'задаваемыми вопросами, доступными по кнопке "ЧаВо" ',
