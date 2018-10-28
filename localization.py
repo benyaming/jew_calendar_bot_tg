@@ -1498,7 +1498,7 @@ class Converter(object):
                        f'Грегорианская дата (Адар I): *{greg_date_1[2]} '
                        f'{data.gr_months_index[greg_date_1[1]]} '
                        f'{greg_date_1[0]}*, {data.days_ru[day_of_week_1]}\n'
-                       f'Грегорианская дата (Адар I): *{greg_date_2[2]} '
+                       f'Грегорианская дата (Адар II): *{greg_date_2[2]} '
                        f'{data.gr_months_index[greg_date_2[1]]} '
                        f'{greg_date_2[0]}*, {data.days_ru[day_of_week_2]}',
             'English': f'Hebrew date: *{heb_date[2]} '

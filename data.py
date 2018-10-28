@@ -859,15 +859,15 @@ get_zmanim_button_converter = {
 }
 
 get_zmanim_button_converter_adar1 = {
-    'Russian': 'Получить зманим на этот день (адар 1)',
-    'English': 'Get zmanim for this day (adar 1)',
+    'Russian': 'Получить зманим на этот день (адар I)',
+    'English': 'Get zmanim for this day (adar I)',
     'Hebrew': ''  # TODO перевод
 }
 
 
 get_zmanim_button_converter_adar2 = {
-    'Russian': 'Получить зманим на этот день (адар 2)',
-    'English': 'Get zmanim for this day (adar 2)',
+    'Russian': 'Получить зманим на этот день (адар II)',
+    'English': 'Get zmanim for this day (adar II)',
     'Hebrew': ''  # TODO перевод
 }
 
