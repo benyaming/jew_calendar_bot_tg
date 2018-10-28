@@ -295,4 +295,3 @@ def get_zmanim(user_id: int, lang: str, custom_date=None) -> dict:
             response['zmanim_set_error'] = \
                 localization.Zmanim.get_zmanim_set_error(lang)
     return response
- 

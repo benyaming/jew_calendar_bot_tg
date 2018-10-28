@@ -159,11 +159,12 @@ def get_lang_by_id(user):
             response = lang_in_bd[0]
             return response
         else:
-            with TeleBot(settings.TOKEN) as bot:
-                keyboard = ReplyKeyboardMarkup(True, False)
-                keyboard.row('Русский', 'English')
-                response = 'Выберите язык/Choose the language'
-                bot.send_message(user, response, reply_markup=keyboard)
+            bot = TeleBot(settings.TOKEN)
+            keyboard = ReplyKeyboardMarkup(True, False)
+            keyboard.row('Русский', 'English')
+            response = 'Выберите язык/Choose the language'
+            bot.send_message(user, response, reply_markup=keyboard)
+            return
 
 
 def get_lang_from_redis(user):
