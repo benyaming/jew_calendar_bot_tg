@@ -33,27 +33,27 @@ def convert_heb_to_greg(hebrew_date: tuple, lang: str) -> dict:
     year_is_leap = Year(year).leap
     response = dict()
     try:
-        if year_is_leap:
-        # если високосный год
-            if month == 12:
-            # просят адар (или адар 1) - то выводим на всякий и для адара 2
+        if year_is_leap:  # если високосный год
+            if month == 12:  # просят адар (или адар 1) выводим и для адара 2
+
                 adar = True
                 hebrew_date_1 = (
                     hebrew_date[0],
-                    13, # чтобы вывело "адар 1"
+                    13,  # чтобы вывело "адар 1"
                     hebrew_date[2]
                 )
                 greg_date_1 = HebrewDate(year, 12, day).to_greg().tuple()
                 day_of_week_1 = datetime(*greg_date_1).weekday()
                 greg_date_2 = HebrewDate(year, 13, day).to_greg().tuple()
                 day_of_week_2 = datetime(*greg_date_2).weekday()
-                response['response'] = localization.Converter.convert_heb_to_greg_two(
+                response['response'] = \
+                    localization.Converter.convert_heb_to_greg_two(
                     hebrew_date_1,
                     day_of_week_1, day_of_week_2,
                     greg_date_1, greg_date_2,
                     lang
                 )
-                response['date'] = [greg_date_1,greg_date_2]
+                response['date'] = [greg_date_1, greg_date_2]
                 return response
             elif month == 13:
                 # спросили чётко про адар 2
@@ -71,6 +71,6 @@ def convert_heb_to_greg(hebrew_date: tuple, lang: str) -> dict:
             lang
         )
         response['date'] = greg_date
-        return  response
+        return response
     except Exception:
         return {}
