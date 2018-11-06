@@ -103,6 +103,10 @@ class TextHandler(object):
         self._chatbase('open main menu')
 
     def _change_lang(self):
+        logger = logging.getLogger("bot_logger")
+        logger.info(
+                f'process: changing lang, {self._user_id}'
+        )
         self._chatbase('change lang', 'user')
         response = 'Выберите язык/Choose the language'
         lang_markup = kbrd.get_lang_menu()
@@ -114,10 +118,18 @@ class TextHandler(object):
         self._chatbase('open language menu')
 
     def _set_lang(self):
+        logger = logging.getLogger("bot_logger")
         db_operations.set_lang(self._user_id, self._lang)
         self._main_menu()
+        logger.info(
+            f'process: chose lang, {self._user_id}'
+        )
 
     def _request_location(self):
+        logger = logging.getLogger("bot_logger")
+        logger.info(
+                f'process: changing loc, {self._user_id}'
+        )
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang)
         response = locale.Utils.request_location(self._lang)
@@ -130,6 +142,10 @@ class TextHandler(object):
         self._chatbase('request location')
 
     def _update_location(self):
+        logger = logging.getLogger("bot_logger")
+        logger.info(
+            f'process: changing loc, {self._user_id}'
+        )
         self._chatbase('update location', 'user')
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang, True)
@@ -141,6 +157,7 @@ class TextHandler(object):
             parse_mode='Markdown'
         )
         self._chatbase('open menu update location')
+
 
     @check_auth
     def _report(self):
@@ -576,16 +593,32 @@ class TextHandler(object):
 
     @check_auth
     def _rosh_hashana(self):
+        logger = logging.getLogger("bot_logger")
+        logger.info(
+            f'process: sending holiday \t up_chb start, {self._user_id}'
+        )
         self._chatbase('rosh hashana', 'user')
+        logger.info(
+            f'process: sending holiday \t up_chb end, {self._user_id}'
+        )
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = holidays.get_holiday_pic(
             'Rosh Hashana',
             self._user_id,
             self._lang
         )
+        logger.info(
+            f'process: sending holiday \t sending photo, {self._user_id}'
+        )
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        logger.info(
+            f'process: sending holiday \t sent photo and start chb, {self._user_id}'
+        )
         self._chatbase('rosh hashana sent')
+        logger.info(
+            f'process: sent holiday, {self._user_id}'
+        )
 
     @check_auth
     def _yom_kippur(self):
