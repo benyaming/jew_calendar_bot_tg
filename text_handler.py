@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
+
 import re
 from datetime import datetime
 
@@ -17,7 +19,6 @@ import settings
 import states
 import jcb_chatbase
 import holidays
-
 
 def check_auth(func):
     def wrapper(instanse, *args):
@@ -55,12 +56,19 @@ class TextHandler(object):
             jcb_chatbase.chatbase_bot_handler(self._user_id, intent)
 
     def handle_text(self):
+        logger = logging.getLogger("bot_logger")
         if self._lang:
+            logger.info(
+                f'process: check_state, {self._user_id}'
+            )
             user_has_state = states.check_state(self._user_id)
             if user_has_state['ok']:
                 if self._text in ['Отмена', 'Cancel']:
                     states.delete_state(self._user_id)
                     self._main_menu()
+                    logger.info(
+                        f'process: main_menu, {self._user_id}'
+                    )
                 else:
                     func = self._user_states.get(user_has_state['state'])
                     return func(self)
@@ -69,8 +77,14 @@ class TextHandler(object):
                 if func:
                     func(self)
                 else:
+                    logger.info(
+                        f'process: incorrect_text   , {self._user_id}'
+                    )
                     self._incorrect_text()
         else:
+            logger.info(
+                f'process: change_lang, {self._user_id}'
+            )
             self._change_lang()
 
 ###############################################################################
