@@ -62,7 +62,7 @@ def handle_start(message: telebot.types.Message):
         'start_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\start\', from: {message.from_user.id}, START'
         )
@@ -81,7 +81,7 @@ def handle_help(message: telebot.types.Message):
         'help_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
@@ -97,7 +97,7 @@ def handle_start(message: telebot.types.Message):
         'settings_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
         )
@@ -113,7 +113,7 @@ def handle_start(message: telebot.types.Message):
         'language_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
         )
@@ -129,7 +129,7 @@ def handle_start(message: telebot.types.Message):
         'location_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
         )
@@ -145,7 +145,7 @@ def handle_start(message: telebot.types.Message):
         'converter_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\converter\', from: {message.from_user.id}, '
             f'CONVERTER'
@@ -165,7 +165,7 @@ def handle_report(message: telebot.types.Message):
         'report_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if settings.IS_SERVER:
+    if not settings.IS_SERVER:
         logger.info(
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
         )
@@ -222,9 +222,16 @@ def handle_reg(message: telebot.types.Message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
+    logger.info(
+            f'Text: {message.text}, from: {message.from_user.id}, '
+            f'TEXT'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, message.text).handle_text()
-
+    logger.info(
+            f'Text: {message.text}, from: {message.from_user.id}, '
+            f'END'
+    )
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call: telebot.types.CallbackQuery):
