@@ -39,6 +39,7 @@ def get_current_year_month_day_tz(user_id: int) -> dict:
 
 # Получение данных о празднике (название, дата)
 def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
+    log(f'Holiday\tget_holiday_dict\tSTART\t{user_id}')
     begin_date = dates.HebrewDate(year=year, month=7, day=1).to_pydate()
     holiday_dict = {}
     diaspora = db_operations.get_diaspora_status(user_id)
@@ -149,14 +150,13 @@ def get_holiday_dict(holiday_name: str, year: int, user_id: int) -> dict:
             values_from_dict['day_of_week'][0],
             values_from_dict['day_of_week'][7]
         ]
+    log(f'Holiday\tget_holiday_dict\tEND\t{user_id}')
     return values_from_dict
 
 
 # Преобразование данных о празднике (название, дата)
 def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
-    log(
-        f'process\tget holiday\ttransform_holiday_dict start\t{user_id}'
-    )
+    log(f'Holiday\ttransform_holiday_dict\tSTART\t{user_id}')
     year = get_current_year_month_day_tz(user_id)['current_year']
     month = get_current_year_month_day_tz(user_id)['current_month']
     day = get_current_year_month_day_tz(user_id)['current_day']
@@ -222,9 +222,7 @@ def transform_holiday_dict(holiday_name: str, user_id: int) -> dict:
             holiday_dict = get_holiday_dict(
                 holiday_name, int(hebrew_year[0]) + 1, user_id)
 
-    log(
-        f'process\tget holiday\ttransform_holiday_dict end\t{user_id}'
-    )
+    log(f'Holiday\ttransform_holiday_dict\tEND\t{user_id}')
     return holiday_dict
 
 
@@ -243,9 +241,7 @@ def get_holiday_name(holiday_info: dict, lang: str) -> str:
 def get_holiday_date(holiday_info: dict, lang: str) -> str:
     
     holiday_name = holiday_info['name']
-    log(
-        f'process\tget holiday \tget_holiday_date start\t{holiday_name}'
-    )
+    log(f'Holiday\tget_holiday_date\tSTART\t')
     # Проверка на длину праздника
     if len(holiday_info['day']) >= 2:
         if len(holiday_info['month']) == 2:
@@ -326,9 +322,7 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
                 lang, date['day'], date['month'], date['year'],
                 date['day_of_week']
             )
-    log(
-        f'process\tget holiday \tget_holiday_date end\t{holiday_name}'
-    )
+    log(f'Holiday\tget_holiday_date\tEND\t')
     return holiday_date
 
 
@@ -336,7 +330,7 @@ def get_holiday_date(holiday_info: dict, lang: str) -> str:
 def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
     location = get_current_year_month_day_tz(user_id)['current_location']
     tz = get_current_year_month_day_tz(user_id)['current_time_zone']
-
+    log(f'Fast\tget_fast_time\tSTART\t{user_id}')
     date = {
         'month': holiday_info['month'][0],
         'day': holiday_info['day'][0],
@@ -414,25 +408,19 @@ def get_fast_time(holiday_info: dict, user_id: int, lang: str) -> str:
             fast_time["tzeis_595_degrees"], ben_ashmashot, nevareshet,
             shmirat_shabat
         )
-
+    log(f'Fast\tget_fast_time\tEND\t{user_id}')
     return fast_time
 
 
 # Получение зманим для праздников
 def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                      last_days_pesach: bool) -> str:
-    
-    holiday_name = holiday_info['name']
-    log(
-        f'process\tget holiday \tget_holiday_time start\t{holiday_name}'
-    )
+
+    log(f'Holiday\tget_holiday_time\tSTART\t{user_id}')
 
     location = get_current_year_month_day_tz(user_id)['current_location']
     tz = get_current_year_month_day_tz(user_id)['current_time_zone']
     diaspora = db_operations.get_diaspora_status(user_id)
-    log(
-        f'process\tget holiday \tget_holiday_time checked loc\t{holiday_name}'
-    )
     date = {
         'day_of_week': holiday_info['day_of_week'][0],
         'month': holiday_info['month'][0],
@@ -454,13 +442,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
         'lng': location[1],
         'havdala_offset': '72'
     }
-    log(
-        f'process\tget holiday \tget_holiday_time request start\t{holiday_name}'
-    )
     current_time = requests.get(URL_ZMANIM, params=params).json()['zmanim']
-    log(
-        f'process\tget holiday \tget_holiday_time request end\t{holiday_name}'
-    )
     # Обработка мест, где невозможно определить зманим
     if current_time['chatzos'] == 'X:XX:XX':
         return Holidays.polar_area(lang)
@@ -623,9 +605,7 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                 current_date['day'], current_date['month'],
                 current_time["tzeis_850_degrees"]
             )
-    log(
-        f'process\tget holiday \tget_holiday_time end\t{holiday_name}'
-    )
+    log(f'Holiday\tget_holiday_time\tEND\t{user_id}')
     return holiday_string
 
 
@@ -633,10 +613,8 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
     diaspora = db_operations.get_diaspora_status(user_id)
     holiday_string = ''
-    
-    log(
-        f'process\tget holiday \tget string start\t{user_id}'
-    )
+    log(f'Holiday\tget_holiday_str\tSTART\t{user_id}')
+
     if holiday_name in 'israel_holidays':
         for israel_name in ['YomHaShoah', 'YomHaZikaron', 'YomHaAtzmaut',
                             'YomYerushalayim']:
@@ -648,9 +626,7 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
             else:
                 holiday = f'{holiday_name}%{holiday_date}\n'
             holiday_string += holiday
-            log(
-                f'process\tget holiday \tget string end\t{user_id}'
-            )
+            log(f'Holiday\tget_holiday_str\tEND\t{user_id}')
         return holiday_string
 
     holiday_dict = transform_holiday_dict(holiday_name, user_id)
@@ -692,21 +668,13 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
             }
             holiday_date = holiday_dates.get(lang, '')
         holiday_string = f'{holiday_date}\n{holiday_time}'
-    log(
-        f'process\tget holiday \t get string end\t{user_id}'
-    )
+    log(f'Holiday\tget_holiday_str\tEND\t{user_id}')
     return holiday_string
 
 
 def get_holiday_pic(holiday_name: str, user_id: int, lang: str) -> BytesIO:
-    
-    log(
-        f'process\tsending holiday \tget pic start\t{user_id}'
-    )
+    log(f'Holiday\tget_holiday_pic\tSTART\t{user_id}')
     text = get_holiday_str(holiday_name, user_id, lang)
-    log(
-        f'process\tsending holiday \tget pic holiday_str\t{user_id}'
-    )
     pic_renders = {
         'Taanis Esther': picture_maker.FastSender,
         '17 of Tamuz': picture_maker.FastSender,
@@ -725,11 +693,10 @@ def get_holiday_pic(holiday_name: str, user_id: int, lang: str) -> BytesIO:
         'Shavuos': picture_maker.ShavuotSender,
         'Shmini Atzeres': picture_maker.ShminiAtzeretSender
     }
-    log(
-        f'process\tsending holiday \tget pic rend\t{user_id}'
-    )
+
+    log(f'Holiday\tpic_renders\tSTART\t{user_id}')
     pic = pic_renders.get(holiday_name)(lang).get_image(text)
-    log(
-        f'process\tsending holiday \tget pic end\t{user_id}'
-    )
+    log(f'Holiday\tpic_renders\tEND\t{user_id}')
+
+    log(f'Holiday\tget_holiday_pic\tEND\t{user_id}')
     return pic

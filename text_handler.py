@@ -46,6 +46,7 @@ class TextHandler(object):
             self._lang = db_operations.get_lang_from_redis(self._user_id)
 
     def _chatbase(self, intent: str, agent='bot', not_handled=False):
+        log(f'chatbase\t{intent}\tSTART\t{self._user_id}')
         if agent == 'user':
             jcb_chatbase.chatbase_user_msg_handler(
                 self._user_id,
@@ -55,20 +56,16 @@ class TextHandler(object):
             )
         elif agent == 'bot':
             jcb_chatbase.chatbase_bot_handler(self._user_id, intent)
+        log(f'chatbase\t{intent}\tEND\t{self._user_id}')
 
     def handle_text(self):
         if self._lang:
-            log(
-                f'process\tcheck_state\t\t{self._user_id}'
-            )
             user_has_state = states.check_state(self._user_id)
             if user_has_state['ok']:
                 if self._text in ['Отмена', 'Cancel']:
                     states.delete_state(self._user_id)
                     self._main_menu()
-                    log(
-                        f'process\tmain_menu\t\t{self._user_id}'
-                    )
+                    log(f'process\tmain_menu\t\t{self._user_id}')
                 else:
                     func = self._user_states.get(user_has_state['state'])
                     return func(self)
@@ -77,14 +74,10 @@ class TextHandler(object):
                 if func:
                     func(self)
                 else:
-                    log(
-                        f'process\tincorrect_text\t\t{self._user_id}'
-                    )
+                    log(f'process\tincorrect_text\t\t{self._user_id}')
                     self._incorrect_text()
         else:
-            log(
-                f'process\tchange_lang\t\t{self._user_id}'
-            )
+            log(f'process\tchange_lang\t\t{self._user_id}')
             self._change_lang()
 
 ###############################################################################
@@ -103,7 +96,6 @@ class TextHandler(object):
         self._chatbase('open main menu')
 
     def _change_lang(self):
-        log(f'process\tchanging lang\tstart\t{self._user_id}')
         self._chatbase('change lang', 'user')
         response = 'Выберите язык/Choose the language'
         lang_markup = kbrd.get_lang_menu()
@@ -113,7 +105,6 @@ class TextHandler(object):
             reply_markup=lang_markup
         )
         self._chatbase('open language menu')
-        log(f'process\tchanging lang\tend\t{self._user_id}')
 
     def _set_lang(self):
         db_operations.set_lang(self._user_id, self._lang)
@@ -121,7 +112,6 @@ class TextHandler(object):
         log(f'process\tchose lang\t\t{self._user_id}')
 
     def _request_location(self):
-        log(f'process\tchanging loc\tstart\t{self._user_id}')
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang)
         response = locale.Utils.request_location(self._lang)
@@ -132,10 +122,8 @@ class TextHandler(object):
             parse_mode='Markdown'
         )
         self._chatbase('request location')
-        log(f'process\tchanging loc\tend\t{self._user_id}')
 
     def _update_location(self):
-        log(f'process\tchanging loc\tstart\t{self._user_id}')
         self._chatbase('update location', 'user')
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang, True)
@@ -147,7 +135,6 @@ class TextHandler(object):
             parse_mode='Markdown'
         )
         self._chatbase('open menu update location')
-        log(f'process\tchanging loc\tend\t{self._user_id}')
 
 
     @check_auth
@@ -319,8 +306,10 @@ class TextHandler(object):
         self._chatbase('shabbos', 'user')
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = shabbos.get_shabbos(self._lang, self._user_id)
+        log(f'Shabbat\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Shabbat\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('shabbos sent')
 
     @check_auth
@@ -328,8 +317,10 @@ class TextHandler(object):
         self._chatbase('rosh chodesh', 'user')
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = rosh_hodesh.get_rh(self._user_id, self._lang)
+        log(f'Rosh Chodesh\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Rosh Chodesh\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('rosh chodesh sent')
 
     @check_auth
@@ -337,8 +328,10 @@ class TextHandler(object):
         self._chatbase('daf yomi', 'user')
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = daf.get_daf(self._user_id, self._lang)
+        log(f'Daf Yomi\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Daf Yomi\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('daf yomi sent')
 
 ###############################################################################
@@ -584,32 +577,20 @@ class TextHandler(object):
 
     @check_auth
     def _rosh_hashana(self):
-        
-        log(
-            f'process\tsending holiday \t_chatbase start\t{self._user_id}'
-        )
         self._chatbase('rosh hashana', 'user')
-        log(
-            f'process\tsending holiday \t_chatbase end\t{self._user_id}'
-        )
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = holidays.get_holiday_pic(
             'Rosh Hashana',
             self._user_id,
             self._lang
         )
-        log(
-            f'process\tsending holiday \t sending photo\t{self._user_id}'
-        )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
-        log(
-            f'process\tsending holiday \tsent photo and start chatbaseb\t{self._user_id}'
-        )
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('rosh hashana sent')
-        log(
-            f'process\tsent holiday\t{self._user_id}'
-        )
 
     @check_auth
     def _yom_kippur(self):
@@ -620,8 +601,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('yom kippur sent')
 
     @check_auth
@@ -633,8 +618,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('succos sent')
 
     @check_auth
@@ -646,8 +635,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('shmini atzeres sent')
 
     @check_auth
@@ -659,8 +652,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('chanukah sent')
 
     @check_auth
@@ -672,8 +669,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('tu bishvat sent')
 
     @check_auth
@@ -685,8 +686,12 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
+
         self._chatbase('purim sent')
 
     @check_auth
@@ -698,8 +703,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('pesach sent')
 
     @check_auth
@@ -711,8 +718,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('lag baomer sent')
 
     @check_auth
@@ -724,8 +733,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('shavuos sent')
 
     @check_auth
@@ -737,8 +748,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Holidays\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Holidays\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('israel sent')
 
 ###############################################################################
@@ -763,8 +776,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'FASTS\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'FASTS\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('fast gedaliah sent')
 
     @check_auth
@@ -776,8 +791,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Fasts\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Fasts\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('10 of tevet sent')
 
     @check_auth
@@ -789,8 +806,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Fasts\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Fasts\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('fast esther sent')
 
     @check_auth
@@ -802,8 +821,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Fasts\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Fasts\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('17 of tammuz sent')
 
     @check_auth
@@ -815,8 +836,10 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
+        log(f'Fasts\t_bot.send_photo\tSTART\t{self._user_id}')
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
+        log(f'Fasts\t_bot.send_photo\tEND\t{self._user_id}')
         self._chatbase('9 of av sent')
 
     _handlers = {
