@@ -19,6 +19,7 @@ import settings
 import states
 import jcb_chatbase
 import holidays
+from utils import log
 
 def check_auth(func):
     def wrapper(instanse, *args):
@@ -56,9 +57,8 @@ class TextHandler(object):
             jcb_chatbase.chatbase_bot_handler(self._user_id, intent)
 
     def handle_text(self):
-        logger = logging.getLogger("bot_logger")
         if self._lang:
-            logger.info(
+            log(
                 f'process: check_state, {self._user_id}'
             )
             user_has_state = states.check_state(self._user_id)
@@ -66,7 +66,7 @@ class TextHandler(object):
                 if self._text in ['Отмена', 'Cancel']:
                     states.delete_state(self._user_id)
                     self._main_menu()
-                    logger.info(
+                    log(
                         f'process: main_menu, {self._user_id}'
                     )
                 else:
@@ -77,12 +77,12 @@ class TextHandler(object):
                 if func:
                     func(self)
                 else:
-                    logger.info(
+                    log(
                         f'process: incorrect_text   , {self._user_id}'
                     )
                     self._incorrect_text()
         else:
-            logger.info(
+            log(
                 f'process: change_lang, {self._user_id}'
             )
             self._change_lang()
@@ -103,8 +103,8 @@ class TextHandler(object):
         self._chatbase('open main menu')
 
     def _change_lang(self):
-        logger = logging.getLogger("bot_logger")
-        logger.info(
+        
+        log(
                 f'process: changing lang, {self._user_id}'
         )
         self._chatbase('change lang', 'user')
@@ -118,16 +118,16 @@ class TextHandler(object):
         self._chatbase('open language menu')
 
     def _set_lang(self):
-        logger = logging.getLogger("bot_logger")
+        
         db_operations.set_lang(self._user_id, self._lang)
         self._main_menu()
-        logger.info(
+        log(
             f'process: chose lang, {self._user_id}'
         )
 
     def _request_location(self):
-        logger = logging.getLogger("bot_logger")
-        logger.info(
+        
+        log(
                 f'process: changing loc, {self._user_id}'
         )
         self._bot.send_chat_action(self._user_id, 'typing')
@@ -142,8 +142,8 @@ class TextHandler(object):
         self._chatbase('request location')
 
     def _update_location(self):
-        logger = logging.getLogger("bot_logger")
-        logger.info(
+        
+        log(
             f'process: changing loc, {self._user_id}'
         )
         self._chatbase('update location', 'user')
@@ -593,12 +593,12 @@ class TextHandler(object):
 
     @check_auth
     def _rosh_hashana(self):
-        logger = logging.getLogger("bot_logger")
-        logger.info(
+        
+        log(
             f'process: sending holiday \t up_chb start, {self._user_id}'
         )
         self._chatbase('rosh hashana', 'user')
-        logger.info(
+        log(
             f'process: sending holiday \t up_chb end, {self._user_id}'
         )
         self._bot.send_chat_action(self._user_id, 'upload_photo')
@@ -607,16 +607,16 @@ class TextHandler(object):
             self._user_id,
             self._lang
         )
-        logger.info(
+        log(
             f'process: sending holiday \t sending photo, {self._user_id}'
         )
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
-        logger.info(
+        log(
             f'process: sending holiday \t sent photo and start chb, {self._user_id}'
         )
         self._chatbase('rosh hashana sent')
-        logger.info(
+        log(
             f'process: sent holiday, {self._user_id}'
         )
 

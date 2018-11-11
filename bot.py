@@ -23,23 +23,7 @@ ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.URI}/'
 
-logger = logging.getLogger('bot_logger')
-logger.setLevel(logging.INFO)
-handler = RotatingFileHandler(
-    path.join(
-        settings.logs_path,
-        'jcb_logfile.log'
-    ),
-    maxBytes=1024*1024*3,
-    backupCount=20
-)
-formatter = logging.Formatter(
-    fmt='%(filename)s\t[LINE:%(lineno)d]#\t' 
-    '[%(asctime)s]\t'
-    '%(message)s'
-)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+utils.set_logger()
 
 bot = telebot.TeleBot(settings.TOKEN)
 
@@ -63,7 +47,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\start\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -82,7 +66,7 @@ def handle_help(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -98,7 +82,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -114,7 +98,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -130,7 +114,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -146,7 +130,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\converter\', from: {message.from_user.id}, '
             f'CONVERTER'
         )
@@ -166,7 +150,7 @@ def handle_report(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     if not settings.IS_SERVER:
-        logger.info(
+        utils.log(
             f' Command: \'\help\', from: {message.from_user.id}, REPORT'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -222,13 +206,13 @@ def handle_reg(message: telebot.types.Message):
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
-    logger.info(
+    utils.log(
             f'Text: {message.text}, from: {message.from_user.id}, '
             f'TEXT'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, message.text).handle_text()
-    logger.info(
+    utils.log(
             f'Text: {message.text}, from: {message.from_user.id}, '
             f'END'
     )
@@ -240,7 +224,7 @@ def handle_callback(call: telebot.types.CallbackQuery):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        logger.info('STARTING WEBHOOK...')
+        utils.log('STARTING WEBHOOK...')
         bot.remove_webhook()
         sleep(1)
         bot.set_webhook(
@@ -249,7 +233,7 @@ if __name__ == '__main__':
         )
 
     else:
-        logger.info('STARTING POLLING....')
+        utils.log('STARTING POLLING....')
         bot.remove_webhook()
         sleep(1)
         bot.polling(True, timeout=50)
