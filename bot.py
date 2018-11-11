@@ -46,10 +46,10 @@ def handle_start(message: telebot.types.Message):
         'start_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\start\', from: {message.from_user.id}, START'
-        )
+
+    utils.log(
+        f' Command: \'\start\', from: {message.from_user.id}, START'
+    )
     db_operations.check_id_in_db(message.from_user)
     keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
     keyboard.row('Русский', 'English')
@@ -65,10 +65,9 @@ def handle_help(message: telebot.types.Message):
         'help_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\help\', from: {message.from_user.id}, START'
-        )
+    utils.log(
+        f' Command: \'\help\', from: {message.from_user.id}, START'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Help').handle_text()
 
@@ -81,10 +80,9 @@ def handle_start(message: telebot.types.Message):
         'settings_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
-        )
+    utils.log(
+        f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Settings').handle_text()
 
@@ -97,10 +95,9 @@ def handle_start(message: telebot.types.Message):
         'language_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
-        )
+    utils.log(
+        f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Language').handle_text()
 
@@ -113,10 +110,9 @@ def handle_start(message: telebot.types.Message):
         'location_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
-        )
+    utils.log(
+        f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Location').handle_text()
 
@@ -129,11 +125,10 @@ def handle_start(message: telebot.types.Message):
         'converter_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\converter\', from: {message.from_user.id}, '
-            f'CONVERTER'
-        )
+    utils.log(
+        f' Command: \'\converter\', from: {message.from_user.id}, '
+        f'CONVERTER'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(
         message.from_user.id,
@@ -149,10 +144,9 @@ def handle_report(message: telebot.types.Message):
         'report_command'
     )
     bot.send_chat_action(message.from_user.id, 'typing')
-    if not settings.IS_SERVER:
-        utils.log(
-            f' Command: \'\help\', from: {message.from_user.id}, REPORT'
-        )
+    utils.log(
+        f' Command: \'\help\', from: {message.from_user.id}, REPORT'
+    )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(
         message.from_user.id,
