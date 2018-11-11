@@ -5,9 +5,10 @@ import localization
 import settings
 
 from utils import get_tz_by_location
-
+from utils import log
 
 def check_id_in_db(user):
+    log(f'Database\tcheck_id_in_db\tSTART\t{user.id}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT id FROM public.users WHERE id = {user.id}'
@@ -23,9 +24,10 @@ def check_id_in_db(user):
                     f'\'{user.last_name}\')'
             cur.execute(query)
             conn.commit()
-
+    log(f'Database\tcheck_id_in_db\tEND\t{user.id}')
 
 def check_location(user, lat, long, bot):
+    log(f'Database\tcheck_location\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         lang = get_lang_from_redis(user)
@@ -78,10 +80,12 @@ def check_location(user, lat, long, bot):
                 response = localization.Utils.failed_check_tz(lang)
                 bot.send_message(user, response)
                 response = False
+        log(f'Database\tcheck_location\tEND\t{user}')
         return response
 
 
 def get_location_by_id(user_id):
+    log(f'Database\tget_location_by_id\tSTART\t{user_id}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT latitude, longitude FROM locations ' \
@@ -89,10 +93,12 @@ def get_location_by_id(user_id):
         cur.execute(query)
         location = cur.fetchone()
         response = location
+        log(f'Database\tget_location_by_id\tEND\t{user_id}')
         return response
 
 
 def check_tz(user, tz):
+    log(f'Database\tcheck_tz\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT tz FROM public.tz WHERE id = {user}'
@@ -112,19 +118,22 @@ def check_tz(user, tz):
             else:
                 diaspora = True
             set_diaspora_status(user, diaspora)
-
+    log(f'Database\tcheck_tz\tEND\t{user}')
 
 def get_tz_by_id(user_id):
+    log(f'Database\tget_tz_by_id\tSTART\t{user_id}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT public.tz.tz FROM public.tz WHERE id = {user_id}'
         cur.execute(query)
         tz = cur.fetchone()
         response = tz[0]
+        log(f'Database\tget_tz_by_id\tEND\t{user_id}')
         return response
 
 
 def set_lang(user, lang):
+    log(f'Database\tset_lang\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT lang FROM lang WHERE id = {user}'
@@ -152,9 +161,10 @@ def set_lang(user, lang):
                 )
                 r.set(f'{user}', lang)
                 r.expire(f'{user}', 31536000)
-
+    log(f'Database\tset_lang\tEND\t{user}')
 
 def get_lang_by_id(user):
+    log(f'Database\tget_lang_by_id\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT lang FROM lang WHERE id = {user}'
@@ -164,10 +174,12 @@ def get_lang_by_id(user):
             response = lang_in_bd[0]
         else:
             response = None
+        log(f'Database\tget_lang_by_id\tEND\t{user}')
         return response
 
 
 def get_lang_from_redis(user):
+    log(f'Database\tget_lang_from_redis\tSTART\t{user}')
     if settings.IS_SERVER:
         r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
         lang_in_redis = r.get(user)
@@ -181,10 +193,12 @@ def get_lang_from_redis(user):
             response = lang
     else:
         response = get_lang_by_id(user)
+    log(f'Database\tget_lang_from_redis\tEND\t{user}')
     return response
 
 
 def get_candle_offset(user_id: int) -> int:
+    log(f'Database\tget_candle_offset\tSTART\t{user_id}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT candle_offset FROM shabos_settings ' \
@@ -192,15 +206,19 @@ def get_candle_offset(user_id: int) -> int:
         cur.execute(query)
         offset = cur.fetchone()
         if offset:
+            log(f'Database\tget_candle_offset\tEND\t{user_id}')
             return offset[0]
         else:
             query = f'INSERT INTO shabos_settings VALUES ({user_id}, DEFAULT)'
             cur.execute(query)
             conn.commit()
+            log(f'Database\tget_candle_offset\tEND\t{user_id}')
             return get_candle_offset(user_id)
 
 
+
 def update_candle_offset(user_id: int, new_offset: int) -> bool:
+    log(f'Database\tupdate_candle_offset\tSTART\t{user_id}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         result = True
         old_offset = get_candle_offset(user_id)
@@ -211,10 +229,12 @@ def update_candle_offset(user_id: int, new_offset: int) -> bool:
                 f'WHERE user_id = {user_id}'
         cur.execute(query)
         conn.commit()
+        log(f'Database\tupdate_candle_offset\tEND\t{user_id}')
         return result
 
 
 def get_zmanim_set(user: int) -> str:
+    log(f'Database\tget_zmanim_set\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT zmanim_set FROM zmanim_settings WHERE ' \
@@ -225,21 +245,26 @@ def get_zmanim_set(user: int) -> str:
             query = f'INSERT INTO zmanim_settings VALUES ({user}, DEFAULT)'
             cur.execute(query)
             conn.commit()
+            log(f'Database\tget_zmanim_set\tEND\t{user}')
             return get_zmanim_set(user)
         else:
+            log(f'Database\tget_zmanim_set\tEND\t{user}')
             return zmanim_set[0]
 
 
 def update_zmanim_set(user: int, zmanim_set: str) -> None:
+    log(f'Database\tupdate_zmanim_set\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'UPDATE zmanim_settings SET zmanim_set = \'{zmanim_set}\' ' \
                 f'WHERE user_id = {user}'
         cur.execute(query)
         conn.commit()
+    log(f'Database\tupdate_zmanim_set\tEND\t{user}')
 
 
 def get_diaspora_status(user: int) -> bool:
+    log(f'Database\tget_diaspora_status\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT diaspora_status FROM diaspora_settings WHERE ' \
@@ -247,6 +272,7 @@ def get_diaspora_status(user: int) -> bool:
         cur.execute(query)
         diaspora_status = cur.fetchone()
         if diaspora_status:
+            log(f'Database\tget_diaspora_status\tEND\t{user}')
             return diaspora_status[0]
         else:
             tz = get_tz_by_id(user)
@@ -255,11 +281,12 @@ def get_diaspora_status(user: int) -> bool:
             else:
                 diaspora = True
             set_diaspora_status(user, diaspora)
-
+            log(f'Database\tget_diaspora_status\tEND\t{user}')
             return diaspora
 
 
 def set_diaspora_status(user: int, status) -> None:
+    log(f'Database\tset_diaspora_status\tSTART\t{user}')
     with psycopg2.connect(settings.db_parameters_string) as conn:
         cur = conn.cursor()
         query = f'SELECT diaspora_status FROM diaspora_settings ' \
@@ -275,3 +302,4 @@ def set_diaspora_status(user: int, status) -> None:
                     f'VALUES ({user}, \'{status}\')'
         cur.execute(query)
         conn.commit()
+        log(f'Database\tset_diaspora_status\tEND\t{user}')

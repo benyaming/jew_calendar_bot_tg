@@ -59,7 +59,7 @@ class TextHandler(object):
     def handle_text(self):
         if self._lang:
             log(
-                f'process: check_state, {self._user_id}'
+                f'process\tcheck_state\t\t{self._user_id}'
             )
             user_has_state = states.check_state(self._user_id)
             if user_has_state['ok']:
@@ -67,7 +67,7 @@ class TextHandler(object):
                     states.delete_state(self._user_id)
                     self._main_menu()
                     log(
-                        f'process: main_menu, {self._user_id}'
+                        f'process\tmain_menu\t\t{self._user_id}'
                     )
                 else:
                     func = self._user_states.get(user_has_state['state'])
@@ -78,12 +78,12 @@ class TextHandler(object):
                     func(self)
                 else:
                     log(
-                        f'process: incorrect_text   , {self._user_id}'
+                        f'process\tincorrect_text\t\t{self._user_id}'
                     )
                     self._incorrect_text()
         else:
             log(
-                f'process: change_lang, {self._user_id}'
+                f'process\tchange_lang\t\t{self._user_id}'
             )
             self._change_lang()
 
@@ -103,10 +103,7 @@ class TextHandler(object):
         self._chatbase('open main menu')
 
     def _change_lang(self):
-        
-        log(
-                f'process: changing lang, {self._user_id}'
-        )
+        log(f'process\tchanging lang\tstart\t{self._user_id}')
         self._chatbase('change lang', 'user')
         response = 'Выберите язык/Choose the language'
         lang_markup = kbrd.get_lang_menu()
@@ -116,20 +113,15 @@ class TextHandler(object):
             reply_markup=lang_markup
         )
         self._chatbase('open language menu')
+        log(f'process\tchanging lang\tend\t{self._user_id}')
 
     def _set_lang(self):
-        
         db_operations.set_lang(self._user_id, self._lang)
         self._main_menu()
-        log(
-            f'process: chose lang, {self._user_id}'
-        )
+        log(f'process\tchose lang\t\t{self._user_id}')
 
     def _request_location(self):
-        
-        log(
-                f'process: changing loc, {self._user_id}'
-        )
+        log(f'process\tchanging loc\tstart\t{self._user_id}')
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang)
         response = locale.Utils.request_location(self._lang)
@@ -140,12 +132,10 @@ class TextHandler(object):
             parse_mode='Markdown'
         )
         self._chatbase('request location')
+        log(f'process\tchanging loc\tend\t{self._user_id}')
 
     def _update_location(self):
-        
-        log(
-            f'process: changing loc, {self._user_id}'
-        )
+        log(f'process\tchanging loc\tstart\t{self._user_id}')
         self._chatbase('update location', 'user')
         self._bot.send_chat_action(self._user_id, 'typing')
         geobutton = kbrd.get_geobutton(self._lang, True)
@@ -157,6 +147,7 @@ class TextHandler(object):
             parse_mode='Markdown'
         )
         self._chatbase('open menu update location')
+        log(f'process\tchanging loc\tend\t{self._user_id}')
 
 
     @check_auth
@@ -595,11 +586,11 @@ class TextHandler(object):
     def _rosh_hashana(self):
         
         log(
-            f'process: sending holiday \t up_chb start, {self._user_id}'
+            f'process\tsending holiday \t_chatbase start\t{self._user_id}'
         )
         self._chatbase('rosh hashana', 'user')
         log(
-            f'process: sending holiday \t up_chb end, {self._user_id}'
+            f'process\tsending holiday \t_chatbase end\t{self._user_id}'
         )
         self._bot.send_chat_action(self._user_id, 'upload_photo')
         response_pic = holidays.get_holiday_pic(
@@ -608,16 +599,16 @@ class TextHandler(object):
             self._lang
         )
         log(
-            f'process: sending holiday \t sending photo, {self._user_id}'
+            f'process\tsending holiday \t sending photo\t{self._user_id}'
         )
         self._bot.send_photo(self._user_id, response_pic)
         response_pic.close()
         log(
-            f'process: sending holiday \t sent photo and start chb, {self._user_id}'
+            f'process\tsending holiday \tsent photo and start chatbaseb\t{self._user_id}'
         )
         self._chatbase('rosh hashana sent')
         log(
-            f'process: sent holiday, {self._user_id}'
+            f'process\tsent holiday\t{self._user_id}'
         )
 
     @check_auth

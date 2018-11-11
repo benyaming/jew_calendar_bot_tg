@@ -48,7 +48,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
 
     utils.log(
-        f' Command: \'\start\', from: {message.from_user.id}, START'
+        f' Command: \'\start\'\t\tfrom: {message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -66,7 +66,7 @@ def handle_help(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\help\', from: {message.from_user.id}, START'
+        f' Command: \'\help\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Help').handle_text()
@@ -81,7 +81,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
+        f' Command: \'\settings\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Settings').handle_text()
@@ -96,7 +96,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
+        f' Command: \'\language\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Language').handle_text()
@@ -111,7 +111,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
+        f' Command: \'\location\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Location').handle_text()
@@ -126,8 +126,7 @@ def handle_start(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\converter\', from: {message.from_user.id}, '
-        f'CONVERTER'
+        f' Command: \'\converter\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(
@@ -145,7 +144,7 @@ def handle_report(message: telebot.types.Message):
     )
     bot.send_chat_action(message.from_user.id, 'typing')
     utils.log(
-        f' Command: \'\help\', from: {message.from_user.id}, REPORT'
+        f' Command: \'\help\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(
@@ -201,14 +200,12 @@ def handle_reg(message: telebot.types.Message):
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text_message(message: telebot.types.Message):
     utils.log(
-            f'Text: {message.text}, from: {message.from_user.id}, '
-            f'TEXT'
+            f'Text\t{message.text}\tSTART\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, message.text).handle_text()
     utils.log(
-            f'Text: {message.text}, from: {message.from_user.id}, '
-            f'END'
+            f'Text\t{message.text}\tEND\t{message.from_user.id}'
     )
 
 @bot.callback_query_handler(func=lambda call: True)
