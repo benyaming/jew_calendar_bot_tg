@@ -31,8 +31,8 @@ def set_logger():
         backupCount=20
     )
     formatter = logging.Formatter(
-        fmt='%(filename)s\t[LINE:%(lineno)d]\t%(levelname)-8s'
-            '[%(asctime)s]\t'
+        fmt='%(levelname)-8s\t'
+            '%(asctime)s\t'
             '%(message)s'
     )
     handler.setFormatter(formatter)
