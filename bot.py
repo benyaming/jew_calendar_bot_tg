@@ -212,7 +212,7 @@ def handle_callback(call: telebot.types.CallbackQuery):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        utils.log('STARTING WEBHOOK\t\t\t')
+        utils.log(f'STARTING WEBHOOK\t\t\t')
         bot.remove_webhook()
         sleep(1)
         bot.set_webhook(
@@ -221,7 +221,7 @@ if __name__ == '__main__':
         )
 
     else:
-        utils.log('STARTING POLLING\t\t\t')
+        utils.log(f'STARTING POLLING\t\t\t')
         bot.remove_webhook()
         sleep(1)
         bot.polling(True, timeout=50)

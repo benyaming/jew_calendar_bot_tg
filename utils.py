@@ -30,7 +30,7 @@ def set_logger():
         backupCount=20
     )
     formatter = logging.Formatter(
-        fmt='%(levelname)-8s\t'
+        fmt='%(levelname)s\t'
             '%(asctime)s\t'
             '%(message)s'
     )
