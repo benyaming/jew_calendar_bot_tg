@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
-from logging.handlers import RotatingFileHandler
 
 from time import sleep
-from os import path
 
 import telebot
 import db_operations
@@ -48,7 +45,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
 
     utils.log(
-        f' Command: \'\start\'\t\tfrom: {message.from_user.id}'
+        f' Command: \'\start\'\t\t{message.from_user.id}'
     )
     db_operations.check_id_in_db(message.from_user)
     keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -215,7 +212,7 @@ def handle_callback(call: telebot.types.CallbackQuery):
 
 if __name__ == '__main__':
     if settings.IS_SERVER:
-        utils.log('STARTING WEBHOOK...')
+        utils.log('STARTING WEBHOOK\t\t\t')
         bot.remove_webhook()
         sleep(1)
         bot.set_webhook(
@@ -224,7 +221,7 @@ if __name__ == '__main__':
         )
 
     else:
-        utils.log('STARTING POLLING....')
+        utils.log('STARTING POLLING\t\t\t')
         bot.remove_webhook()
         sleep(1)
         bot.polling(True, timeout=50)

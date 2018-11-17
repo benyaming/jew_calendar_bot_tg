@@ -179,7 +179,7 @@ def get_lang_by_id(user):
 
 
 def get_lang_from_redis(user):
-    log(f'Database\tget_lang_from_redis\tSTART\t{user}')
+    log(f'Redis\tget_lang_from_redis\tSTART\t{user}')
     if settings.IS_SERVER:
         r = redis.StrictRedis(host=settings.r_host, port=settings.r_port)
         lang_in_redis = r.get(user)
@@ -193,7 +193,7 @@ def get_lang_from_redis(user):
             response = lang
     else:
         response = get_lang_by_id(user)
-    log(f'Database\tget_lang_from_redis\tEND\t{user}')
+    log(f'Redis\tget_lang_from_redis\tEND\t{user}')
     return response
 
 

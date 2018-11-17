@@ -10,6 +10,7 @@ import db_operations, data
 from picture_maker import ZmanimSender
 
 import localization
+from utils import log
 
 URL = 'http://db.ou.org/zmanim/getCalendarData.php'
 
@@ -273,6 +274,7 @@ def get_date(user_id, lang: str, cusom_date=None) -> str:
 
 
 def get_zmanim(user_id: int, lang: str, custom_date=None) -> dict:
+    log(f'Zmanim\tget_zmanim\tSTART\t{user_id}')
     response = {'polar_error': False, 'zmanim_set_error': False}
     zmanim_dict = get_zmanim_dict(user_id, custom_date)
     if zmanim_dict['chatzos'] == 'X:XX:XX':
@@ -294,4 +296,5 @@ def get_zmanim(user_id: int, lang: str, custom_date=None) -> dict:
         else:
             response['zmanim_set_error'] = \
                 localization.Zmanim.get_zmanim_set_error(lang)
+    log(f'Zmanim\tget_zmanim\tEND\t{user_id}')
     return response
