@@ -21,7 +21,7 @@ WEBHOOK_PORT = settings.BOT_PORT
 ssl_cert = '/hdd/certs/webhook_cert.pem'
 ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
-route_path = settings.URI
+route_path = f'/settings.URI/'
 
 logger = logging.getLogger('bot_logger')
 logger.setLevel(logging.INFO)
