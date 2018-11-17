@@ -3,6 +3,8 @@ from os import environ
 
 IS_SERVER = environ.get('IS_SERVER')
 
+URI = environ.get('URI')
+
 TOKEN = environ.get('TOKEN')  # bot's token
 TIMEZONE_DB_API_KEY = environ.get('TIMEZONE_DB_API_KEY')
 
