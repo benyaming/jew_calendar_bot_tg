@@ -276,11 +276,14 @@ def get_date(user_id, lang: str, cusom_date=None) -> str:
 def get_zmanim(user_id: int, lang: str, custom_date=None) -> dict:
     log(f'Zmanim\tget_zmanim\tSTART\t{user_id}')
     response = {'polar_error': False, 'zmanim_set_error': False}
-    zmanim_dict = get_zmanim_dict(user_id, custom_date)
-    if zmanim_dict['chatzos'] == 'X:XX:XX':
-        response['polar_error'] = localization.Zmanim.get_polar_error(lang)
-    else:
-        user_zmanim_set = db_operations.get_zmanim_set(user_id)
+    zmanim_dict = get_zmanim_dict(user, custom_date)
+    for zman in zmanim_dict.keys():
+        if zmanim_dict[zman] == 'X:XX:XX':
+            response['polar_error'] = localization.Zmanim.get_polar_error(lang)
+            break
+
+    if not response['polar_error']:
+        user_zmanim_set = db_operations.get_zmanim_set(user)
         user_zmanim_str = collect_custom_zmanim(
             zmanim_dict,
             user_zmanim_set,
