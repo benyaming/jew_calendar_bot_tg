@@ -18,8 +18,8 @@ from flask import Flask, request
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
-ssl_cert = '/hdd/certs/webhook_cert.pem'
-ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
+# ssl_cert = '/hdd/certs/webhook_cert.pem'
+# ssl_cert_key = '/hdd/certs/webhook_pkey.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.URI}/'
 
@@ -64,7 +64,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\start\', from: {message.from_user.id}, START'
+            f'Command: \'\\start\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
     keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -83,7 +83,7 @@ def handle_help(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\help\', from: {message.from_user.id}, START'
+            f' Command: \'\\help\', from: {message.from_user.id}, START'
         )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Help').handle_text()
@@ -99,7 +99,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\settings\', from: {message.from_user.id}, SETTINGS'
+            f' Command: \'\\settings\', from: {message.from_user.id}, SETTINGS'
         )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Settings').handle_text()
@@ -115,7 +115,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\language\', from: {message.from_user.id}, LANGUAGE'
+            f' Command: \'\\language\', from: {message.from_user.id}, LANGUAGE'
         )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Language').handle_text()
@@ -131,7 +131,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\location\', from: {message.from_user.id}, LOCATION'
+            f' Command: \'\\location\', from: {message.from_user.id}, LOCATION'
         )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(message.from_user.id, 'Location').handle_text()
@@ -147,7 +147,7 @@ def handle_start(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\converter\', from: {message.from_user.id}, '
+            f' Command: \'\\converter\', from: {message.from_user.id}, '
             f'CONVERTER'
         )
     db_operations.check_id_in_db(message.from_user)
@@ -167,7 +167,7 @@ def handle_report(message: telebot.types.Message):
     bot.send_chat_action(message.from_user.id, 'typing')
     if settings.IS_SERVER:
         logger.info(
-            f' Command: \'\help\', from: {message.from_user.id}, REPORT'
+            f' Command: \'\\help\', from: {message.from_user.id}, REPORT'
         )
     db_operations.check_id_in_db(message.from_user)
     text_handler.TextHandler(
@@ -237,8 +237,8 @@ if __name__ == '__main__':
         bot.remove_webhook()
         sleep(1)
         bot.set_webhook(
-            url=f'{base_url}{route_path}',
-            certificate=open(ssl_cert, 'r')
+            url=f'{base_url}{route_path}'
+            # certificate=open(ssl_cert, 'r')
         )
 
     else:
