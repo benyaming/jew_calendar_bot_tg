@@ -18,7 +18,6 @@ from flask import Flask, request
 
 WEBHOOK_HOST = settings.BOT_HOST
 WEBHOOK_PORT = settings.BOT_PORT
-ssl_cert = '/hdd/certs/fullchain.pem'
 base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.URI}/'
 
@@ -235,10 +234,7 @@ if __name__ == '__main__':
         logger.info('STARTING WEBHOOK...')
         bot.remove_webhook()
         sleep(1)
-        bot.set_webhook(
-            url=f'{base_url}{route_path}',
-            certificate=open(ssl_cert, 'r')
-        )
+        bot.set_webhook(url=f'{base_url}{route_path}')
 
     else:
         logger.info('STARTING POLLING....')
