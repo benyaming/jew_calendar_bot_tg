@@ -16,9 +16,6 @@ import jcb_chatbase
 from flask import Flask, request
 
 
-WEBHOOK_HOST = settings.BOT_HOST
-WEBHOOK_PORT = settings.BOT_PORT
-base_url = f'{WEBHOOK_HOST}:{WEBHOOK_PORT}'
 route_path = f'/{settings.URI}/'
 
 logger = logging.getLogger('bot_logger')
@@ -232,9 +229,6 @@ def handle_callback(call: telebot.types.CallbackQuery):
 if __name__ == '__main__':
     if settings.IS_SERVER:
         logger.info('STARTING WEBHOOK...')
-        bot.remove_webhook()
-        sleep(1)
-        bot.set_webhook(url=f'{base_url}{route_path}')
 
     else:
         logger.info('STARTING POLLING....')
