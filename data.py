@@ -209,6 +209,7 @@ gr_dayofweek_he = {
 
 jewish_months = {
     'Nisan': 'Нисан',
+    'Nissan': 'Нисан',
     'Iyar': 'Ияр',
     'Sivan': 'Сиван',
     'Tamuz': 'Таммуз',
@@ -251,6 +252,7 @@ jewish_months_a = {
 
 jewish_months_he = {
     'Nisan': 'ניסן',
+    'Nissan': 'Ниcана',
     'Iyar': 'אייר',
     'Sivan': 'סיון',
     'Tamuz': 'תמוז',
