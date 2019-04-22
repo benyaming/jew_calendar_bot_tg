@@ -146,7 +146,7 @@ class CallbackHandler(object):
         self._bot.answer_callback_query(self._call.id, response)
         self._bot.edit_message_reply_markup(self._call.from_user.id,
                                             self._call.message.message_id)
-        db_operations.subscribe_to_omer(self._user_id, self._lang)
+        db_operations.subscribe_to_omer(self._user_id)
 
     _call_prefixes = {
         'zmanim': _edit_zman_status,
