@@ -141,10 +141,17 @@ class CallbackHandler(object):
             reply_markup=new_markup,
             parse_mode='Markdown'
         )'''
+    def _subscribe_to_omer(self):
+        response = 'OK!'
+        self._bot.answer_callback_query(self._call.id, response)
+        self._bot.edit_message_reply_markup(self._call.from_user.id,
+                                            self._call.message.message_id)
+        db_operations.subscribe_to_omer(self._user_id, self._lang)
 
     _call_prefixes = {
         'zmanim': _edit_zman_status,
         'candle_offset': _edit_candle_offset,
         #       'diaspora': _edit_diaspora,
         'get_zmanim': _get_zmanim_by_date,
+        'omer': _subscribe_to_omer
     }
