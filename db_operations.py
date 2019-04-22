@@ -275,3 +275,12 @@ def set_diaspora_status(user: int, status) -> None:
                     f'VALUES ({user}, \'{status}\')'
         cur.execute(query)
         conn.commit()
+
+
+def subscribe_to_omer(user_id: int) -> None:
+    with psycopg2.connect(settings.db_parameters_string) as conn:
+        cur = conn.cursor()
+        query = 'INSERT INTO omer_subscriptions ' \
+                'VALUES (%s) ON CONFLICT DO NOTHING'
+        cur.execute(query, (user_id,))
+        conn.commit()
