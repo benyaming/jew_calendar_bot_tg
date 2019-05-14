@@ -189,14 +189,17 @@ def collect_custom_zmanim(
         zman = int(user_zmanim[i])
         if zman:
             zman_code = ZmanimList(i).name
-            func = zmanim_funcs.get(zman_code, '')
+            func = zmanim_funcs.get(zman_code)
             zman_names = {
                 'Russian': data.zmanim_ru[zman_code],
                 'English': data.zmanim_en[zman_code],
                 'Hebrew': data.zmanim_he[zman_code]
             }
-            zman_name = zman_names.get(lang,'')
-            zman_string = f'{zman_name} —{func(zmanim_dict, lang)[:-3]}'
+            zman_name = zman_names.get(lang)
+            zman_value = func(zmanim_dict, lang)
+            if not zman_value:
+                continue
+            zman_string = f'{zman_name} —{zman_value[:-3]}'
             if first_zman_flag:
                 user_zmanim_str += f'{zman_string}'
                 first_zman_flag = False
