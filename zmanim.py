@@ -197,14 +197,13 @@ def collect_custom_zmanim(
             }
             zman_name = zman_names.get(lang)
             zman_value = func(zmanim_dict, lang)
-            if not zman_value:
-                continue
-            zman_string = f'{zman_name} —{zman_value[:-3]}'
-            if first_zman_flag:
-                user_zmanim_str += f'{zman_string}'
-                first_zman_flag = False
-            else:
-                user_zmanim_str += f'\n{zman_string}'
+            if zman_value:
+                zman_string = f'{zman_name} —{zman_value[:-3]}'
+                if first_zman_flag:
+                    user_zmanim_str += f'{zman_string}'
+                    first_zman_flag = False
+                else:
+                    user_zmanim_str += f'\n{zman_string}'
     return user_zmanim_str
 
 
