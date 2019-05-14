@@ -120,7 +120,8 @@ def get_tzeis_72_minutes(zmanim_dict: dict, lang: str) -> str:
 
 def get_astronomical_hour_ma(zmanim_dict: dict, lang: str) -> str:
     if zmanim_dict['sof_zman_shema_ma'] != 'X:XX:XX' and \
-            zmanim_dict['sof_zman_tefila_ma'] != 'X:XX:XX':
+            zmanim_dict['sof_zman_tefila_ma'] != 'X:XX:XX' and \
+            zmanim_dict['sof_zman_shema_ma'] and zmanim_dict['sof_zman_tefila_ma']:
         begin_hour_ma = datetime.strptime(
             zmanim_dict['sof_zman_shema_ma'],
             "%H:%M:%S"
