@@ -609,6 +609,7 @@ def get_holiday_str(holiday_name: str, user_id: int, lang: str) -> str:
         for israel_name in ['YomHaShoah', 'YomHaZikaron', 'YomHaAtzmaut',
                             'YomYerushalayim']:
             holiday_dict = transform_holiday_dict(israel_name, user_id)
+            holiday_dict['day_of_week'] = str(int(holiday_dict['day_of_week']) + 1)
             holiday_name = get_holiday_name(holiday_dict, lang)
             holiday_date = get_holiday_date(holiday_dict, lang)
             if israel_name == 'YomYerushalayim':
