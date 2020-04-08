@@ -483,6 +483,9 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
     sunset_plus_1_day = datetime.strptime(
         time_plus_1_day['sunset'], "%H:%M:%S"
     )
+    sunset_plus_2_day = datetime.strptime(
+        time_plus_2_day['sunset'], "%H:%M:%S"
+    )
     sunset_minus_1_day = datetime.strptime(
         time_minus_1_day['sunset'], "%H:%M:%S"
     )
@@ -515,7 +518,23 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
     # Проверка на диаспору
     if diaspora:
-        if date['day_of_week'][0] == '4':
+        if date['day_of_week'][0] == '4' and last_days_pesach:
+            holiday_string = Holidays.lighting_double_shabbat(
+                lang,
+                date_minus_2_days['day'],
+                date_minus_2_days['month'],
+                (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_1_day['day'],
+                date_minus_1_day['month'],
+                time_minus_1_day["tzeis_850_degrees"],
+                current_date['day'],
+                current_date['month'],
+                (sunset_current_date - delta_18_minutes).strftime("%H:%M:%S"),
+                date_plus_1_day['day'],
+                date_plus_1_day['month'],
+                time_plus_1_day["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'][0] == '4':
             holiday_string = Holidays.lighting_double_shabbat(
                 lang, date_minus_1_day['day'], date_minus_1_day['month'],
                 (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
@@ -567,11 +586,20 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
     else:
         if last_days_pesach:
             holiday_string = Holidays.lighting(
-                lang, current_date['day'], current_date['month'],
-                (sunset_current_date - delta_18_minutes).strftime(
-                    "%H:%M:%S"),  date_plus_1_day['day'],
-                date_plus_1_day['month'],  time_plus_1_day["tzeis_850_degrees"]
+                lang=lang,
+                light_day=date_minus_1_day['day'],
+                light_month=date_minus_1_day['month'],
+                light_time=(sunset_current_date - delta_18_minutes).strftime('%H:%M:%S'),
+                avdala_day=current_date['day'],
+                avdala_month=current_date['month'],
+                avdala_time=current_time['tzeis_850_degrees']
             )
+            # holiday_string = Holidays.lighting(
+            #     lang, current_date['day'], current_date['month'],
+            #     (sunset_current_date - delta_18_minutes).strftime(
+            #         "%H:%M:%S"),  date_plus_1_day['day'],
+            #     date_plus_1_day['month'],  time_plus_1_day["tzeis_850_degrees"]
+            # )
         elif date['day_of_week'] == '7':
             holiday_string = Holidays.one_day_shabbat_before(
                 lang, date_minus_2_days['day'], date_minus_2_days['month'],
