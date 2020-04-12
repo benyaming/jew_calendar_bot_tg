@@ -518,31 +518,36 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
 
     # Проверка на диаспору
     if diaspora:
-        # if date['day_of_week'][0] == '5' and last_days_pesach:
-        #     holiday_string = Holidays.lighting_double_shabbat(
-        #         lang,
-        #         date_minus_2_days['day'],
-        #         date_minus_2_days['month'],
-        #         (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
-        #         date_minus_1_day['day'],
-        #         date_minus_1_day['month'],
-        #         time_minus_1_day["tzeis_850_degrees"],
-        #         current_date['day'],
-        #         current_date['month'],
-        #         (sunset_current_date - delta_18_minutes).strftime("%H:%M:%S"),
-        #         date_plus_1_day['day'],
-        #         date_plus_1_day['month'],
-        #         time_plus_1_day["tzeis_850_degrees"]
-        #     )
-        if date['day_of_week'][0] == '5':
+        if date['day_of_week'][0] == '4' and last_days_pesach:
+            holiday_string = Holidays.lighting_double(
+                lang,
+                # date_minus_2_days['day'],
+                # date_minus_2_days['month'],
+                # (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_2_days['day'],
+                date_minus_2_days['month'],
+                (sunset_minus_2_days - delta_18_minutes).strftime("%H:%M:%S"),
+                date_minus_1_day['day'],
+                date_minus_1_day['month'],
+                time_minus_1_day["tzeis_850_degrees"],
+                current_date['day'],
+                current_date['month'],
+                current_time["tzeis_850_degrees"]
+            )
+        elif date['day_of_week'][0] == '4':
             holiday_string = Holidays.lighting_double_shabbat(
-                lang, date_minus_1_day['day'], date_minus_1_day['month'],
+                lang,
+                date_minus_1_day['day'],
+                date_minus_1_day['month'],
                 (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
-                current_date['day'], current_date['month'],
-                current_time["tzeis_850_degrees"], date_plus_1_day['day'],
+                current_date['day'],
+                current_date['month'],
+                current_time["tzeis_850_degrees"],
+                date_plus_1_day['day'],
                 date_plus_1_day['month'],
                 (sunset_plus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
-                date_plus_2_days['day'], date_plus_2_days['month'],
+                date_plus_2_days['day'],
+                date_plus_2_days['month'],
                 time_plus_2_day["tzeis_850_degrees"]
             )
         elif date['day_of_week'][0] == '7' or \

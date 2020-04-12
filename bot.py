@@ -19,22 +19,22 @@ from flask import Flask, request
 route_path = f'/{settings.URI}/'
 
 logger = logging.getLogger('bot_logger')
-logger.setLevel(logging.INFO)
-handler = RotatingFileHandler(
-    path.join(
-        settings.logs_path,
-        'jcb_logfile.log'
-    ),
-    maxBytes=1024*1024*3,
-    backupCount=20
-)
-formatter = logging.Formatter(
-    fmt='%(filename)s[LINE:%(lineno)d]# ' 
-    '%(levelname)-8s [%(asctime)s]  '
-    '%(message)s'
-)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+# logger.setLevel(logging.INFO)
+# handler = RotatingFileHandler(
+#     path.join(
+#         settings.logs_path,
+#         'jcb_logfile.log'
+#     ),
+#     maxBytes=1024*1024*3,
+#     backupCount=20
+# )
+# formatter = logging.Formatter(
+#     fmt='%(filename)s[LINE:%(lineno)d]# '
+#     '%(levelname)-8s [%(asctime)s]  '
+#     '%(message)s'
+# )
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
 
 bot = telebot.TeleBot(settings.TOKEN)
 
