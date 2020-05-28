@@ -534,16 +534,21 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                 current_date['month'],
                 current_time["tzeis_850_degrees"]
             )
-        elif date['day_of_week'][0] == '4':
-            holiday_string = Holidays.lighting_double_shabbat(
-                lang, date_minus_1_day['day'], date_minus_1_day['month'],
-                (sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
-                current_date['day'], current_date['month'],
-                current_time["tzeis_850_degrees"], date_plus_1_day['day'],
-                date_plus_1_day['month'],
-                (sunset_plus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
-                date_plus_2_days['day'], date_plus_2_days['month'],
-                time_plus_2_day["tzeis_850_degrees"]
+        elif date['day_of_week'][0] == '5':
+            holiday_string = Holidays.lighting_shabbat(
+                lang=lang,
+                light_day=date_minus_1_day['day'],
+                light_month=date_minus_1_day['month'],
+                light_time=(sunset_minus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                light_shab_day=current_date['day'],
+                light_shab_month=current_date['month'],
+                light_shab_time=(sunset_plus_1_day - delta_18_minutes).strftime("%H:%M:%S"),
+                avdala_day=date_plus_1_day['day'],
+                avdala_month=date_plus_1_day['month'],
+                avdala_time=time_plus_2_day["tzeis_850_degrees"],
+                # date_plus_2_days['day'],
+                # date_plus_2_days['month'],
+                # time_plus_2_day["tzeis_850_degrees"]
             )
         elif date['day_of_week'][0] == '7' or \
                 date['day_of_week'] == '7' and last_days_pesach:
