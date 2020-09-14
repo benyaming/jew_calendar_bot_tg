@@ -1048,6 +1048,8 @@ class RoshHashanaSender(PictureSender):
         for line in succos_data:
             defenition = line.split('|')[0]
             value = line.split('|')[1]
+            # One time fix for Rosh hashana 2020 only!
+            defenition = defenition.replace('#', '\n')
             defenition_offset = self._bold_font_offset(defenition)
 
             # draw definition
@@ -1069,6 +1071,16 @@ class RoshHashanaSender(PictureSender):
                     )
                     start_position_y += y_offset_small
                 start_position_y += y_offset_small
+            elif '\n' in defenition:
+                draw.text(
+                    (
+                        start_position_x + self._bold_font_offset(defenition.split('\n')[1])[0],
+                        start_position_y + self._bold_font_offset(defenition.split('\n')[1])[1]
+                    ),
+                    value,
+                    font=self._regular_font
+                )
+                start_position_y += y_offset + self._bold_font_offset(defenition.split('\n')[1])[1]
             else:
                 draw.text(
                     (

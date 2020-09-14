@@ -622,6 +622,20 @@ def get_holiday_time(holiday_info: dict, user_id: int, lang: str,
                     "%H:%M:%S"), date_plus_1_day['day'],
                 date_plus_1_day['month'], time_plus_1_day["tzeis_850_degrees"]
             )
+        elif holiday_info['name'] == 'Rosh Hashana':
+            # One time fix for Rosh hashana 2020 only!
+            holiday_string = Holidays.shabbat_include(
+                lang=lang,
+                light_1_day=date_minus_1_day['day'],
+                light_1_month=date_minus_1_day['month'],
+                light_1_time=(sunset_minus_1_day - delta_18_minutes).strftime('%H:%M:%S'),
+                light_2_day=current_date['day'],
+                light_2_month=current_date['month'],
+                light_2_time=current_time['tzeis_850_degrees'],
+                avdala_day=date_plus_1_day['day'],
+                avdala_month=date_plus_1_day['month'],
+                avdala_time=time_plus_1_day['tzeis_850_degrees']
+            )
         else:
             holiday_string = Holidays.lighting(
                 lang, date_minus_1_day['day'], date_minus_1_day['month'],

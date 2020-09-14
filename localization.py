@@ -1027,7 +1027,8 @@ class Holidays(object):
             avdala_time: str
     ) -> str:
         responses = {
-            'Russian': f'Зажигание свечей (Шаббат) {light_1_day} '
+            # One time fix for Rosh hashana 2020 only!
+            'Russian': f'Зажигание свечей (Шаббат) #{light_1_day} '
                        f'{data.gr_months_index[light_1_month]}: |'
                        f'{light_1_time:.5s}\n'
                        f'Зажигание свечей {light_2_day} '
@@ -1036,7 +1037,7 @@ class Holidays(object):
                        f'Авдала {avdala_day} '
                        f'{data.gr_months_index[avdala_month]}: |'
                        f'{avdala_time:.5s}',
-            'English': f'Candle lighting (Shabbat) {light_1_day} '
+            'English': f'Candle lighting (Shabbat) #{light_1_day} '
                        f'{data.gr_months_index_en[light_1_month]}: |'
                        f'{light_1_time:.5s}\n'
                        f'Candle lighting {light_2_day} '
