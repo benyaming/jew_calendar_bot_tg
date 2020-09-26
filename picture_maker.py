@@ -879,7 +879,7 @@ class SucosSender(PictureSender):
         self._lang = lang
         self._background_path = 'res/backgrounds/succos.png'
         self._draw = self._get_draw(self._background_path)
-        self._data_font_size = 50
+        self._data_font_size = 45
         self._regular_font = ImageFont.truetype(
             self._regular_font_path,
             size=self._data_font_size
